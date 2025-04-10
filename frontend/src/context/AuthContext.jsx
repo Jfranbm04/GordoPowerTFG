@@ -13,7 +13,8 @@ export const AuthProvider = ({ children }) => {
             const response = await fetch(`${BASE_URL}/api/login`, {
                 method: "POST",
                 headers: {
-                    "Content-Type": "application/json"
+                    "Content-Type": "application/json",
+                    "Accept": "application/json"
                 },
                 body: JSON.stringify({ email, password })
             });
@@ -41,7 +42,7 @@ export const AuthProvider = ({ children }) => {
             const response = await fetch(`${BASE_URL}/api/users`, {
                 method: "POST",
                 headers: {
-                    "Content-Type": "application/json",
+                    "Content-Type": "application/ld+json",
                 },
                 body: JSON.stringify({
                     email,
