@@ -58,6 +58,25 @@ export const AuthProvider = ({ children }) => {
                 throw new Error(errorData.message || "Error al registrar usuario");
             }
             const data = await response.json();
+
+            // Crear el personaje para el usuario
+            const characterResponse = await fetch(`${BASE_URL}/api/characters`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/ld+json",
+                },
+                body: JSON.stringify({
+                    user: `/api/users/${data.id}`,
+                    level: 1,
+                    strength: 1,
+                    weight: 50
+                })
+            });
+
+            if (!characterResponse.ok) {
+                throw new Error("Error al crear el personaje");
+            }
+
             return data;
         } catch (error) {
             console.log("Error al registrar usuario", error);

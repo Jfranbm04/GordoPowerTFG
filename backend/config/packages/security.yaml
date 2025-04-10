@@ -28,6 +28,7 @@ security:
   access_control:
     - { path: ^/api/login, roles: PUBLIC_ACCESS }
     - { path: ^/api/users, roles: PUBLIC_ACCESS, methods: [POST] }
+    - { path: ^/api/characters, roles: PUBLIC_ACCESS, methods: [POST] } # El personaje se crea al registrarse
     - { path: ^/api, roles: IS_AUTHENTICATED_FULLY }
 
 when@test:

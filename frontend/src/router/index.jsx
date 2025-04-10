@@ -4,10 +4,20 @@ import LoginPage from "../pages/LoginPage";
 import RootLayout from "../layout/RootLayout";
 import ProtectedRoute from "../components/ProtectedRoute";
 import HomePage from "../pages/HomePage";
-import DataFormPage from "../pages/DataFormPage";
 import RegisterPage from "../pages/RegisterPage";
+import ProfilePage from "../pages/ProfilePage";
 
 export const router = createBrowserRouter([
+    {
+        path: "login",
+        element:
+            <LoginPage />
+    },
+    {
+        path: "register",
+        element:
+            <RegisterPage />
+    },
     {
         path: "/",
         element: <RootLayout />,
@@ -17,20 +27,10 @@ export const router = createBrowserRouter([
                 element: <HomePage />
             },
             {
-                path: "login",
-                element:
-                    <LoginPage />
-            },
-            {
-                path: "register",
-                element:
-                    <RegisterPage />
-            },
-            {
-                path: "installation/dataForm",
+                path: "profile",
                 element:
                     <ProtectedRoute>
-                        <DataFormPage />
+                        <ProfilePage />
                     </ProtectedRoute>
             }
 
