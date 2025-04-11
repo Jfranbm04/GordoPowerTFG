@@ -1,40 +1,38 @@
-import React, { useState } from 'react'
+import React, { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
-import { Navigate, useNavigate, Link } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 
 const LoginPage = () => {
     const [formData, setFormData] = useState({
-        email: "",
-        password: ""
+        email: '',
+        password: ''
     });
     const [isLoading, setIsLoading] = useState(false);
-    const [error, setError] = useState("");
+    const [error, setError] = useState('');
     const navigate = useNavigate();
     const { loginUser } = useAuth();
 
     const handleChange = (e) => {
-        const nombre = e.target.name;
-        setFormData({ ...formData, [nombre]: e.target.value.trim() })
-    }
+        const { name, value } = e.target;
+        setFormData({ ...formData, [name]: value.trim() });
+    };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         setIsLoading(true);
-        setError("");
+        setError('');
+
         try {
-            await loginUser(formData);
-            navigate("/");
-        } catch (error) {
-            console.log("Error al iniciar sesión", error);
-            setError(error.message || "Email o contraseña incorrectos");
-            setFormData({
-                email: "",
-                password: ""
-            });
+            await loginUser(formData); // loginUser ya guarda token y usuario
+            navigate('/');
+        } catch (err) {
+            console.error('Error al iniciar sesión', err);
+            setError(err.message || 'Email o contraseña incorrectos');
+            setFormData({ email: '', password: '' });
         } finally {
             setIsLoading(false);
         }
-    }
+    };
 
     return (
         <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-purple-900 via-purple-800 to-indigo-900">
@@ -101,6 +99,6 @@ const LoginPage = () => {
             </div>
         </div>
     );
-}
+};
 
-export default LoginPage
+export default LoginPage;
