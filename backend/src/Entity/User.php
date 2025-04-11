@@ -41,21 +41,25 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?string $password = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(['user:read'])]
     private ?string $username = null;
 
     #[ORM\Column]
+    #[Groups(['user:read'])]
     private ?int $coins = null;
 
     /**
      * @var Collection<int, UserFood>
      */
     #[ORM\OneToMany(targetEntity: UserFood::class, mappedBy: 'user')]
+    #[Groups(['user:read'])]
     private Collection $userFood;
 
     /**
      * @var Collection<int, UserClothing>
      */
     #[ORM\OneToMany(targetEntity: UserClothing::class, mappedBy: 'user')]
+    #[Groups(['user:read'])]
     private Collection $userClothing;
 
     public function __construct()

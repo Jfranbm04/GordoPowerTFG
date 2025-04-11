@@ -30,6 +30,7 @@ security:
     - { path: ^/api/users, roles: PUBLIC_ACCESS, methods: [POST] }
     - { path: ^/api/characters, roles: PUBLIC_ACCESS, methods: [POST] } # El personaje se crea al registrarse
     - { path: ^/api, roles: IS_AUTHENTICATED_FULLY }
+    - { path: ^/api/get-current-user, roles: IS_AUTHENTICATED_FULLY }
 
 when@test:
   security:
