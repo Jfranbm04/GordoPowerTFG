@@ -114,10 +114,10 @@ export const AuthProvider = ({ children }) => {
     const getCurrentUser = () => {
         if (!token) return null;
 
-        const decodedToken = parseJwt(token);
-        if (!decodedToken) return null;
+        const userData = localStorage.getItem('user');
+        if (!userData) return null;
 
-        return decodedToken; // Retorna el objeto completo decodificado
+        return JSON.parse(userData);
     }
 
     return <authContext.Provider value={{ token, loginUser, logOut, registerUser, getCurrentUser }}>{children}</authContext.Provider>
