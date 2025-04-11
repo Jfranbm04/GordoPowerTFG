@@ -1,9 +1,52 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 
 const ProfilePage = () => {
     const { getCurrentUser } = useAuth();
     const user = getCurrentUser();
+    const [character, setCharacter] = useState(null);
+
+    useEffect(() => {
+        const fetchCharacter = async () => {
+            try {
+                console.log('Current user:', user);
+                console.log('User ID:', user?.id);
+                console.log('API URL:', `${import.meta.env.VITE_BASE_URL}/api/character/user/${user?.id}`);
+
+                const response = await fetch(`${import.meta.env.VITE_BASE_URL}/api/character/user/${user?.id}`, {
+                    headers: {
+                        'Authorization': `Bearer ${localStorage.getItem('token')}`,
+                        'Accept': 'application/json'
+                    }
+                });
+
+                console.log('Response status:', response.status);
+                console.log('Response headers:', response.headers);
+
+                const text = await response.text();
+                console.log('Raw response:', text);
+
+                const data = text ? JSON.parse(text) : null;
+                console.log('Parsed data:', data);
+
+                if (!response.ok) throw new Error(`Failed to fetch character: ${text}`);
+                setCharacter(data);
+            } catch (error) {
+                console.error('Full error:', error);
+                console.error('Error stack:', error.stack);
+            }
+        };
+
+        if (user) {
+            console.log('Starting fetch for user:', user);
+            fetchCharacter();
+        } else {
+            console.log('No user available');
+        }
+    }, [user]);
+
+    // Then use character instead of user.character in your stats display:
+    // Example: {character?.level || 'N/A'}
     const [activeTab, setActiveTab] = useState('foods');
     const [equippedItems, setEquippedItems] = useState({
         head: null,
@@ -41,19 +84,19 @@ const ProfilePage = () => {
                             <div className="grid grid-cols-2 gap-4">
                                 <div className="bg-white/5 p-4 rounded-lg">
                                     <p className="text-purple-300">Level</p>
-                                    <p className="text-2xl font-bold text-white">{user.character?.level || 'N/A'}</p>
+                                    <p className="text-2xl font-bold text-white">{character?.level || 'N/A'}</p>
                                 </div>
                                 <div className="bg-white/5 p-4 rounded-lg">
                                     <p className="text-purple-300">Strength</p>
-                                    <p className="text-2xl font-bold text-white">{user.character?.strength || 'N/A'}</p>
+                                    <p className="text-2xl font-bold text-white">{character?.strength || 'N/A'}</p>
                                 </div>
                                 <div className="bg-white/5 p-4 rounded-lg">
                                     <p className="text-purple-300">Weight</p>
-                                    <p className="text-2xl font-bold text-white">{user.character?.weight || 'N/A'}</p>
+                                    <p className="text-2xl font-bold text-white">{character?.weight || 'N/A'}</p>
                                 </div>
                                 <div className="bg-white/5 p-4 rounded-lg">
                                     <p className="text-purple-300">Coins</p>
-                                    <p className="text-2xl font-bold text-white">{user.character?.coins || 0}</p>
+                                    <p className="text-2xl font-bold text-white">{character?.coins || 0}</p>
                                 </div>
                             </div>
                         </div>
