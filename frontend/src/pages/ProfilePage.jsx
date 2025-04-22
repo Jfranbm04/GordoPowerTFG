@@ -1,52 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
+import { useUser } from '../context/UserContext';
 
 const ProfilePage = () => {
-    const { getCurrentUser } = useAuth();
-    const user = getCurrentUser();
-    const [character, setCharacter] = useState(null);
-
-    useEffect(() => {
-        const fetchCharacter = async () => {
-            try {
-                console.log('Current user:', user);
-                console.log('User ID:', user?.id);
-                console.log('API URL:', `${import.meta.env.VITE_BASE_URL}/api/character/user/${user?.id}`);
-
-                const response = await fetch(`${import.meta.env.VITE_BASE_URL}/api/character/user/${user?.id}`, {
-                    headers: {
-                        'Authorization': `Bearer ${localStorage.getItem('token')}`,
-                        'Accept': 'application/json'
-                    }
-                });
-
-                console.log('Response status:', response.status);
-                console.log('Response headers:', response.headers);
-
-                const text = await response.text();
-                console.log('Raw response:', text);
-
-                const data = text ? JSON.parse(text) : null;
-                console.log('Parsed data:', data);
-
-                if (!response.ok) throw new Error(`Failed to fetch character: ${text}`);
-                setCharacter(data);
-            } catch (error) {
-                console.error('Full error:', error);
-                console.error('Error stack:', error.stack);
-            }
-        };
-
-        if (user) {
-            console.log('Starting fetch for user:', user);
-            fetchCharacter();
-        } else {
-            console.log('No user available');
-        }
-    }, [user]);
-
-    // Then use character instead of user.character in your stats display:
-    // Example: {character?.level || 'N/A'}
+    const { user, character, loading } = useUser();
     const [activeTab, setActiveTab] = useState('foods');
     const [equippedItems, setEquippedItems] = useState({
         head: null,
@@ -55,8 +12,16 @@ const ProfilePage = () => {
         feet: null
     });
 
-    if (!user) {
+    if (loading) {
         return <div className="text-white text-center">Cargando perfil...</div>;
+    }
+
+    if (!user) {
+        return <div className="text-white text-center">Usuario no encontrado</div>;
+    }
+
+    if (!character) {
+        return <div className="text-white text-center">Personaje no encontrado</div>;
     }
 
     return (

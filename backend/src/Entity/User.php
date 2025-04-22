@@ -62,6 +62,10 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[Groups(['user:read'])]
     private Collection $userClothing;
 
+    #[ORM\OneToOne(mappedBy: 'user', cascade: ['persist', 'remove'])]
+    #[Groups(['user:read'])]
+    private ?Character $userCharacter = null;
+
     public function __construct()
     {
         $this->userFood = new ArrayCollection();
@@ -223,6 +227,28 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
                 $userClothing->setUser(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getUserCharacter(): ?Character
+    {
+        return $this->userCharacter;
+    }
+
+    public function setUserCharacter(?Character $userCharacter): static
+    {
+        // unset the owning side of the relation if necessary
+        if ($userCharacter === null && $this->userCharacter !== null) {
+            $this->userCharacter->setUser(null);
+        }
+
+        // set the owning side of the relation if necessary
+        if ($userCharacter !== null && $userCharacter->getUser() !== $this) {
+            $userCharacter->setUser($this);
+        }
+
+        $this->userCharacter = $userCharacter;
 
         return $this;
     }

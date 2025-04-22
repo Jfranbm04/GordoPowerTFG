@@ -16,6 +16,15 @@ class CharacterRepository extends ServiceEntityRepository
         parent::__construct($registry, Character::class);
     }
 
+    public function findOneByUserId(int $userId): ?Character
+    {
+        return $this->createQueryBuilder('c')
+            ->andWhere('c.user = :userId')
+            ->setParameter('userId', $userId)
+            ->getQuery()
+            ->getOneOrNullResult();
+    }
+
     //    /**
     //     * @return Character[] Returns an array of Character objects
     //     */

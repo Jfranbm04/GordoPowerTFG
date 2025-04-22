@@ -5,6 +5,7 @@ namespace App\Entity;
 use ApiPlatform\Metadata\ApiResource;
 use App\Repository\CharacterRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: CharacterRepository::class)]
 #[ORM\Table(name: '`character`')]
@@ -14,35 +15,27 @@ class Character
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(['character:read'])]
     private ?int $id = null;
 
-    #[ORM\OneToOne(cascade: ['persist', 'remove'])]
-    private ?User $user = null;
-
     #[ORM\Column]
+    #[Groups(['character:read'])]
     private ?int $level = null;
 
     #[ORM\Column]
+    #[Groups(['character:read'])]
     private ?int $strength = null;
 
     #[ORM\Column(nullable: true)]
+    #[Groups(['character:read'])]
     private ?int $weight = null;
+
+    #[ORM\OneToOne(inversedBy: 'userCharacter', cascade: ['persist', 'remove'])]
+    private ?User $user = null;
 
     public function getId(): ?int
     {
         return $this->id;
-    }
-
-    public function getUser(): ?User
-    {
-        return $this->user;
-    }
-
-    public function setUser(?User $user): static
-    {
-        $this->user = $user;
-
-        return $this;
     }
 
     public function getLevel(): ?int
@@ -77,6 +70,18 @@ class Character
     public function setWeight(?int $weight): static
     {
         $this->weight = $weight;
+
+        return $this;
+    }
+
+    public function getUser(): ?User
+    {
+        return $this->user;
+    }
+
+    public function setUser(?User $user): static
+    {
+        $this->user = $user;
 
         return $this;
     }
