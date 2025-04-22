@@ -11,6 +11,11 @@ const ProfilePage = () => {
         legs: null,
         feet: null
     });
+    // Añade este useEffect para ver los datos en la consola
+    useEffect(() => {
+        console.log('Datos del personaje:', character);
+        console.log('Datos del usuario:', user);
+    }, [character, user]);
 
     if (loading) {
         return <div className="text-white text-center">Cargando perfil...</div>;
