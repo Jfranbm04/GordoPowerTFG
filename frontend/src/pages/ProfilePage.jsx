@@ -11,6 +11,9 @@ const ProfilePage = () => {
         legs: null,
         feet: null
     });
+    useEffect(() => {
+        console.log(user)
+    }, [])
 
     if (loading) {
         return <div className="text-white text-center">Cargando perfil...</div>;
