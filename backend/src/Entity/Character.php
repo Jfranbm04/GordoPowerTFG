@@ -10,8 +10,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
 #[ORM\Entity(repositoryClass: CharacterRepository::class)]
 #[ORM\Table(name: '`character`')]
 #[ApiResource(
-    normalizationContext: ['groups' => ['character:read']],
-    security: "is_granted('ROLE_USER')"
+    normalizationContext: ['groups' => ['character:read']]
 )]
 class Character
 {

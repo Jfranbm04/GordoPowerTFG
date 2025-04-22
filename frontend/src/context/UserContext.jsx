@@ -16,7 +16,7 @@ export const UserProvider = ({ children }) => {
 
     useEffect(() => {
         const fetchCharacter = async () => {
-            if (user && user.id && token) {  // Check if token exists
+            if (user && user.id) {  // Check if token exists
                 setLoading(true);
                 try {
                     console.log('Fetching with token:', token);
@@ -25,7 +25,7 @@ export const UserProvider = ({ children }) => {
                         headers: {
                             "Accept": "application/json",
                             "Content-Type": "application/json",
-                            "Authorization": `Bearer ${token}`
+                            // "Authorization": `Bearer ${token}`
                         }
                     });
 
@@ -50,7 +50,7 @@ export const UserProvider = ({ children }) => {
             }
         };
         fetchCharacter();
-    }, [user, token, BASE_URL]);
+    }, [user, BASE_URL]);
 
     return (
         <UserContext.Provider value={{ user, character, loading }}>

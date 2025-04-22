@@ -12,13 +12,12 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 class CharacterController extends AbstractController
 {
     #[Route('/api/character/user/{userId}', name: 'get_character_by_user', methods: ['GET'])]
-    #[IsGranted('IS_AUTHENTICATED_FULLY')]
     public function getCharacterByUser(int $userId, CharacterRepository $characterRepository): JsonResponse
     {
-        $user = $this->getUser();
-        if (!$user) {
-            return new JsonResponse(['message' => 'User not found'], 401);
-        }
+        // $user = $this->getUser();
+        // if (!$user) {
+        //     return new JsonResponse(['message' => 'User not found'], 401);
+        // }
 
         $character = $characterRepository->findOneByUserId($userId);
         if (!$character) {
