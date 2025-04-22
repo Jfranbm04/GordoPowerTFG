@@ -66,7 +66,7 @@ const ProfilePage = () => {
                                 </div>
                                 <div className="bg-white/5 p-4 rounded-lg">
                                     <p className="text-purple-300">Coins</p>
-                                    <p className="text-2xl font-bold text-white">{character?.coins || 0}</p>
+                                    <p className="text-2xl font-bold text-white">{user?.coins || 0}</p>
                                 </div>
                             </div>
                         </div>
