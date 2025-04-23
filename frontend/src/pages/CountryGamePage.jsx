@@ -1,10 +1,12 @@
 import React from 'react';
 import { CountryGuesser } from '../components/CountryGuesser';
 
-export function CountryGame() {
+const CountryGame = () => {
   return (
     <div className="space-y-8">
       <CountryGuesser />
     </div>
   );
 }
+
+export default CountryGame;

@@ -1,11 +1,22 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Outlet, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { Home, User, ShoppingBag, Gift, Gamepad2, Book } from 'lucide-react';
 
 const RootLayout = () => {
     const { getCurrentUser, logOut } = useAuth();
-    const user = getCurrentUser();
+    const [user, setUser] = useState(getCurrentUser());
+
+    useEffect(() => {
+        // Actualizar el usuario cada 2 segundos
+        const interval = setInterval(() => {
+            const currentUser = getCurrentUser();
+            setUser(currentUser);
+        }, 2000);
+
+        // Limpiar el intervalo cuando el componente se desmonte
+        return () => clearInterval(interval);
+    }, [getCurrentUser]);
 
     return (
         <div className="min-h-screen bg-gradient-to-br from-purple-900 via-purple-800 to-indigo-900 text-white">
@@ -47,7 +58,7 @@ const RootLayout = () => {
                             {user && (
                                 <div className="flex items-center bg-purple-900/50 px-3 py-1 rounded-full">
                                     <span className="text-yellow-300 font-bold mr-1">💰</span>
-                                    <span className="text-white font-medium">{user.coins}</span>
+                                    <span className="text-white font-medium">{user?.coins}</span>
                                 </div>
                             )}
                             {user ? (

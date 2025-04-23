@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Gamepad2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
@@ -9,12 +10,12 @@ export default function Minigames() {
         {
             name: 'Country Guesser',
             description: 'Test your geography knowledge!',
-            path: '/minigames/countryguesser'
+            path: '/country'
         },
         {
             name: 'Food Zoom Challenge',
             description: 'Guess the food before the image becomes clear!',
-            path: '/minigames/food-zoom'
+            path: '/foodzoom'
         },
         {
             name: 'Minigame 3',
@@ -38,7 +39,7 @@ export default function Minigames() {
                         <button
                             onClick={() => game.path && navigate(game.path)}
                             className="bg-purple-600 hover:bg-purple-700 px-6 py-2 rounded-lg transition duration-200"
-                            disabled={!game.path}
+                        // disabled={!game.path}
                         >
                             Play Now
                         </button>
