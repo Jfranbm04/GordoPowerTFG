@@ -7,7 +7,10 @@ import HomePage from "../pages/HomePage";
 import RegisterPage from "../pages/RegisterPage";
 import ProfilePage from "../pages/ProfilePage";
 import MinigamesPage from "../pages/MinigamesPage";
-import { CountryGuesser } from "../components/CountryGuesser";
+import CountryGame from "../pages/CountryGamePage";
+import { FoodZoom } from "../components/FoodZoom";
+import GachaPage from "../pages/GachaPage";
+import CollectionPage from "../pages/CollectionPage";
 
 export const router = createBrowserRouter([
     {
@@ -36,16 +39,27 @@ export const router = createBrowserRouter([
                     </ProtectedRoute>
             },
             {
+                path: "collection",
+                element:
+                    <ProtectedRoute>
+                        <CollectionPage />
+                    </ProtectedRoute>
+            },
+            {
+                path: "gacha",
+                element:
+                    <ProtectedRoute>
+                        <GachaPage />
+                    </ProtectedRoute>
+            },
+            {
                 path: "minigames",
                 element:
                     <ProtectedRoute>
                         <MinigamesPage />
                     </ProtectedRoute>,
                 children: [
-                    {
-                        path: "countryguesser",
-                        element: <CountryGuesser />
-                    },
+
                     // {
                     //     path: "food-zoom",
                     //     element: <FoodZoom />
@@ -55,7 +69,21 @@ export const router = createBrowserRouter([
                     //     element: <Minigame3 />
                     // }
                 ]
-            }
+            },
+            {
+                path: "country",
+                element:
+                    <ProtectedRoute>
+                        <CountryGame />
+                    </ProtectedRoute>
+            },
+            {
+                path: "foodzoom",
+                element:
+                    <ProtectedRoute>
+                        <FoodZoom />
+                    </ProtectedRoute>
+            },
 
         ]
     }

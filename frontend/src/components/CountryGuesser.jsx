@@ -43,12 +43,12 @@ export function CountryGuesser() {
         if (formattedGuess === targetCountry.name) {
             setGameOver(true);
             const coinsWon = Math.max(100 - (attempts.length * 10), 20);
-            
+
             try {
                 const response = await fetch(`${import.meta.env.VITE_BASE_URL}/api/users/${user.id}`, {
                     method: 'PATCH',
                     headers: {
-                        'Content-Type': 'application/merge-patch+json',
+                        'Content-Type': 'application/merge-patch+json', // Necesita ese tipo de content
                     },
                     body: JSON.stringify({
                         coins: user.coins + coinsWon
