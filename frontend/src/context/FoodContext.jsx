@@ -18,7 +18,7 @@ export const FoodProvider = ({ children }) => {
                 throw new Error('Error al obtener las comidas');
             }
             const data = await response.json();
-            setFoods(data['hydra:member']);
+            setFoods(data);
         } catch (error) {
             console.error('Error:', error);
         }
@@ -110,10 +110,10 @@ export const FoodProvider = ({ children }) => {
     }, []);
 
     return (
-        <FoodContext.Provider 
-            value={{ 
-                foods, 
-                userFoods, 
+        <FoodContext.Provider
+            value={{
+                foods,
+                userFoods,
                 loading,
                 unlockFood,
                 updateFoodQuantity,

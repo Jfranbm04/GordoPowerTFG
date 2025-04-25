@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Gift } from 'lucide-react';
 import { useUser } from '../context/UserContext';
 import { useAuth } from '../context/AuthContext';
+import { FoodRoulette } from '../components/FoodRoulette';
 
 export function GachaPage() {
   const [activeRoulette, setActiveRoulette] = useState(null);
@@ -19,7 +20,7 @@ export function GachaPage() {
   return (
     <div className="space-y-8">
       <h2 className="text-2xl font-bold">Sistema Gacha</h2>
-      
+
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
         <div className="bg-white/10 backdrop-blur-sm p-6 rounded-lg text-center">
           <h3 className="text-xl font-bold mb-4">Gacha de Comida</h3>
@@ -27,7 +28,7 @@ export function GachaPage() {
             <Gift className="w-24 h-24 text-purple-400" />
           </div>
           <p className="text-purple-200 mb-4">¡Prueba tu suerte para obtener comidas raras!</p>
-          <button 
+          <button
             onClick={() => handleRoulette('food', 0)}
             className="bg-purple-600 hover:bg-purple-700 px-8 py-3 rounded-lg transition duration-200"
           >
@@ -41,7 +42,7 @@ export function GachaPage() {
             <Gift className="w-24 h-24 text-indigo-400" />
           </div>
           <p className="text-purple-200 mb-4">¡Consigue ropa exclusiva y monedas!</p>
-          <button 
+          <button
             onClick={() => handleRoulette('clothing', 200)}
             className="bg-indigo-600 hover:bg-indigo-700 px-8 py-3 rounded-lg transition duration-200"
           >
@@ -50,19 +51,12 @@ export function GachaPage() {
         </div>
       </div>
 
+
       {activeRoulette === 'food' && (
-        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center">
-          <div className="bg-white/10 p-8 rounded-lg max-w-md w-full">
-            <h3 className="text-xl font-bold mb-4">¡Tirando Gacha de Comida!</h3>
-            {/* Aquí irá la animación y lógica de la ruleta */}
-            <button 
-              onClick={() => setActiveRoulette(null)}
-              className="w-full bg-purple-600 hover:bg-purple-700 px-4 py-2 rounded-lg mt-4"
-            >
-              Cerrar
-            </button>
-          </div>
-        </div>
+        <FoodRoulette
+          cost={0}
+          onClose={() => setActiveRoulette(null)}
+        />
       )}
 
       {activeRoulette === 'clothing' && (
@@ -70,7 +64,7 @@ export function GachaPage() {
           <div className="bg-white/10 p-8 rounded-lg max-w-md w-full">
             <h3 className="text-xl font-bold mb-4">¡Tirando Gacha de Ropa!</h3>
             {/* Aquí irá la animación y lógica de la ruleta */}
-            <button 
+            <button
               onClick={() => setActiveRoulette(null)}
               className="w-full bg-indigo-600 hover:bg-indigo-700 px-4 py-2 rounded-lg mt-4"
             >
