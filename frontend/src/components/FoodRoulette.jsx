@@ -1,27 +1,20 @@
 import React, { useState, useEffect } from 'react';
 import { useUser } from '../context/UserContext';
 import { useAuth } from '../context/AuthContext';
-
-const FOOD_ITEMS = [
-    { name: 'PIZZA', emoji: '🍕', rarity: 'legendary' },
-    { name: 'SUSHI', emoji: '🍣', rarity: 'epic' },
-    { name: 'HAMBURGUESA', emoji: '🍔', rarity: 'rare' },
-    { name: 'ESPAGUETIS', emoji: '🍝', rarity: 'common' },
-    { name: 'TACOS', emoji: '🌮', rarity: 'epic' },
-    { name: 'RAMEN', emoji: '🍜', rarity: 'rare' },
-    // Puedes añadir más comidas aquí
-];
+import { useFood } from '../context/FoodContext';
 
 export function FoodRoulette({ cost, onClose }) {
     const [isRunning, setIsRunning] = useState(false);
     const [currentIndex, setCurrentIndex] = useState(-1);
     const [finalResult, setFinalResult] = useState(null);
     const [items, setItems] = useState([]);
-    const { user } = useUser();
+    const { user, updateUserCoins } = useUser();
     const { getCurrentUser } = useAuth();
+    const { foods, unlockFood, userFoods, updateFoodQuantity } = useFood();
 
     const getRandomFood = (excludeLegendary = false) => {
-        const filtered = FOOD_ITEMS.filter(f =>
+        const foodsList = foods?.member || [];
+        const filtered = foodsList.filter(f =>
             excludeLegendary ? f.rarity !== 'legendary' : f.rarity === 'legendary'
         );
         return filtered[Math.floor(Math.random() * filtered.length)];
@@ -31,38 +24,25 @@ export function FoodRoulette({ cost, onClose }) {
         if (!user || user.coins < cost || isRunning) return;
 
         const newItems = [
-            { type: 'nothing' },
-            { type: 'nothing' },
-            { type: 'nothing' },
-            { type: 'nothing' },
-            { type: 'coins', amount: 200 },
-            { type: 'coins', amount: 300 },
-            { type: 'coins', amount: 400 },
-            { type: 'coins', amount: 500 },
+            // { type: 'nothing' },
+            // { type: 'nothing' },
+            // { type: 'nothing' },
+            // { type: 'nothing' },
+            // { type: 'coins', amount: 200 },
+            // { type: 'coins', amount: 300 },
+            // { type: 'coins', amount: 400 },
+            // { type: 'coins', amount: 500 },
             { type: 'food', food: getRandomFood(true) },
-            { type: 'food', food: getRandomFood(false) }
+            // { type: 'food', food: getRandomFood(false) }
         ];
 
         try {
-            // Restar monedas
-            const response = await fetch(`${import.meta.env.VITE_BASE_URL}/api/users/${user.id}`, {
-                method: 'PATCH',
-                headers: {
-                    'Content-Type': 'application/merge-patch+json',
-                },
-                body: JSON.stringify({
-                    coins: user.coins - cost
-                })
-            });
-
-            if (response.ok) {
-                const updatedUser = await response.json();
-                localStorage.setItem('user', JSON.stringify(updatedUser));
-                setItems(newItems);
-                setFinalResult(null);
-                setCurrentIndex(0);
-                setIsRunning(true);
-            }
+            // Restar monedas usando el nuevo método
+            await updateUserCoins(user.id, user.coins - cost);
+            setItems(newItems);
+            setFinalResult(null);
+            setCurrentIndex(0);
+            setIsRunning(true);
         } catch (error) {
             console.error('Error al actualizar monedas:', error);
         }
@@ -88,25 +68,29 @@ export function FoodRoulette({ cost, onClose }) {
                 setFinalResult(resultIndex);
 
                 const result = items[resultIndex];
+                console.log(result)
                 try {
                     if (result.type === 'coins') {
-                        const response = await fetch(`${import.meta.env.VITE_BASE_URL}/api/users/${user.id}`, {
-                            method: 'PATCH',
-                            headers: {
-                                'Content-Type': 'application/merge-patch+json',
-                            },
-                            body: JSON.stringify({
-                                coins: user.coins + result.amount
-                            })
-                        });
-
-                        if (response.ok) {
-                            const updatedUser = await response.json();
-                            localStorage.setItem('user', JSON.stringify(updatedUser));
-                        }
+                        await updateUserCoins(user.id, user.coins + result.amount);
                     } else if (result.type === 'food') {
-                        // Aquí implementarías la lógica para guardar la comida en el inventario
-                        console.log('Comida ganada:', result.food);
+                        console.log("UserFoods: ", userFoods)
+
+                        // Verificar si el usuario ya tiene esta comida
+                        const existingUserFood = userFoods?.member?.find(uf => {
+                            // Extraer el ID de la URL de la comida del usuario
+                            const foodId = uf.food.split('/').pop();
+                            return foodId === result.food.id.toString();
+                        });
+                        console.log(existingUserFood)
+                        if (existingUserFood) {
+                            // Si ya existe, actualizar la cantidad
+                            console.log("actualizar cantidad", existingUserFood)
+                            await updateFoodQuantity(existingUserFood.id, existingUserFood.quantity + 1);
+                        } else {
+                            // Si no existe, desbloquear nueva comida
+                            console.log("desbloquear comida", result.food.id)
+                            await unlockFood(result.food.id);
+                        }
                     }
                 } catch (error) {
                     console.error('Error al procesar el resultado:', error);

@@ -35,7 +35,8 @@ export const FoodProvider = ({ children }) => {
                 throw new Error('Error al obtener las comidas del usuario');
             }
             const data = await response.json();
-            setUserFoods(data['hydra:member']);
+            console.log("Data: ", data)
+            setUserFoods(data);
         } catch (error) {
             console.error('Error:', error);
         }
@@ -50,17 +51,21 @@ export const FoodProvider = ({ children }) => {
             const response = await fetch(`${BASE_URL}/api/user_foods`, {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/json',
+                    'Content-Type': 'application/ld+json',
+                    'Accept': 'application/ld+json'
                 },
                 body: JSON.stringify({
-                    user: `/api/users/${user.id}`,
-                    food: `/api/food/${foodId}`,
-                    unlocked: true,
-                    quantity: 1
+
+                    "user": `/api/users/${user.id}`,
+                    "food": `/api/food/${foodId}`,
+                    "unlocked": true,
+                    "quantity": 1
                 })
             });
 
             if (!response.ok) {
+                const errorData = await response.json();
+                console.error('Error response:', errorData);
                 throw new Error('Error al desbloquear la comida');
             }
 

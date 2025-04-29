@@ -29,10 +29,10 @@ export function GachaPage() {
           </div>
           <p className="text-purple-200 mb-4">¡Prueba tu suerte para obtener comidas raras!</p>
           <button
-            onClick={() => handleRoulette('food', 0)}
+            onClick={() => handleRoulette('food', 100)}
             className="bg-purple-600 hover:bg-purple-700 px-8 py-3 rounded-lg transition duration-200"
           >
-            Tirar (0 monedas)
+            Tirar (100 monedas)
           </button>
         </div>
 
@@ -54,7 +54,7 @@ export function GachaPage() {
 
       {activeRoulette === 'food' && (
         <FoodRoulette
-          cost={0}
+          cost={100}
           onClose={() => setActiveRoulette(null)}
         />
       )}
