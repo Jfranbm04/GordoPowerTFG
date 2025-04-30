@@ -11,6 +11,8 @@ import CountryGame from "../pages/CountryGamePage";
 import { FoodZoom } from "../components/FoodZoom";
 import GachaPage from "../pages/GachaPage";
 import CollectionPage from "../pages/CollectionPage";
+import AdminPage from "../pages/AdminPage";
+import ShopPage from "../pages/ShopPage";
 
 export const router = createBrowserRouter([
     {
@@ -36,6 +38,13 @@ export const router = createBrowserRouter([
                 element:
                     <ProtectedRoute>
                         <ProfilePage />
+                    </ProtectedRoute>
+            },
+            {
+                path: "shop",
+                element:
+                    <ProtectedRoute>
+                        <ShopPage />
                     </ProtectedRoute>
             },
             {
@@ -82,6 +91,13 @@ export const router = createBrowserRouter([
                 element:
                     <ProtectedRoute>
                         <FoodZoom />
+                    </ProtectedRoute>
+            },
+            {
+                path: "admin",
+                element:
+                    <ProtectedRoute>
+                        <AdminPage />
                     </ProtectedRoute>
             },
 

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Outlet, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { Home, User, ShoppingBag, Gift, Gamepad2, Book } from 'lucide-react';
+import { Home, User, ShoppingBag, Gift, Gamepad2, Book, Settings } from 'lucide-react';
 
 const RootLayout = () => {
     const { getCurrentUser, logOut } = useAuth();
@@ -51,6 +51,12 @@ const RootLayout = () => {
                                         <Gamepad2 className="w-5 h-5" />
                                         <span>Minigames</span>
                                     </Link>
+                                    {user.roles && user.roles.includes("ROLE_ADMIN") && (
+                                        <Link to="/admin" className="flex items-center space-x-1 hover:text-red-300">
+                                            <Settings className="w-5 h-5" />
+                                            <span>Admin</span>
+                                        </Link>
+                                    )}
                                 </div>
                             )}
                         </div>

@@ -52,17 +52,18 @@ export function CollectionPage() {
                     {Array.isArray(foodsList) && foodsList.map(food => {
                         const userFood = userFoodsList.find(uf => uf.food === `/api/food/${food.id}`);
                         const quantity = userFood ? userFood.quantity : 0;
+                        const unlocked = userFood ? userFood.unlocked : false;
 
                         return (
                             <div
                                 key={food.id}
-                                className={`relative group p-6 rounded-xl ${quantity > 0
+                                className={`relative group p-6 rounded-xl ${unlocked
                                     ? 'bg-gradient-to-br from-purple-900/50 to-indigo-900/50 backdrop-blur-sm transition-all duration-300 transform hover:scale-105'
                                     : 'bg-gradient-to-br from-gray-900/80 to-slate-900/80 backdrop-blur-sm'
                                     }`}
                             >
                                 <div className="absolute top-2 right-2">
-                                    {quantity > 0 ? (
+                                    {unlocked ? (
                                         <div className="bg-yellow-500/20 px-2 py-0.5 rounded-full border border-yellow-500/30">
                                             <span className="text-yellow-300 text-sm font-medium">
                                                 x{quantity}
@@ -76,8 +77,8 @@ export function CollectionPage() {
                                         </div>
                                     )}
                                 </div>
-                                <div className={`flex flex-col items-center space-y-4 ${quantity === 0 ? 'opacity-60' : ''}`}>
-                                    <div className={`text-6xl mb-2 ${quantity > 0 ? 'transform group-hover:scale-110 transition-transform duration-300' : ''
+                                <div className={`flex flex-col items-center space-y-4 ${!unlocked ? 'opacity-60' : ''}`}>
+                                    <div className={`text-6xl mb-2 ${unlocked ? 'transform group-hover:scale-110 transition-transform duration-300' : ''
                                         }`}>
                                         {food.emoji}
                                     </div>
@@ -104,14 +105,14 @@ export function CollectionPage() {
                                         )}
                                         {food.fat && (
                                             <div className="text-sm text-gray-300 flex justify-between">
-                                                <span>🥑 Grasas:</span>
+                                                <span>🍖 Grasas:</span>
                                                 <span className="text-purple-300">{food.fat}g</span>
                                             </div>
                                         )}
                                     </div>
-                                    <div className={`mt-1 text-sm px-4 py-1 rounded-full font-medium ${food.rarity === 'Legendary' ? 'bg-gradient-to-r from-yellow-500/20 to-amber-500/20 text-yellow-300 border border-yellow-500/30' :
-                                        food.rarity === 'Epic' ? 'bg-gradient-to-r from-purple-500/20 to-pink-500/20 text-purple-300 border border-purple-500/30' :
-                                            food.rarity === 'Rare' ? 'bg-gradient-to-r from-blue-500/20 to-cyan-500/20 text-blue-300 border border-blue-500/30' :
+                                    <div className={`mt-1 text-sm px-4 py-1 rounded-full font-medium ${food.rarity.toUpperCase() === 'LEGENDARY' ? 'bg-gradient-to-r from-yellow-500/20 to-amber-500/20 text-yellow-300 border border-yellow-500/30' :
+                                        food.rarity.toUpperCase() === 'EPIC' ? 'bg-gradient-to-r from-purple-500/20 to-pink-500/20 text-purple-300 border border-purple-500/30' :
+                                            food.rarity.toUpperCase() === 'RARE' ? 'bg-gradient-to-r from-blue-500/20 to-cyan-500/20 text-blue-300 border border-blue-500/30' :
                                                 'bg-gradient-to-r from-gray-500/20 to-slate-500/20 text-gray-300 border border-gray-500/30'
                                         }`}>
                                         {food.rarity.toUpperCase()}

@@ -14,8 +14,9 @@ export function FoodRoulette({ cost, onClose }) {
 
     const getRandomFood = (excludeLegendary = false) => {
         const foodsList = foods?.member || [];
+        // Filtro para que aparezca solo legendarios o no legendarios
         const filtered = foodsList.filter(f =>
-            excludeLegendary ? f.rarity !== 'legendary' : f.rarity === 'legendary'
+            excludeLegendary ? f.rarity.toUpperCase() !== 'LEGENDARY' : f.rarity.toUpperCase() === 'LEGENDARY'
         );
         return filtered[Math.floor(Math.random() * filtered.length)];
     };
@@ -24,16 +25,16 @@ export function FoodRoulette({ cost, onClose }) {
         if (!user || user.coins < cost || isRunning) return;
 
         const newItems = [
-            // { type: 'nothing' },
-            // { type: 'nothing' },
-            // { type: 'nothing' },
-            // { type: 'nothing' },
-            // { type: 'coins', amount: 200 },
-            // { type: 'coins', amount: 300 },
-            // { type: 'coins', amount: 400 },
-            // { type: 'coins', amount: 500 },
+            { type: 'nothing' },
+            { type: 'nothing' },
+            { type: 'nothing' },
+            { type: 'nothing' },
+            { type: 'coins', amount: 200 },
+            { type: 'coins', amount: 300 },
+            { type: 'coins', amount: 400 },
+            { type: 'coins', amount: 500 },
             { type: 'food', food: getRandomFood(true) },
-            // { type: 'food', food: getRandomFood(false) }
+            { type: 'food', food: getRandomFood(false) } // legendario
         ];
 
         try {
@@ -127,11 +128,16 @@ export function FoodRoulette({ cost, onClose }) {
                                     <div className="text-sm">
                                         <div>{item.food.name}</div>
                                         <div className={
-                                            item.food.rarity === 'legendary' ? 'text-yellow-300' :
-                                                item.food.rarity === 'epic' ? 'text-purple-300' :
-                                                    item.food.rarity === 'rare' ? 'text-blue-300' :
+                                            item.food.rarity.toUpperCase() === 'LEGENDARY' ? 'text-yellow-300' :
+                                                item.food.rarity.toUpperCase() === 'EPIC' ? 'text-purple-300' :
+                                                    item.food.rarity.toUpperCase() === 'RARE' ? 'text-blue-300' :
                                                         'text-gray-300'
                                         }>
+                                            {/* <div className={`mt-1 text-sm px-4 py-1 rounded-full font-medium ${item.food.rarity.toUpperCase() === 'LEGENDARY' ? 'bg-gradient-to-r from-yellow-500/20 to-amber-500/20 text-yellow-300 border border-yellow-500/30' :
+                                                    item.food.rarity.toUpperCase() === 'EPIC' ? 'bg-gradient-to-r from-purple-500/20 to-pink-500/20 text-purple-300 border border-purple-500/30' :
+                                                        item.food.rarity.toUpperCase() === 'RARE' ? 'bg-gradient-to-r from-blue-500/20 to-cyan-500/20 text-blue-300 border border-blue-500/30' :
+                                                            'bg-gradient-to-r from-gray-500/20 to-slate-500/20 text-gray-300 border border-gray-500/30'
+                                                }`}></div> */}
                                             {item.food.rarity.toUpperCase()}
                                         </div>
                                     </div>
