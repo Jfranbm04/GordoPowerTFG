@@ -13,6 +13,7 @@ import GachaPage from "../pages/GachaPage";
 import CollectionPage from "../pages/CollectionPage";
 import AdminPage from "../pages/AdminPage";
 import ShopPage from "../pages/ShopPage";
+import AdminUserPage from "../pages/AdminUserPage";
 
 export const router = createBrowserRouter([
     {
@@ -67,17 +68,6 @@ export const router = createBrowserRouter([
                     <ProtectedRoute>
                         <MinigamesPage />
                     </ProtectedRoute>,
-                children: [
-
-                    // {
-                    //     path: "food-zoom",
-                    //     element: <FoodZoom />
-                    // },
-                    // {
-                    //     path: "minigame-3",
-                    //     element: <Minigame3 />
-                    // }
-                ]
             },
             {
                 path: "country",
@@ -98,8 +88,22 @@ export const router = createBrowserRouter([
                 element:
                     <ProtectedRoute>
                         <AdminPage />
-                    </ProtectedRoute>
+                    </ProtectedRoute>,
+                children: [
+                    {
+                        path: "users",
+                        element: <AdminUserPage />
+                    },
+
+                ]
             },
+            // {
+            //     path: "admin-users",
+            //     element:
+            //         <ProtectedRoute>
+            //             <AdminUserPage />
+            //         </ProtectedRoute>
+            // },
 
         ]
     }
