@@ -104,6 +104,33 @@ export const FoodProvider = ({ children }) => {
         }
     };
 
+    // Crear un nuevo plato
+    const createFood = async (foodData) => {
+        try {
+            const response = await fetch(`${BASE_URL}/api/food`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/ld+json',
+                    'Accept': 'application/ld+json'
+                },
+                body: JSON.stringify(foodData)
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                console.error('Error response:', errorData);
+                throw new Error('Error al crear el plato');
+            }
+
+            // Actualizar la lista de comidas
+            await fetchFoods();
+            return true;
+        } catch (error) {
+            console.error('Error:', error);
+            return false;
+        }
+    };
+
     useEffect(() => {
         const loadData = async () => {
             setLoading(true);
@@ -122,7 +149,8 @@ export const FoodProvider = ({ children }) => {
                 loading,
                 unlockFood,
                 updateFoodQuantity,
-                refreshUserFoods: fetchUserFoods
+                refreshUserFoods: fetchUserFoods,
+                createFood
             }}
         >
             {children}
