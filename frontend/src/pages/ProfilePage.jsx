@@ -45,8 +45,8 @@ const ProfilePage = () => {
             // Calcular nuevas estadísticas
             const newProtein = character.protein + (food.protein || 0);
             const newFat = character.fat + (food.fat || 0);
-            const newStrength = character.strength + Math.floor((food.protein || 0) / 10);
-            const newWeight = character.weight + Math.floor((food.fat || 0) / 5);
+            const newStrength = character.strength + Math.floor((food.protein || 0) / 20);
+            const newWeight = character.weight + Math.floor((food.fat || 0) / 50);
 
             // Usar la nueva función del contexto
             await updateCharacter(character.id, {

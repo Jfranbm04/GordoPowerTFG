@@ -18,7 +18,7 @@ const HomePage = () => {
         <div>
             {/* Modal Tutorial */}
             {showTutorial && (
-                <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50">
+                <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 overflow-y-auto py-[10vh]">
                     <div className="bg-purple-900/90 p-8 rounded-xl backdrop-blur-sm max-w-2xl w-full mx-4 relative">
                         <button
                             onClick={() => setShowTutorial(false)}
@@ -26,48 +26,34 @@ const HomePage = () => {
                         >
                             ✕
                         </button>
-                        <h2 className="text-2xl font-bold mb-6 text-center">Tutorial de GordoPower</h2>
+                        <h2 className="text-2xl font-bold mb-6 text-center">¡Bienvenido a GordoPower!</h2>
 
                         <div className="space-y-6">
-                            <div>
-                                <h3 className="text-xl font-semibold mb-2 text-purple-300">🎮 Minijuegos</h3>
-                                <p className="text-gray-300">Juega a diferentes minijuegos para ganar monedas:</p>
-                                <ul className="list-disc list-inside mt-2 text-gray-400">
-                                    <li>Country Guesser: Adivina países y gana monedas</li>
-                                    <li>Food Zoom Challenge: Identifica comidas antes de que se revelen por completo</li>
+                            <div className="bg-purple-800/30 p-4 rounded-lg">
+                                <h3 className="text-xl font-semibold mb-2 text-purple-300">💪 Mejora tu Personaje</h3>
+                                <ul className="list-disc list-inside space-y-1 text-gray-300">
+                                    <li>Alimenta a tu personaje para ganar estadísticas</li>
+                                    <li>Proteína = Fuerza (1 punto cada 20g)</li>
+                                    <li>Grasa = Peso (1 punto cada 50g)</li>
                                 </ul>
                             </div>
 
-                            <div>
-                                <h3 className="text-xl font-semibold mb-2 text-purple-300">🎲 Sistema Gacha</h3>
-                                <p className="text-gray-300">Prueba tu suerte en el sistema gacha para obtener:</p>
-                                <ul className="list-disc list-inside mt-2 text-gray-400">
-                                    <li>Comidas raras y legendarias</li>
-                                    <li>Ropa exclusiva para tu personaje</li>
+                            <div className="bg-purple-800/30 p-4 rounded-lg">
+                                <h3 className="text-xl font-semibold mb-2 text-purple-300">💰 Gana Monedas</h3>
+                                <ul className="list-disc list-inside space-y-1 text-gray-300">
+                                    <li>Juega Country Guesser y Food Zoom Challenge</li>
+                                    <li>Usa las monedas en la tienda o el gacha</li>
                                 </ul>
                             </div>
 
-                            <div>
-                                <h3 className="text-xl font-semibold mb-2 text-purple-300">🏪 Tienda</h3>
-                                <p className="text-gray-300">Compra comidas y objetos para mejorar tu personaje usando las monedas ganadas.</p>
-                            </div>
-
-                            <div>
-                                <h3 className="text-xl font-semibold mb-2 text-purple-300">📚 Colección</h3>
-                                <p className="text-gray-300">Explora tu colección de comidas y ropa, organizadas por rareza y tipo.</p>
-                            </div>
-                            <div>
-                                <h3 className="text-xl font-semibold mb-2 text-purple-300">⚙️ Funcionalidad del juego</h3>
-                                <p className="text-gray-300">
-                                    - Proteína: Se suma directamente la proteína del alimento
-                                    - Grasa: Se suma directamente la grasa del alimento
-                                    - Fuerza: Aumenta 1 punto por cada 10g de proteína
-                                    - Peso: Aumenta 1 punto por cada 5g de grasa.</p>
-                            </div>
-
-                            <div>
-                                <h3 className="text-xl font-semibold mb-2 text-purple-300">👤 Perfil</h3>
-                                <p className="text-gray-300">Gestiona tu personaje, visualiza tus estadísticas y equipa los objetos coleccionados.</p>
+                            <div className="bg-purple-800/30 p-4 rounded-lg">
+                                <h3 className="text-xl font-semibold mb-2 text-purple-300">🎯 Consejos Rápidos</h3>
+                                <ul className="list-disc list-inside space-y-1 text-gray-300">
+                                    <li>Prioriza alimentos legendarios y épicos</li>
+                                    <li>Equilibra proteínas y grasas</li>
+                                    <li>Juega minijuegos a diario</li>
+                                    <li>Colecciona diferentes tipos de comida</li>
+                                </ul>
                             </div>
                         </div>
                     </div>
