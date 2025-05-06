@@ -66,10 +66,15 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[Groups(['user:read'])]
     private ?Character $userCharacter = null;
 
+    #[ORM\Column]
+    #[Groups(['user:read'])]
+    private ?bool $active = null;
+
     public function __construct()
     {
         $this->userFood = new ArrayCollection();
         $this->userClothing = new ArrayCollection();
+        $this->active = true;
     }
 
     public function getId(): ?int
@@ -249,6 +254,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         }
 
         $this->userCharacter = $userCharacter;
+
+        return $this;
+    }
+
+    public function isActive(): ?bool
+    {
+        return $this->active;
+    }
+
+    public function setActive(bool $active): static
+    {
+        $this->active = $active;
 
         return $this;
     }

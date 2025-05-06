@@ -24,10 +24,15 @@ export const AuthProvider = ({ children }) => {
                 throw new Error("Usuario o contraseña incorrectos");
             }
             const data = await response.json();
+
+            // Verificar si el usuario está baneado
+            if (!data.user.active) {
+                // logOut(); // Limpiar cualquier dato de sesión
+                throw new Error("Tu cuenta ha sido baneada. No puedes iniciar sesión.");
+            }
+
             setToken(data.token);
             localStorage.setItem("token", data.token);
-
-            // Obtener datos del usuario
             localStorage.setItem("user", JSON.stringify(data.user));
 
             return {
@@ -79,7 +84,9 @@ export const AuthProvider = ({ children }) => {
                     user: `/api/users/${data.id}`,
                     level: 1,
                     strength: 1,
-                    weight: 50
+                    weight: 50,
+                    protein: 100,
+                    fat: 100,
                 })
             });
 

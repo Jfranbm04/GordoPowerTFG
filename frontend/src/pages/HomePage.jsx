@@ -20,14 +20,14 @@ const HomePage = () => {
             {showTutorial && (
                 <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50">
                     <div className="bg-purple-900/90 p-8 rounded-xl backdrop-blur-sm max-w-2xl w-full mx-4 relative">
-                        <button 
+                        <button
                             onClick={() => setShowTutorial(false)}
                             className="absolute top-4 right-4 text-gray-400 hover:text-white"
                         >
                             ✕
                         </button>
                         <h2 className="text-2xl font-bold mb-6 text-center">Tutorial de GordoPower</h2>
-                        
+
                         <div className="space-y-6">
                             <div>
                                 <h3 className="text-xl font-semibold mb-2 text-purple-300">🎮 Minijuegos</h3>
@@ -55,6 +55,14 @@ const HomePage = () => {
                             <div>
                                 <h3 className="text-xl font-semibold mb-2 text-purple-300">📚 Colección</h3>
                                 <p className="text-gray-300">Explora tu colección de comidas y ropa, organizadas por rareza y tipo.</p>
+                            </div>
+                            <div>
+                                <h3 className="text-xl font-semibold mb-2 text-purple-300">⚙️ Funcionalidad del juego</h3>
+                                <p className="text-gray-300">
+                                    - Proteína: Se suma directamente la proteína del alimento
+                                    - Grasa: Se suma directamente la grasa del alimento
+                                    - Fuerza: Aumenta 1 punto por cada 10g de proteína
+                                    - Peso: Aumenta 1 punto por cada 5g de grasa.</p>
                             </div>
 
                             <div>

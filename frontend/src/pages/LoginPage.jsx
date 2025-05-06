@@ -49,6 +49,7 @@ const LoginPage = () => {
                     </div>
                 )}
                 <h2 className="text-3xl font-bold text-white mb-6 text-center">¡Bienvenido!</h2>
+                {/* Control de errores */}
                 {error && (
                     <div className="bg-red-500/20 border border-red-500 text-white p-3 rounded-lg mb-4">
                         {error}

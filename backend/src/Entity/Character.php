@@ -9,9 +9,11 @@ use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: CharacterRepository::class)]
 #[ORM\Table(name: '`character`')]
-#[ApiResource(
-    normalizationContext: ['groups' => ['character:read']]
-)]
+// #[ApiResource(
+//     normalizationContext: ['groups' => ['character:read']]
+// )]
+#[ApiResource]
+
 class Character
 {
     #[ORM\Id]
@@ -34,6 +36,14 @@ class Character
 
     #[ORM\OneToOne(inversedBy: 'userCharacter', cascade: ['persist', 'remove'])]
     private ?User $user = null;
+
+    #[ORM\Column]
+    #[Groups(['character:read'])]
+    private ?int $protein = null;
+
+    #[ORM\Column]
+    #[Groups(['character:read'])]
+    private ?int $fat = null;
 
     public function getId(): ?int
     {
@@ -84,6 +94,30 @@ class Character
     public function setUser(?User $user): static
     {
         $this->user = $user;
+
+        return $this;
+    }
+
+    public function getProtein(): ?int
+    {
+        return $this->protein;
+    }
+
+    public function setProtein(int $protein): static
+    {
+        $this->protein = $protein;
+
+        return $this;
+    }
+
+    public function getFat(): ?int
+    {
+        return $this->fat;
+    }
+
+    public function setFat(int $fat): static
+    {
+        $this->fat = $fat;
 
         return $this;
     }

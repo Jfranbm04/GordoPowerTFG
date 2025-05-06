@@ -118,7 +118,7 @@ export const UserProvider = ({ children }) => {
                 }
                 setLoading(false);
             } else {
-                console.log('Missing user ID or token:', { userId: user?.id, hasToken: !!token });
+                // console.log('Missing user ID or token:', { userId: user?.id, hasToken: !!token });
                 setCharacter(null);
                 setLoading(false);
             }
@@ -126,8 +126,31 @@ export const UserProvider = ({ children }) => {
         fetchCharacter();
     }, [user, BASE_URL]);
 
+    const updateCharacter = async (characterId, updates) => {
+        try {
+            const response = await fetch(`${BASE_URL}/api/characters/${characterId}`, {
+                method: 'PATCH',
+                headers: {
+                    'Content-Type': 'application/merge-patch+json',
+                },
+                body: JSON.stringify(updates)
+            });
+
+            if (!response.ok) {
+                throw new Error('Error al actualizar el personaje');
+            }
+
+            const updatedCharacter = await response.json();
+            setCharacter(updatedCharacter);
+            return updatedCharacter;
+        } catch (error) {
+            console.error('Error al actualizar el personaje:', error);
+            throw error;
+        }
+    };
+
     return (
-        <UserContext.Provider value={{ user, character, loading, updateUserCoins, updateUserFood }}>
+        <UserContext.Provider value={{ user, character, loading, updateCharacter, updateUserCoins, updateUserFood }}>
             {children}
         </UserContext.Provider>
     );
