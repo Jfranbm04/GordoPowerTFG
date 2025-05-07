@@ -9,17 +9,17 @@ export default function Minigames() {
     const minigames = [
         {
             name: 'Country Guesser',
-            description: 'Test your geography knowledge!',
+            description: 'Prueba tus conocimientos sobre geografía!',
             path: '/country'
         },
         {
             name: 'Food Zoom Challenge',
-            description: 'Guess the food before the image becomes clear!',
+            description: 'Adivina el plato antes de que la imagen sea clara!',
             path: '/foodzoom'
         },
         {
-            name: 'Minigame 3',
-            description: 'Play to earn coins and rewards!',
+            name: 'Minijuego 3',
+            description: 'Minijuego 3!',
             path: ''
         }
     ];
@@ -41,7 +41,7 @@ export default function Minigames() {
                             className="bg-purple-600 hover:bg-purple-700 px-6 py-2 rounded-lg transition duration-200"
                         // disabled={!game.path}
                         >
-                            Play Now
+                            JUGAR
                         </button>
                     </div>
                 ))}

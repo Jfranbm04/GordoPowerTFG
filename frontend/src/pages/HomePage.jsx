@@ -109,29 +109,29 @@ const HomePage = () => {
                                     to="/profile"
                                     className="bg-white/10 backdrop-blur-sm p-6 rounded-lg hover:bg-white/20 transition duration-200"
                                 >
-                                    <h3 className="text-xl font-bold mb-2 text-white">Your Character</h3>
-                                    <p className="text-purple-200">Customize and level up your character</p>
+                                    <h3 className="text-xl font-bold mb-2 text-white">Tu personaje</h3>
+                                    <p className="text-purple-200">Personaliza, mejora y sube el nivel de tu personaje</p>
                                 </Link>
                                 <Link
                                     to="/shop"
                                     className="bg-white/10 backdrop-blur-sm p-6 rounded-lg hover:bg-white/20 transition duration-200"
                                 >
-                                    <h3 className="text-xl font-bold mb-2 text-white">Shop</h3>
-                                    <p className="text-purple-200">Buy food and clothes for your character</p>
+                                    <h3 className="text-xl font-bold mb-2 text-white">Tienda</h3>
+                                    <p className="text-purple-200">Compra comida y ropa para tu personaje</p>
                                 </Link>
                                 <Link
                                     to="/gacha"
                                     className="bg-white/10 backdrop-blur-sm p-6 rounded-lg hover:bg-white/20 transition duration-200"
                                 >
                                     <h3 className="text-xl font-bold mb-2 text-white">Gacha</h3>
-                                    <p className="text-purple-200">Try your luck with food and clothing rolls</p>
+                                    <p className="text-purple-200">Prueba tu suerte con ruletas de comida y ropa</p>
                                 </Link>
                                 <Link
                                     to="/minigames"
                                     className="bg-white/10 backdrop-blur-sm p-6 rounded-lg hover:bg-white/20 transition duration-200"
                                 >
-                                    <h3 className="text-xl font-bold mb-2 text-white">Minigames</h3>
-                                    <p className="text-purple-200">Play games to earn coins</p>
+                                    <h3 className="text-xl font-bold mb-2 text-white">Minijuegos</h3>
+                                    <p className="text-purple-200">Juega para ganar monedas</p>
                                 </Link>
                             </div>
                         </>

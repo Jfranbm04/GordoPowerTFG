@@ -33,15 +33,15 @@ const RootLayout = () => {
                                 <div className="flex items-center space-x-4">
                                     <Link to="/profile" className="flex items-center space-x-1 hover:text-purple-300">
                                         <User className="w-5 h-5" />
-                                        <span>Profile</span>
+                                        <span>Perfil</span>
                                     </Link>
                                     <Link to="/shop" className="flex items-center space-x-1 hover:text-purple-300">
                                         <ShoppingBag className="w-5 h-5" />
-                                        <span>Shop</span>
+                                        <span>Tienda</span>
                                     </Link>
                                     <Link to="/collection" className="flex items-center space-x-1 hover:text-purple-300">
                                         <Book className="w-5 h-5" />
-                                        <span>Collection</span>
+                                        <span>Colección</span>
                                     </Link>
                                     <Link to="/gacha" className="flex items-center space-x-1 hover:text-purple-300">
                                         <Gift className="w-5 h-5" />
@@ -49,7 +49,7 @@ const RootLayout = () => {
                                     </Link>
                                     <Link to="/minigames" className="flex items-center space-x-1 hover:text-purple-300">
                                         <Gamepad2 className="w-5 h-5" />
-                                        <span>Minigames</span>
+                                        <span>Minijuegos</span>
                                     </Link>
                                     {user.roles && user.roles.includes("ROLE_ADMIN") && (
                                         <Link to="/admin" className="flex items-center space-x-1 hover:text-red-300">
@@ -72,7 +72,7 @@ const RootLayout = () => {
                                     onClick={() => logOut()}
                                     className="bg-red-500 hover:bg-red-600 px-4 py-2 rounded-lg"
                                 >
-                                    Logout
+                                    Cerrar Sesión
                                 </button>
                             ) : (
                                 <div className="space-x-4">

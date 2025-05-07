@@ -25,14 +25,14 @@ const ProfilePage = () => {
     useEffect(() => {
         console.log('Datos del personaje:', character);
         console.log('Datos del usuario:', user);
-        
+
         // Verificar si todos los datos necesarios están cargados
         if (user && character && foods && userFoods) {
             // Añadir un pequeño retraso para asegurar que todo esté listo
             const timer = setTimeout(() => {
                 setIsPageLoading(false);
             }, 1000);
-            
+
             return () => clearTimeout(timer);
         }
     }, [character, user, foods, userFoods]);
@@ -191,7 +191,7 @@ const ProfilePage = () => {
             <div className="bg-white/10 backdrop-blur-sm p-6 rounded-lg">
                 <div className="flex justify-between items-center mb-4">
 
-                    <h2 className="text-2xl font-bold text-white">Your Character</h2>
+                    <h2 className="text-2xl font-bold text-white">Mi personaje</h2>
                 </div>
                 <div className="flex gap-8">
                     <div className="w-48 h-72 bg-white/5 rounded-lg relative overflow-hidden">
@@ -204,7 +204,7 @@ const ProfilePage = () => {
                     </div>
                     <div className="flex-1 space-y-4">
                         <div>
-                            <h3 className="text-lg font-semibold mb-2 text-white">Stats</h3>
+                            <h3 className="text-lg font-semibold mb-2 text-white">Estadísticas</h3>
                             <div className="grid grid-cols-2 gap-4">
                                 <div className="bg-white/5 p-4 rounded-lg col-span-2 flex items-center justify-between">
                                     <div className="flex items-center gap-3">
@@ -231,23 +231,23 @@ const ProfilePage = () => {
                                 </div>
 
                                 <div className="bg-green-500/10 p-4 rounded-lg border border-green-500/30">
-                                    <p className="text-purple-300">Protein</p>
+                                    <p className="text-purple-300">Proteina</p>
                                     <p className="text-2xl font-bold text-white">{character?.protein || 'N/A'}</p>
                                 </div>
                                 <div className="bg-red-500/10 p-4 rounded-lg border border-red-500/30">
-                                    <p className="text-purple-300">Fat</p>
+                                    <p className="text-purple-300">Grasas</p>
                                     <p className="text-2xl font-bold text-white">{character?.fat || 'N/A'}</p>
                                 </div>
                                 <div className="bg-white/5 p-4 rounded-lg">
-                                    <p className="text-purple-300">Strength</p>
+                                    <p className="text-purple-300">Fuerza</p>
                                     <p className="text-2xl font-bold text-white">{character?.strength || 'N/A'}</p>
                                 </div>
                                 <div className="bg-white/5 p-4 rounded-lg">
-                                    <p className="text-purple-300">Weight</p>
+                                    <p className="text-purple-300">Peso</p>
                                     <p className="text-2xl font-bold text-white">{character?.weight || 'N/A'}</p>
                                 </div>
                                 <div className="bg-yellow-500/10 p-4 rounded-lg border border-yellow-500/30">
-                                    <p className="text-purple-300">Coins</p>
+                                    <p className="text-purple-300">Saldo</p>
                                     <p className="text-2xl font-bold text-white">{user?.coins || 0}</p>
                                 </div>
 
