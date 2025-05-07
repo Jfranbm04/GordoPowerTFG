@@ -4,13 +4,16 @@ import { useUser } from '../context/UserContext';
 import { useFood } from '../context/FoodContext';
 
 const ProfilePage = () => {
-    const { user, character, loading, updateCharacter } = useUser();
+    const { user, character, loading: userLoading, updateCharacter } = useUser();
     const { foods, userFoods, updateFoodQuantity, refreshUserFoods } = useFood();
+    const [isPageLoading, setIsPageLoading] = useState(true);
     const [activeTab, setActiveTab] = useState('foods');
     const [feedingStatus, setFeedingStatus] = useState({ show: false, message: '', success: true });
     const [isFeeding, setIsFeeding] = useState(false);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [feedingItemId, setFeedingItemId] = useState(null);
+    const [showLevelUpModal, setShowLevelUpModal] = useState(false);
+    const [newLevel, setNewLevel] = useState(null);
 
     const { equippedItems, setEquippedItems } = useState({
         head: null,
@@ -22,7 +25,17 @@ const ProfilePage = () => {
     useEffect(() => {
         console.log('Datos del personaje:', character);
         console.log('Datos del usuario:', user);
-    }, [character, user]);
+        
+        // Verificar si todos los datos necesarios están cargados
+        if (user && character && foods && userFoods) {
+            // Añadir un pequeño retraso para asegurar que todo esté listo
+            const timer = setTimeout(() => {
+                setIsPageLoading(false);
+            }, 1000);
+            
+            return () => clearTimeout(timer);
+        }
+    }, [character, user, foods, userFoods]);
 
     // Función para alimentar al personaje
     const handleFeed = async (userFoodId, food) => {
@@ -39,35 +52,76 @@ const ProfilePage = () => {
                     message: 'No tienes suficiente cantidad de este alimento',
                     success: false
                 });
+                setFeedingItemId(null);
+                setIsModalOpen(false);
                 return;
             }
 
-            // Calcular nuevas estadísticas
-            const newProtein = character.protein + (food.protein || 0);
-            const newFat = character.fat + (food.fat || 0);
-            const newStrength = character.strength + Math.floor((food.protein || 0) / 20);
-            const newWeight = character.weight + Math.floor((food.fat || 0) / 50);
+            // Calcular nuevas estadísticas base
+            const totalProtein = character.protein + (food.protein || 0);
+            const totalFat = character.fat + (food.fat || 0);
 
-            // Usar la nueva función del contexto
+            // Calcular fuerza y peso basados en los totales acumulados
+            const newStrength = Math.floor(totalProtein / 20);
+            const newWeight = Math.floor(totalFat / 50);
+
+            // Calcular experiencia basada en la rareza
+            let expGain = 10; // XP base para comidas comunes
+            switch (food.rarity.toUpperCase()) {
+                case 'RARE':
+                    expGain = 20;
+                    break;
+                case 'EPIC':
+                    expGain = 50;
+                    break;
+                case 'LEGENDARY':
+                    expGain = 100;
+                    break;
+            }
+
+            // Calcular nueva experiencia y nivel
+            const currentExp = character.experience || 0;
+            const newExp = currentExp + expGain;
+            const currentLevel = Math.floor(currentExp / 1000) + 1;
+            const calculatedNewLevel = Math.floor(newExp / 1000) + 1;
+
+            // Verificar si subió de nivel
+            if (currentLevel < calculatedNewLevel) {
+                setTimeout(() => {
+                    setIsModalOpen(false);
+                    setNewLevel(calculatedNewLevel);
+                    setShowLevelUpModal(true);
+                    setTimeout(() => {
+                        setShowLevelUpModal(false);
+                    }, 2000);
+                }, 1000);
+            } else {
+                setTimeout(() => {
+                    setIsModalOpen(false);
+                    setFeedingStatus({
+                        show: true,
+                        message: `¡Has alimentado a tu personaje con ${food.name}! (+${expGain} XP)`,
+                        success: true
+                    });
+                }, 1000);
+            }
+
+            // Actualizar personaje con todas las estadísticas
             await updateCharacter(character.id, {
-                protein: newProtein,
-                fat: newFat,
+                protein: totalProtein,
+                fat: totalFat,
                 strength: newStrength,
-                weight: newWeight
+                weight: newWeight,
+                level: calculatedNewLevel,
+                experience: newExp
             });
 
             // Reducir la cantidad del alimento
             await updateFoodQuantity(userFoodId, userFood.quantity - 1);
 
-            setFeedingStatus({
-                show: true,
-                message: `¡Has alimentado a tu personaje con ${food.name}!`,
-                success: true
-            });
-
             setTimeout(() => {
                 setFeedingStatus({ show: false, message: '', success: true });
-            }, 3000);
+            }, 4000);
 
         } catch (error) {
             console.error('Error al alimentar:', error);
@@ -76,14 +130,26 @@ const ProfilePage = () => {
                 message: 'Error al alimentar al personaje',
                 success: false
             });
+            setIsModalOpen(false);
         } finally {
             setFeedingItemId(null);
-            setIsModalOpen(false);
         }
     };
 
+    // Si está cargando, mostrar pantalla de carga
+    if (userLoading || isPageLoading) {
+        return (
+            <div className="flex items-center justify-center min-h-[50vh]">
+                <div className="text-center space-y-4">
+                    <div className="animate-spin rounded-full h-12 w-12 border-4 border-purple-500 border-t-transparent mx-auto"></div>
+                    <p className="text-purple-300">Cargando perfil...</p>
+                </div>
+            </div>
+        );
+    }
+
     return (
-        <div className="space-y-8 p-6">
+        <div className="space-y-8 p-6 relative">
             {/* Modal de carga */}
             {isModalOpen && (
                 <div className="fixed inset-0 flex items-center justify-center z-50">
@@ -97,13 +163,28 @@ const ProfilePage = () => {
                 </div>
             )}
 
-            {/* Notificación de estado */}
+            {/* Modal de Subida de Nivel Simplificado */}
+            {showLevelUpModal && (
+                <div className="fixed inset-0 flex items-center justify-center z-50 bg-black/70">
+                    <div className="bg-purple-900 p-6 rounded-lg shadow-xl text-center">
+                        <h2 className="text-2xl font-bold text-white mb-2">
+                            ¡Felicidades!
+                        </h2>
+                        <p className="text-white">
+                            Has alcanzado el nivel {newLevel}
+                        </p>
+                    </div>
+                </div>
+            )}
+
+            {/* Resto del contenido */}
             {feedingStatus.show && (
                 <div className={`fixed bottom-4 right-4 p-4 rounded-lg ${feedingStatus.success ? 'bg-green-500/80' : 'bg-red-500/80'} text-white shadow-lg transition-all duration-300 ease-in-out`}>
                     {feedingStatus.message}
                 </div>
             )}
 
+            {/* Resto del contenido de la página */}
             <div className="flex items-center gap-2">
                 <h3 className="text-2xl font-semibold text-white">Hola {user.username}.</h3>
             </div>
@@ -125,13 +206,28 @@ const ProfilePage = () => {
                         <div>
                             <h3 className="text-lg font-semibold mb-2 text-white">Stats</h3>
                             <div className="grid grid-cols-2 gap-4">
-                                <div className="bg-white/5 p-4 rounded-lg">
-                                    <p className="text-purple-300">Level</p>
-                                    <p className="text-2xl font-bold text-white">{character?.level || 'N/A'}</p>
-                                </div>
-                                <div className="bg-yellow-500/10 p-4 rounded-lg border border-yellow-500/30">
-                                    <p className="text-purple-300">Coins</p>
-                                    <p className="text-2xl font-bold text-white">{user?.coins || 0}</p>
+                                <div className="bg-white/5 p-4 rounded-lg col-span-2 flex items-center justify-between">
+                                    <div className="flex items-center gap-3">
+                                        <div className="bg-purple-600 rounded-full w-12 h-12 flex items-center justify-center">
+                                            <span className="text-2xl font-bold text-white">{character?.level || 1}</span>
+                                        </div>
+                                        <div className="flex-1 min-w-[200px]">
+                                            <div className="flex justify-between mb-1">
+                                                <span className="text-sm text-purple-300">Nivel {character?.level || 1}</span>
+                                                <span className="text-sm text-purple-300">
+                                                    {character?.experience}/{character?.level * 1000} XP
+                                                </span>
+                                            </div>
+                                            <div className="w-full bg-purple-900/30 rounded-full h-2">
+                                                <div
+                                                    className="bg-purple-500 h-2 rounded-full transition-all duration-300"
+                                                    style={{
+                                                        width: `${((character?.experience || 0) % 1000) / 1000 * 100}%`
+                                                    }}
+                                                ></div>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
 
                                 <div className="bg-green-500/10 p-4 rounded-lg border border-green-500/30">
@@ -149,6 +245,10 @@ const ProfilePage = () => {
                                 <div className="bg-white/5 p-4 rounded-lg">
                                     <p className="text-purple-300">Weight</p>
                                     <p className="text-2xl font-bold text-white">{character?.weight || 'N/A'}</p>
+                                </div>
+                                <div className="bg-yellow-500/10 p-4 rounded-lg border border-yellow-500/30">
+                                    <p className="text-purple-300">Coins</p>
+                                    <p className="text-2xl font-bold text-white">{user?.coins || 0}</p>
                                 </div>
 
 

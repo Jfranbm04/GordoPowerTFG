@@ -45,6 +45,10 @@ class Character
     #[Groups(['character:read'])]
     private ?int $fat = null;
 
+    #[ORM\Column]
+    #[Groups(['character:read'])]
+    private ?int $experience = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -118,6 +122,18 @@ class Character
     public function setFat(int $fat): static
     {
         $this->fat = $fat;
+
+        return $this;
+    }
+
+    public function getExperience(): ?int
+    {
+        return $this->experience;
+    }
+
+    public function setExperience(int $experience): static
+    {
+        $this->experience = $experience;
 
         return $this;
     }

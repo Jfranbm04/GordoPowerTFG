@@ -87,6 +87,7 @@ export const AuthProvider = ({ children }) => {
                     weight: 50,
                     protein: 100,
                     fat: 100,
+                    experience: 0
                 })
             });
 
