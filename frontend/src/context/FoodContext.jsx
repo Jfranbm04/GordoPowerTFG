@@ -10,6 +10,17 @@ export const FoodProvider = ({ children }) => {
     const [loading, setLoading] = useState(true);
     const BASE_URL = import.meta.env.VITE_BASE_URL;
 
+    useEffect(() => {
+        const loadData = async () => {
+            setLoading(true);
+            await Promise.all([fetchFoods(), fetchUserFoods()]);
+            setLoading(false);
+        };
+
+        loadData();
+    }, []);
+
+
     // Obtener todas las comidas
     const fetchFoods = async () => {
         try {
@@ -131,15 +142,54 @@ export const FoodProvider = ({ children }) => {
         }
     };
 
-    useEffect(() => {
-        const loadData = async () => {
-            setLoading(true);
-            await Promise.all([fetchFoods(), fetchUserFoods()]);
-            setLoading(false);
-        };
+    // Actualizar un plato existente
+    const updateFood = async (foodId, foodData) => {
+        try {
+            const response = await fetch(`${BASE_URL}/api/food/${foodId}`, {
+                method: 'PATCH',
+                headers: {
+                    'Content-Type': 'application/merge-patch+json',
+                },
+                body: JSON.stringify(foodData)
+            });
 
-        loadData();
-    }, []);
+            if (!response.ok) {
+                const errorData = await response.json();
+                console.error('Error response:', errorData);
+                throw new Error('Error al actualizar el plato');
+            }
+
+            // Actualizar la lista de comidas
+            await fetchFoods();
+            return true;
+        } catch (error) {
+            console.error('Error:', error);
+            return false;
+        }
+    };
+
+    // Eliminar un plato
+    const deleteFood = async (foodId) => {
+        try {
+            const response = await fetch(`${BASE_URL}/api/food/${foodId}`, {
+                method: 'DELETE',
+
+            });
+
+            if (!response.ok) {
+                throw new Error('Error al eliminar el plato');
+            }
+
+            // Actualizar la lista de comidas
+            await fetchFoods();
+            return true;
+        } catch (error) {
+            console.error('Error:', error);
+            return false;
+        }
+    };
+
+
 
     return (
         <FoodContext.Provider
@@ -150,7 +200,9 @@ export const FoodProvider = ({ children }) => {
                 unlockFood,
                 updateFoodQuantity,
                 refreshUserFoods: fetchUserFoods,
-                createFood
+                createFood,
+                updateFood,
+                deleteFood
             }}
         >
             {children}

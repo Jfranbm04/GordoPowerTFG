@@ -7,7 +7,6 @@ const authContext = createContext();
 
 export const AuthProvider = ({ children }) => {
     const [token, setToken] = useState(localStorage.getItem("token") || null);
-    const [users, setUsers] = useState([])
 
     const loginUser = async ({ email, password }) => {
         try {
@@ -118,32 +117,7 @@ export const AuthProvider = ({ children }) => {
         }
     };
 
-    const fetchUsers = async () => {
-        setLoading(true);
-        try {
-            const response = await fetch(`${BASE_URL}/api/users`, {
-                method: "GET",
-                headers: {
-                    "Content-Type": "application/json",
-                    "Authorization": `Bearer ${token}`
-                }
-            });
 
-            if (!response.ok) {
-                throw new Error("Error al obtener usuarios");
-            }
-
-            const data = await response.json();
-            console.log("Datos:", data)
-            setUsers(data);
-            return data;
-        } catch (error) {
-            console.error("Error al obtener usuarios:", error);
-            throw error;
-        } finally {
-            setLoading(false);
-        }
-    };
 
     const getCurrentUser = () => {
         if (!token) return null;
@@ -154,7 +128,7 @@ export const AuthProvider = ({ children }) => {
         return JSON.parse(userData);
     }
 
-    return <authContext.Provider value={{ token, loginUser, logOut, registerUser, getCurrentUser, users }}>{children}</authContext.Provider>
+    return <authContext.Provider value={{ token, loginUser, logOut, registerUser, getCurrentUser }}>{children}</authContext.Provider>
 }
 
 export const useAuth = () => {
