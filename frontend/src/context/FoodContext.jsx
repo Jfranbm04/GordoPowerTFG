@@ -116,16 +116,27 @@ export const FoodProvider = ({ children }) => {
     };
 
     // Crear un nuevo plato
-    const createFood = async (foodData) => {
+    const createFood = async (foodData, hasImage = false) => {
         try {
-            const response = await fetch(`${BASE_URL}/api/food`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/ld+json',
-                    'Accept': 'application/ld+json'
-                },
-                body: JSON.stringify(foodData)
-            });
+            let response;
+            
+            if (hasImage) {
+                // Si hay imagen, enviamos como FormData
+                response = await fetch(`${BASE_URL}/api/food/new`, {
+                    method: 'POST',
+                    body: foodData // Ya es un FormData
+                });
+            } else {
+                // Si no hay imagen, enviamos como JSON
+                response = await fetch(`${BASE_URL}/api/food`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/ld+json',
+                        'Accept': 'application/ld+json'
+                    },
+                    body: JSON.stringify(foodData)
+                });
+            }
 
             if (!response.ok) {
                 const errorData = await response.json();
@@ -143,20 +154,40 @@ export const FoodProvider = ({ children }) => {
     };
 
     // Actualizar un plato existente
-    const updateFood = async (foodId, foodData) => {
+    const updateFood = async (foodId, foodData, hasImage = false) => {
         try {
-            const response = await fetch(`${BASE_URL}/api/food/${foodId}`, {
-                method: 'PATCH',
-                headers: {
-                    'Content-Type': 'application/merge-patch+json',
-                },
-                body: JSON.stringify(foodData)
-            });
+            let response;
+            
+            if (hasImage) {
+                // Si hay imagen, enviamos como FormData
+                response = await fetch(`${BASE_URL}/api/food/${foodId}/edit`, {
+                    method: 'POST',
+                    // No establecemos Content-Type aquí, el navegador lo configurará automáticamente con el boundary correcto
+                    body: foodData // Ya es un FormData
+                });
+            } else {
+                // Si no hay imagen, enviamos como JSON
+                response = await fetch(`${BASE_URL}/api/food/${foodId}`, {
+                    method: 'PATCH',
+                    headers: {
+                        'Content-Type': 'application/merge-patch+json',
+                    },
+                    body: JSON.stringify(foodData)
+                });
+            }
 
             if (!response.ok) {
-                const errorData = await response.json();
-                console.error('Error response:', errorData);
-                throw new Error('Error al actualizar el plato');
+                const contentType = response.headers.get("content-type");
+                if (contentType && contentType.indexOf("application/json") !== -1) {
+                    const errorData = await response.json();
+                    console.error('Error response:', errorData);
+                    throw new Error(errorData.message || 'Error al actualizar el plato');
+                } else {
+                    // Si la respuesta no es JSON, obtenemos el texto
+                    const errorText = await response.text();
+                    console.error('Error response (text):', errorText);
+                    throw new Error('Error al actualizar el plato: respuesta no válida del servidor');
+                }
             }
 
             // Actualizar la lista de comidas

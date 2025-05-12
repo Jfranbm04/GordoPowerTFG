@@ -9,18 +9,18 @@ export default function Minigames() {
     const minigames = [
         {
             name: 'Country Guesser',
-            description: 'Prueba tus conocimientos sobre geografía!',
+            description: '¡Prueba tus conocimientos sobre geografía!',
             path: '/country'
         },
         {
             name: 'Food Zoom Challenge',
-            description: 'Adivina el plato antes de que la imagen sea clara!',
+            description: '¡Adivina el plato antes de que la imagen sea clara!',
             path: '/foodzoom'
         },
         {
-            name: 'Minijuego 3',
-            description: 'Minijuego 3!',
-            path: ''
+            name: 'Objeto o Comida',
+            description: '¡Identifica rápido si es comida o no!',
+            path: '/foodornot'
         }
     ];
 
@@ -39,7 +39,6 @@ export default function Minigames() {
                         <button
                             onClick={() => game.path && navigate(game.path)}
                             className="bg-purple-600 hover:bg-purple-700 px-6 py-2 rounded-lg transition duration-200"
-                        // disabled={!game.path}
                         >
                             JUGAR
                         </button>

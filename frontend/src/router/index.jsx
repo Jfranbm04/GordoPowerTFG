@@ -8,7 +8,7 @@ import RegisterPage from "../pages/RegisterPage";
 import ProfilePage from "../pages/ProfilePage";
 import MinigamesPage from "../pages/MinigamesPage";
 import CountryGame from "../pages/CountryGamePage";
-import { FoodZoom } from "../components/FoodZoom";
+import FoodZoomPage from "../pages/FoodZoomPage";
 import GachaPage from "../pages/GachaPage";
 import CollectionPage from "../pages/CollectionPage";
 import AdminPage from "../pages/AdminPage";
@@ -16,6 +16,7 @@ import ShopPage from "../pages/ShopPage";
 import AdminUserPage from "../components/AdminUser";
 import AdminFood from "../components/AdminFood";
 import AdminUser from "../components/AdminUser";
+import FoodOrNotPage from "../pages/FoodOrNotPage";
 
 export const router = createBrowserRouter([
     {
@@ -82,7 +83,14 @@ export const router = createBrowserRouter([
                 path: "foodzoom",
                 element:
                     <ProtectedRoute>
-                        <FoodZoom />
+                        <FoodZoomPage />
+                    </ProtectedRoute>
+            },
+            {
+                path: "foodornot",
+                element:
+                    <ProtectedRoute>
+                        <FoodOrNotPage />
                     </ProtectedRoute>
             },
             {

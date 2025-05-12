@@ -47,6 +47,9 @@ class Food
     #[ORM\OneToMany(targetEntity: UserFood::class, mappedBy: 'food')]
     private Collection $userFood;
 
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $image = null;
+
     public function __construct()
     {
         $this->userFood = new ArrayCollection();
@@ -179,6 +182,18 @@ class Food
                 $userFood->setFood(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getImage(): ?string
+    {
+        return $this->image;
+    }
+
+    public function setImage(?string $image): static
+    {
+        $this->image = $image;
 
         return $this;
     }
