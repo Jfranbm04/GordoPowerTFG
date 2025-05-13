@@ -454,7 +454,7 @@ const AdminFood = () => {
                                         <td className="py-3 px-4">
                                             {food.image ? (
                                                 <div className="w-24 h-24 overflow-hidden rounded-lg group-hover:scale-110 transition-transform duration-300">
-                                                    <img 
+                                                    <img
                                                         src={`${import.meta.env.VITE_BASE_URL}/${food.image}`}
                                                         alt={food.name}
                                                         className="w-full h-full object-cover"
@@ -470,12 +470,11 @@ const AdminFood = () => {
                                         <td className="py-3 px-4">{food.origin}</td>
                                         <td className="py-3 px-4">{food.type}</td>
                                         <td className="py-3 px-4">
-                                            <span className={`px-2 py-1 rounded-full text-xs ${
-                                                food.rarity.toUpperCase() === 'LEGENDARY' ? 'bg-gradient-to-r from-yellow-500/20 to-amber-500/20 text-yellow-300 border border-yellow-500/30' :
-                                                food.rarity.toUpperCase() === 'EPIC' ? 'bg-gradient-to-r from-purple-500/20 to-pink-500/20 text-purple-300 border border-purple-500/30' :
-                                                food.rarity.toUpperCase() === 'RARE' ? 'bg-gradient-to-r from-blue-500/20 to-cyan-500/20 text-blue-300 border border-blue-500/30' :
-                                                'bg-gradient-to-r from-gray-500/20 to-slate-500/20 text-gray-300 border border-gray-500/30'
-                                            }`}>
+                                            <span className={`px-2 py-1 rounded-full text-xs ${food.rarity.toUpperCase() === 'LEGENDARY' ? 'bg-gradient-to-r from-yellow-500/20 to-amber-500/20 text-yellow-300 border border-yellow-500/30' :
+                                                    food.rarity.toUpperCase() === 'EPIC' ? 'bg-gradient-to-r from-purple-500/20 to-pink-500/20 text-purple-300 border border-purple-500/30' :
+                                                        food.rarity.toUpperCase() === 'RARE' ? 'bg-gradient-to-r from-blue-500/20 to-cyan-500/20 text-blue-300 border border-blue-500/30' :
+                                                            'bg-gradient-to-r from-gray-500/20 to-slate-500/20 text-gray-300 border border-gray-500/30'
+                                                }`}>
                                                 {food.rarity.toUpperCase()}
                                             </span>
                                         </td>

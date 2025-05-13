@@ -15,7 +15,13 @@ const WORDS = [
     { word: 'Gazpacho', isFood: true },
     { word: 'Risotto', isFood: true },
     { word: 'Croissant', isFood: true },
-    { word: 'Golem', isFood: false },
+    { word: 'Enchiladas', isFood: true },
+    { word: 'Falafel', isFood: true },
+    { word: 'Pad Thai', isFood: true },
+    { word: 'Tiramisu', isFood: true },
+    { word: 'Hummus', isFood: true },
+    { word: 'Poke', isFood: true },
+    { word: 'Curry', isFood: true },
     { word: 'Teléfono', isFood: false },
     { word: 'Zapato', isFood: false },
     { word: 'Ordenador', isFood: false },
@@ -23,10 +29,14 @@ const WORDS = [
     { word: 'Ventana', isFood: false },
     { word: 'Libro', isFood: false },
     { word: 'Reloj', isFood: false },
-    { word: 'Silla', isFood: false },
-    { word: 'Coche', isFood: false },
-    { word: 'Pluma', isFood: false },
-    { word: 'Guitarra', isFood: false }
+    { word: 'Mochila', isFood: false },
+    { word: 'Paraguas', isFood: false },
+    { word: 'Cámara', isFood: false },
+    { word: 'Teclado', isFood: false },
+    { word: 'Pincel', isFood: false },
+    { word: 'Tijeras', isFood: false },
+    { word: 'Gafas', isFood: false },
+    { word: 'Altavoz', isFood: false }
 ];
 
 export const FoodOrNot = () => {
@@ -219,13 +229,13 @@ export const FoodOrNot = () => {
                                 onClick={() => handleAnswer(true)}
                                 className="bg-green-600 hover:bg-green-700 px-8 py-3 rounded-lg transition duration-200"
                             >
-                                ¡Es comida! ✅
+                                ¡Es comida! 🍔
                             </button>
                             <button
                                 onClick={() => handleAnswer(false)}
                                 className="bg-red-600 hover:bg-red-700 px-8 py-3 rounded-lg transition duration-200"
                             >
-                                No es comida ❌
+                                ¡Es objeto! ⚙️
                             </button>
                         </div>
                     </div>

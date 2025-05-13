@@ -256,57 +256,61 @@ const AdminUser = () => {
 
             {/* Lista de usuarios */}
             {showList && (
-                <div className="bg-white/10 p-6 rounded-lg animate-fadeIn">
+                <div className="bg-white/10 p-4 sm:p-6 rounded-lg animate-fadeIn">
                     <h3 className="text-xl font-semibold mb-4">Lista de Usuarios</h3>
                     <div className="space-y-4">
                         {usersList.length > 0 ? (
                             usersList.map((user) => (
                                 <div key={user.id}
-                                    className={`flex items-center justify-between p-4 rounded-lg transition-all duration-300 ${user.active ? 'bg-white/5 hover:bg-white/10' : 'bg-red-900/20 hover:bg-red-900/30'
-                                        }`}
+                                    className={`flex flex-col sm:flex-row items-start sm:items-center justify-between p-4 rounded-lg transition-all duration-300 ${
+                                        user.active ? 'bg-white/5 hover:bg-white/10' : 'bg-red-900/20 hover:bg-red-900/30'
+                                    }`}
                                 >
-                                    <div className="flex items-center gap-4 flex-1">
-                                        <div className="w-12 h-12 bg-purple-500/20 rounded-full flex items-center justify-center">
+                                    <div className="flex items-start sm:items-center gap-4 flex-1 w-full sm:w-auto">
+                                        <div className="w-12 h-12 bg-purple-500/20 rounded-full flex items-center justify-center shrink-0">
                                             <span className="text-xl">👤</span>
                                         </div>
-                                        <div className="flex-1">
-                                            <div className="flex items-center gap-2">
-                                                <h3 className="font-bold">{user.username}</h3>
-                                                <span className={`text-xs px-2 py-0.5 rounded-full ${user.roles.includes('ROLE_ADMIN')
-                                                    ? 'bg-red-500/20 text-red-300'
-                                                    : 'bg-blue-500/20 text-blue-300'
-                                                    }`}>
+                                        <div className="flex-1 min-w-0">
+                                            <div className="flex flex-wrap items-center gap-2">
+                                                <h3 className="font-bold truncate">{user.username}</h3>
+                                                <span className={`text-xs px-2 py-0.5 rounded-full ${
+                                                    user.roles.includes('ROLE_ADMIN')
+                                                        ? 'bg-red-500/20 text-red-300'
+                                                        : 'bg-blue-500/20 text-blue-300'
+                                                }`}>
                                                     {user.roles.includes('ROLE_ADMIN') ? 'Admin' : 'Usuario'}
                                                 </span>
-                                                <span className={`text-xs px-2 py-0.5 rounded-full ${user.active
-                                                    ? 'bg-green-500/20 text-green-300'
-                                                    : 'bg-red-500/20 text-red-300'
-                                                    }`}>
+                                                <span className={`text-xs px-2 py-0.5 rounded-full ${
+                                                    user.active
+                                                        ? 'bg-green-500/20 text-green-300'
+                                                        : 'bg-red-500/20 text-red-300'
+                                                }`}>
                                                     {user.active ? 'Activo' : 'Baneado'}
                                                 </span>
                                             </div>
-                                            <div className="text-sm text-gray-400 mt-1">
-                                                <span>Email: {user.email}</span>
-                                                <span className="mx-2">•</span>
+                                            <div className="text-sm text-gray-400 mt-1 flex flex-wrap gap-2">
+                                                <span className="truncate">Email: {user.email}</span>
+                                                <span className="hidden sm:inline">•</span>
                                                 <span>Monedas: {user.coins}</span>
-                                                <span className="mx-2">•</span>
-                                                <span>ID: {user.id}</span>
+                                                <span className="hidden sm:inline">•</span>
+                                                <span className="truncate">ID: {user.id}</span>
                                             </div>
                                         </div>
                                     </div>
-                                    <div className="flex gap-2">
+                                    <div className="flex gap-2 mt-4 sm:mt-0 w-full sm:w-auto">
                                         <button
                                             onClick={() => handleEdit(user)}
-                                            className="bg-yellow-600 hover:bg-yellow-700 px-3 py-1 rounded text-sm transition-colors"
+                                            className="flex-1 sm:flex-none bg-yellow-600 hover:bg-yellow-700 px-3 py-1 rounded text-sm transition-colors"
                                         >
                                             Editar
                                         </button>
                                         <button
                                             onClick={() => handleBanToggle(user.id, user.active)}
-                                            className={`px-3 py-1 rounded text-sm transition-colors ${user.active
-                                                ? 'bg-red-600 hover:bg-red-700'
-                                                : 'bg-green-600 hover:bg-green-700'
-                                                }`}
+                                            className={`flex-1 sm:flex-none px-3 py-1 rounded text-sm transition-colors ${
+                                                user.active
+                                                    ? 'bg-red-600 hover:bg-red-700'
+                                                    : 'bg-green-600 hover:bg-green-700'
+                                            }`}
                                         >
                                             {user.active ? 'Banear' : 'Desbanear'}
                                         </button>

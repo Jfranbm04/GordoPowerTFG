@@ -3,7 +3,7 @@ import { useUser } from '../context/UserContext';
 import { useAuth } from '../context/AuthContext';
 import { useFood } from '../context/FoodContext';
 
-export function FoodRoulette({ cost, onClose }) {
+export const FoodRoulette = ({ cost, onClose }) => {
     const [isRunning, setIsRunning] = useState(false);
     const [currentIndex, setCurrentIndex] = useState(-1);
     const [finalResult, setFinalResult] = useState(null);

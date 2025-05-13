@@ -9,17 +9,12 @@ const HomePage = () => {
     const user = getCurrentUser();
     const [showTutorial, setShowTutorial] = useState(false);
 
-    const handleLogout = () => {
-        logOut();
-        navigate('/');
-    };
-
     return (
-        <div>
+        <div className="min-h-screen">
             {/* Modal Tutorial */}
             {showTutorial && (
                 <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 overflow-y-auto py-[5vh] md:py-[10vh]">
-                    <div className="bg-purple-900/90 p-6 md:p-8 rounded-xl backdrop-blur-sm max-w-2xl w-full mx-4 relative">
+                    <div className="bg-purple-900/90 p-4 md:p-6 lg:p-8 rounded-xl backdrop-blur-sm w-[95%] max-w-2xl mx-auto relative">
                         <button
                             onClick={() => setShowTutorial(false)}
                             className="absolute top-4 right-4 text-gray-400 hover:text-white"
@@ -70,28 +65,29 @@ const HomePage = () => {
                 </div>
             )}
 
-            <div className="text-center relative">
-                {/* Botón de Tutorial */}
-                <button
-                    onClick={() => setShowTutorial(true)}
-                    className="absolute top-0 right-0 bg-purple-600 hover:bg-purple-700 text-white p-3 rounded-full transition duration-200 z-10"
-                    aria-label="Mostrar tutorial"
-                >
-                    <Info size={24} />
-                </button>
-                <div className="text-center">
+            <div className="text-center relative px-4 md:px-6 lg:px-8">
+                <div className="text-center relative">
                     {!user ? (
                         // Vista para usuarios no logueados (Landing Page Moderna)
-                        <div className="pt-8 pb-16 px-4">
-                            <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-purple-400 via-pink-500 to-orange-400">
-                                Gordo Power
-                            </h1>
-                            <p className="text-xl md:text-2xl mb-10 text-purple-200 max-w-3xl mx-auto">
+                        <div className="pt-6 md:pt-8 lg:pt-12 pb-12 md:pb-16">
+                            <div className="flex items-center justify-center gap-4 mb-4">
+                                <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-purple-400 via-pink-500 to-orange-400">
+                                    Gordo Power
+                                </h1>
+                                <button
+                                    onClick={() => setShowTutorial(true)}
+                                    className="bg-purple-600 hover:bg-purple-700 text-white p-2 md:p-3 rounded-full transition duration-200"
+                                    aria-label="Mostrar tutorial"
+                                >
+                                    <Info size={20} className="md:w-6 md:h-6" />
+                                </button>
+                            </div>
+                            <p className="text-lg sm:text-xl md:text-2xl mb-8 md:mb-10 text-purple-200 max-w-3xl mx-auto px-4">
                                 ¡Embárcate en una aventura culinaria épica! Personaliza tu avatar, colecciona platos exóticos y domina divertidos minijuegos para convertirte en la leyenda gastronómica definitiva.
                             </p>
 
-                            <div className="grid md:grid-cols-3 gap-6 mb-12 max-w-4xl mx-auto">
-                                <div className="bg-white/10 backdrop-blur-sm p-6 rounded-lg text-left transform hover:scale-105 transition-transform duration-300">
+                            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 md:gap-6 mb-8 md:mb-12 max-w-4xl mx-auto px-4">
+                                <div className="bg-white/10 backdrop-blur-sm p-4 md:p-6 rounded-lg text-left transform hover:scale-105 transition-transform duration-300">
                                     <Utensils className="w-12 h-12 text-pink-400 mb-3" />
                                     <h3 className="text-xl font-semibold mb-2 text-white">Colecciona Platos</h3>
                                     <p className="text-purple-300 text-sm">Descubre y reúne una vasta colección de comidas, desde comunes hasta legendarias.</p>
@@ -108,16 +104,16 @@ const HomePage = () => {
                                 </div>
                             </div>
 
-                            <div className="space-y-4 md:space-y-0 md:space-x-6">
+                            <div className="space-y-4 sm:space-y-0 sm:space-x-4 md:space-x-6 px-4">
                                 <Link
                                     to="/register"
-                                    className="inline-block bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-bold py-3 px-10 rounded-lg transition duration-300 transform hover:shadow-xl text-lg"
+                                    className="inline-block w-full sm:w-auto bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-bold py-2 md:py-3 px-6 md:px-10 rounded-lg transition duration-300 transform hover:shadow-xl text-base md:text-lg"
                                 >
                                     Empieza tu Aventura
                                 </Link>
                                 <Link
                                     to="/login"
-                                    className="inline-block bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-10 rounded-lg transition duration-300 transform hover:shadow-xl text-lg"
+                                    className="inline-block w-full sm:w-auto bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 md:py-3 px-6 md:px-10 rounded-lg transition duration-300 transform hover:shadow-xl text-base md:text-lg"
                                 >
                                     Continuar Aventura
                                 </Link>
@@ -125,17 +121,26 @@ const HomePage = () => {
                         </div>
                     ) : (
                         // Vista para usuarios logueados (Dashboard)
-                        <>
-                            <h1 className="text-5xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-pink-600">
-                                Gordo Power
-                            </h1>
-                            <p className="text-xl mb-8 text-purple-200">
+                        <div className="px-4 py-6 md:py-8">
+                            <div className="flex items-center justify-center gap-4 mb-4">
+                                <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-pink-600">
+                                    Gordo Power
+                                </h1>
+                                <button
+                                    onClick={() => setShowTutorial(true)}
+                                    className="bg-purple-600 hover:bg-purple-700 text-white p-2 md:p-3 rounded-full transition duration-200"
+                                    aria-label="Mostrar tutorial"
+                                >
+                                    <Info size={20} className="md:w-6 md:h-6" />
+                                </button>
+                            </div>
+                            <p className="text-lg md:text-xl mb-6 md:mb-8 text-purple-200">
                                 ¡Bienvenido de nuevo, {user.username}! Continúa tu aventura.
                             </p>
-                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mt-8">
+                            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
                                 <Link
                                     to="/profile"
-                                    className="bg-white/10 backdrop-blur-sm p-6 rounded-lg hover:bg-white/20 transition duration-200"
+                                    className="bg-white/10 backdrop-blur-sm p-4 md:p-6 rounded-lg hover:bg-white/20 transition duration-200"
                                 >
                                     <h3 className="text-xl font-bold mb-2 text-white">Tu personaje</h3>
                                     <p className="text-purple-200">Personaliza, mejora y sube el nivel de tu personaje</p>
@@ -162,7 +167,7 @@ const HomePage = () => {
                                     <p className="text-purple-200">Juega para ganar monedas</p>
                                 </Link>
                             </div>
-                        </>
+                        </div>
                     )}
                 </div>
             </div>
