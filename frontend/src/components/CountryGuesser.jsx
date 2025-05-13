@@ -19,7 +19,7 @@ const COUNTRIES = [
     { name: 'ARGENTINA', capital: 'Buenos Aires', continent: 'South America', hint: 'Land of tango', dish: 'Locro' }
 ];
 
-export function CountryGuesser() {
+export const CountryGuesser = () => {
     const [targetCountry, setTargetCountry] = useState(null);
     const [guess, setGuess] = useState('');
     const [attempts, setAttempts] = useState([]);

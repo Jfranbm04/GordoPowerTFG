@@ -9,121 +9,94 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpKernel\Attribute\AsController;
+use Symfony\Component\HttpFoundation\File\Exception\FileException;
+use Symfony\Component\String\Slugger\SluggerInterface;
 
+
+// Controlador para manejar un plato con imagen
 class FoodController extends AbstractController
 {
-    #[Route('/api/food/new', name: 'app_food_new', methods: ['POST'])]
-    public function new(Request $request, EntityManagerInterface $entityManager): Response
+    #[Route('/api/food/new', name: 'api_food_create', methods: ['POST'])]
+    public function create(Request $request, SluggerInterface $slugger, EntityManagerInterface $em): JsonResponse
     {
-        // Obtener los datos del formulario
-        $name = $request->request->get('name');
-        $description = $request->request->get('description');
-        $origin = $request->request->get('origin');
-        $type = $request->request->get('type');
-        $rarity = $request->request->get('rarity');
-        $protein = $request->request->get('protein');
-        $fat = $request->request->get('fat');
-        $price = $request->request->get('price');
-        
-        // Obtener el archivo de imagen
-        $imageFile = $request->files->get('imageFile');
-        
-        // Crear un nuevo objeto Food
-        $food = new Food();
-        $food->setName($name);
-        $food->setDescription($description);
-        $food->setOrigin($origin);
-        $food->setType($type);
-        $food->setRarity($rarity);
-        $food->setProtein((float)$protein);
-        $food->setFat((float)$fat);
-        $food->setPrice((int)$price);
-        
-        // Procesar la imagen si existe
-        if ($imageFile) {
-            $originalFilename = pathinfo($imageFile->getClientOriginalName(), PATHINFO_FILENAME);
-            // Generar un nombre único para el archivo
-            $newFilename = $originalFilename.'-'.uniqid().'.'.$imageFile->guessExtension();
-            
-            // Mover el archivo a la carpeta de destino
-            try {
-                $imageFile->move(
-                    $this->getParameter('food_images_directory'),
-                    $newFilename
-                );
-                
-                // Guardar la ruta relativa en la entidad
-                $food->setImage('uploads/food/'.$newFilename);
-            } catch (\Exception $e) {
-                return $this->json(['error' => 'Error al subir la imagen'], Response::HTTP_BAD_REQUEST);
+        try {
+            $name = $request->get('name');
+            $description = $request->get('description');
+            $origin = $request->get('origin');
+            $type = $request->get('type');
+            $rarity = $request->get('rarity');
+            $protein = $request->get('protein');
+            $fat = $request->get('fat');
+            $price = $request->get('price');
+
+            $food = new Food();
+            $food->setName($name);
+            $food->setDescription($description);
+            $food->setOrigin($origin);
+            $food->setType($type);
+            $food->setRarity($rarity);
+            $food->setProtein((float)$protein);
+            $food->setFat((float)$fat);
+            $food->setPrice((int)$price);
+
+            $imageFile = $request->files->get('image');
+            if ($imageFile) {
+                $filename = $imageFile->getClientOriginalName();
+                $imageFile->move(__DIR__ . '/../../public/uploads/food', $filename);
+                $food->setImage('uploads/food/' . $filename);
             }
+            // if ($imageFile) {
+            //     $originalFilename = pathinfo($imageFile->getClientOriginalName(), PATHINFO_FILENAME);
+            //     $safeFilename = $slugger->slug($originalFilename);
+            //     $newFilename = $safeFilename . '-' . uniqid() . '.' . $imageFile->getClientOriginalExtension();
+            //     $imageFile->move(__DIR__ . '/../../public/uploads/food', $newFilename);
+            //     $food->setImage('uploads/food/' . $newFilename);
+            // }
+
+            $em->persist($food);
+            $em->flush();
+
+            return new JsonResponse(['status' => 'ok'], 201);
+        } catch (\Throwable $e) {
+            return new JsonResponse(['error' => $e->getMessage()], 500);
         }
-        
-        // Guardar en la base de datos
-        $entityManager->persist($food);
-        $entityManager->flush();
-        
-        return $this->json($food, Response::HTTP_CREATED);
     }
-    
+
+
     #[Route('/api/food/{id}/edit', name: 'app_food_edit', methods: ['POST'])]
-    public function edit(Request $request, Food $food, EntityManagerInterface $entityManager): Response
+    public function edit(Request $request, Food $food, EntityManagerInterface $em): JsonResponse
     {
-        // Obtener los datos del formulario
-        $name = $request->request->get('name');
-        $description = $request->request->get('description');
-        $origin = $request->request->get('origin');
-        $type = $request->request->get('type');
-        $rarity = $request->request->get('rarity');
-        $protein = $request->request->get('protein');
-        $fat = $request->request->get('fat');
-        $price = $request->request->get('price');
-        
-        // Actualizar los datos del objeto Food
-        $food->setName($name);
-        $food->setDescription($description);
-        $food->setOrigin($origin);
-        $food->setType($type);
-        $food->setRarity($rarity);
-        $food->setProtein((float)$protein);
-        $food->setFat((float)$fat);
-        $food->setPrice((int)$price);
-        
-        // Obtener el archivo de imagen
-        $imageFile = $request->files->get('imageFile');
-        
-        // Procesar la imagen si existe
-        if ($imageFile) {
-            $originalFilename = pathinfo($imageFile->getClientOriginalName(), PATHINFO_FILENAME);
-            // Generar un nombre único para el archivo
-            $newFilename = $originalFilename.'-'.uniqid().'.'.$imageFile->guessExtension();
-            
-            // Mover el archivo a la carpeta de destino
-            try {
-                $imageFile->move(
-                    $this->getParameter('food_images_directory'),
-                    $newFilename
-                );
-                
-                // Eliminar la imagen anterior si existe
-                $oldImage = $food->getImage();
-                if ($oldImage) {
-                    $oldImagePath = $this->getParameter('kernel.project_dir').'/public/'.$oldImage;
-                    if (file_exists($oldImagePath)) {
-                        unlink($oldImagePath);
+        try {
+            $food->setName($request->get('name'));
+            $food->setDescription($request->get('description'));
+            $food->setOrigin($request->get('origin'));
+            $food->setType($request->get('type'));
+            $food->setRarity($request->get('rarity'));
+            $food->setProtein((float)$request->get('protein'));
+            $food->setFat((float)$request->get('fat'));
+            $food->setPrice((int)$request->get('price'));
+
+            $imageFile = $request->files->get('image');
+            if ($imageFile) {
+                $filename = $imageFile->getClientOriginalName();
+                $imageFile->move(__DIR__ . '/../../public/uploads/food', $filename);
+
+                if ($food->getImage()) {
+                    $oldPath = __DIR__ . '/../../public/' . $food->getImage();
+                    if (file_exists($oldPath)) {
+                        unlink($oldPath);
                     }
                 }
-                
-                // Guardar la ruta relativa en la entidad
-                $food->setImage('uploads/food/'.$newFilename);
-            } catch (\Exception $e) {
-                return $this->json(['error' => 'Error al subir la imagen'], Response::HTTP_BAD_REQUEST);
+
+                $food->setImage('uploads/food/' . $filename);
             }
+
+            $em->flush();
+            return new JsonResponse(['status' => 'ok'], 200);
+        } catch (\Throwable $e) {
+            return new JsonResponse(['error' => $e->getMessage()], 500);
         }
-        
-        // Guardar en la base de datos
-        $entityManager->flush();
-        
-        return $this->json($food, Response::HTTP_OK);
     }
 }

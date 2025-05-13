@@ -89,7 +89,7 @@ const FOOD_CHALLENGES = [
     }
 ];
 
-export function FoodZoom() {
+export const FoodZoom = () => {
     const [targetFood, setTargetFood] = useState(null);
     const [guess, setGuess] = useState('');
     const [attempts, setAttempts] = useState(0);
@@ -127,7 +127,7 @@ export function FoodZoom() {
         const formattedGuess = guess.toUpperCase();
         setGuess('');
         setAttempts(prev => prev + 1);
-        
+
         // Reducimos el zoom con cada intento
         setZoomLevel(prev => Math.max(100, prev - 100));
 
@@ -162,7 +162,7 @@ export function FoodZoom() {
             setGameOver(true);
             setGameWon(false);
             setZoomLevel(100);
-            
+
             try {
                 const response = await fetch(`${import.meta.env.VITE_BASE_URL}/api/users/${user.id}`, {
                     method: 'PATCH',
@@ -213,7 +213,7 @@ export function FoodZoom() {
     return (
         <div className="max-w-xl mx-auto space-y-6">
             <h2 className="text-2xl font-bold text-center mb-8">Adivina la Comida</h2>
-            
+
             {/* Mostrar las monedas actuales */}
             <div className="text-center text-yellow-300 mb-4">
                 <span className="mr-2">💰</span> {coins} monedas

@@ -3,7 +3,9 @@ import { useUser } from '../context/UserContext';
 import { useFood } from '../context/FoodContext';
 import { FoodCollectionCard } from '../components/FoodCollectionCard';
 
-export function CollectionPage() {
+
+
+export const CollectionPage = () => {
     const [activeTab, setActiveTab] = useState('foods');
     const { user } = useUser();
     const { foods = [], userFoods = [], loading } = useFood();

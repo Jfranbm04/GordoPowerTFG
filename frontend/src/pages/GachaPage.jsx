@@ -4,7 +4,7 @@ import { useUser } from '../context/UserContext';
 import { useAuth } from '../context/AuthContext';
 import { FoodRoulette } from '../components/FoodRoulette';
 
-export function GachaPage() {
+export const GachaPage = () => {
   const [activeRoulette, setActiveRoulette] = useState(null);
   const { user } = useUser();
   const { getCurrentUser } = useAuth();

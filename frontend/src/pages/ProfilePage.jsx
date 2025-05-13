@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useUser } from '../context/UserContext';
 import { useFood } from '../context/FoodContext';
+import { Info } from 'lucide-react';
+import { FoodInventoryCard } from '../components/FoodInventoryCard';
 
 const ProfilePage = () => {
     const { user, character, loading: userLoading, updateCharacter } = useUser();
@@ -9,11 +11,11 @@ const ProfilePage = () => {
     const [isPageLoading, setIsPageLoading] = useState(true);
     const [activeTab, setActiveTab] = useState('foods');
     const [feedingStatus, setFeedingStatus] = useState({ show: false, message: '', success: true });
-    const [isFeeding, setIsFeeding] = useState(false);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [feedingItemId, setFeedingItemId] = useState(null);
     const [showLevelUpModal, setShowLevelUpModal] = useState(false);
     const [newLevel, setNewLevel] = useState(null);
+    const [showTutorial, setShowTutorial] = useState(false);
 
     const { equippedItems, setEquippedItems } = useState({
         head: null,
@@ -150,6 +152,63 @@ const ProfilePage = () => {
 
     return (
         <div className="space-y-8 p-6 relative">
+            {/* Modal Tutorial */}
+            {showTutorial && (
+                <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 overflow-y-auto min-h-screen">
+                    <div className="bg-purple-900/90 p-6 md:p-8 rounded-xl backdrop-blur-sm max-w-2xl w-full mx-4 relative my-auto">
+                        <button
+                            onClick={() => setShowTutorial(false)}
+                            className="absolute top-4 right-4 text-gray-400 hover:text-white"
+                        >
+                            ✕
+                        </button>
+                        <h2 className="text-2xl font-bold mb-6 text-center">Sistema de Progresión</h2>
+
+                        <div className="space-y-4 md:space-y-6 max-h-[80vh] overflow-y-auto pr-2">
+                            <div className="bg-purple-800/30 p-4 rounded-lg">
+                                <h3 className="text-xl font-semibold mb-2 text-purple-300">⭐ Experiencia y Niveles</h3>
+                                <ul className="list-disc list-inside space-y-1 text-gray-300">
+                                    <li>Cada nivel requiere 1000 puntos de experiencia.</li>
+                                    <li>Comida común: +10 XP</li>
+                                    <li>Comida rara: +20 XP</li>
+                                    <li>Comida épica: +50 XP</li>
+                                    <li>Comida legendaria: +100 XP</li>
+                                </ul>
+                            </div>
+
+                            <div className="bg-purple-800/30 p-4 rounded-lg">
+                                <h3 className="text-xl font-semibold mb-2 text-purple-300">💪 Sistema de Fuerza</h3>
+                                <ul className="list-disc list-inside space-y-1 text-gray-300">
+                                    <li>La fuerza se calcula a partir de la proteína acumulada.</li>
+                                    <li>Cada 20g de proteína = 1 punto de fuerza.</li>
+                                    <li>La proteína se acumula permanentemente al alimentar al personaje.</li>
+                                </ul>
+                            </div>
+
+                            <div className="bg-purple-800/30 p-4 rounded-lg">
+                                <h3 className="text-xl font-semibold mb-2 text-purple-300">⚖️ Sistema de Peso</h3>
+                                <ul className="list-disc list-inside space-y-1 text-gray-300">
+                                    <li>El peso se calcula a partir de la grasa acumulada.</li>
+                                    <li>Cada 50g de grasa = 1 punto de peso.</li>
+                                    <li>La grasa se acumula permanentemente al alimentar al personaje.</li>
+                                </ul>
+                            </div>
+
+                            <div className="bg-purple-800/30 p-4 rounded-lg">
+                                <h3 className="text-xl font-semibold mb-2 text-purple-300">🎯 Consejos</h3>
+                                <ul className="list-disc list-inside space-y-1 text-gray-300">
+                                    <li>Usa comidas legendarias y épicas para subir de nivel más rápido.</li>
+                                    <li>Equilibra la proteína y la grasa según tu estrategia.</li>
+                                    <li>Colecciona comidas de mayor rareza para obtener mejores bonificaciones.</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+
+
             {/* Modal de carga */}
             {isModalOpen && (
                 <div className="fixed inset-0 flex items-center justify-center z-50">
@@ -185,9 +244,19 @@ const ProfilePage = () => {
             )}
 
             {/* Resto del contenido de la página */}
-            <div className="flex items-center gap-2">
-                <h3 className="text-2xl font-semibold text-white">Hola {user.username}.</h3>
+            <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                    <h3 className="text-2xl font-semibold text-white">Hola {user.username}.</h3>
+                </div>
+                <button
+                    onClick={() => setShowTutorial(true)}
+                    className="bg-purple-600 hover:bg-purple-700 text-white p-3 rounded-full transition duration-200"
+                    aria-label="Mostrar información del sistema"
+                >
+                    <Info size={24} />
+                </button>
             </div>
+
             <div className="bg-white/10 backdrop-blur-sm p-6 rounded-lg">
                 <div className="flex justify-between items-center mb-4">
 
@@ -200,7 +269,6 @@ const ProfilePage = () => {
                             alt="Character"
                             className="w-full h-full object-contain"
                         />
-                        {/* Equipment overlays will go here later */}
                     </div>
                     <div className="flex-1 space-y-4">
                         <div>
@@ -278,42 +346,18 @@ const ProfilePage = () => {
                     </div>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-2">
                     {activeTab === 'foods' && userFoods?.member?.filter(uf => uf.quantity > 0).map((userFood) => {
                         const food = foods?.member?.find(f => `/api/food/${f.id}` === userFood.food);
                         if (!food) return null;
 
                         return (
-                            <div key={userFood.id} className="bg-white/10 p-4 rounded-lg flex items-center justify-between">
-                                <div className="flex items-center gap-3">
-                                    <span className="text-2xl">{food.emoji}</span>
-                                    <div>
-                                        <h4 className="font-semibold text-white">{food.name}</h4>
-                                        <p className="text-sm text-gray-400">Cantidad: x{userFood.quantity}</p>
-                                        <div className="flex gap-2 mt-1">
-                                            <span className="text-yellow-300">💪 {food.protein}g</span>
-                                            <span className="text-red-300">🍖 {food.fat}g</span>
-                                        </div>
-                                        <span className={`text-xs ${food.rarity.toUpperCase() === 'LEGENDARY' ? 'text-yellow-300' :
-                                            food.rarity.toUpperCase() === 'EPIC' ? 'text-purple-300' :
-                                                food.rarity.toUpperCase() === 'RARE' ? 'text-blue-300' :
-                                                    'text-gray-300'
-                                            }`}>
-                                            {food.rarity.toUpperCase()}
-                                        </span>
-                                    </div>
-                                </div>
-                                <button
-                                    className={`px-4 py-2 rounded-lg text-white text-sm transition-colors ${userFood.quantity > 0
-                                        ? 'bg-purple-600 hover:bg-purple-700'
-                                        : 'bg-gray-600 cursor-not-allowed'
-                                        }`}
-                                    onClick={() => userFood.quantity > 0 && handleFeed(userFood.id, food)}
-                                    disabled={userFood.quantity <= 0 || feedingItemId !== null}
-                                >
-                                    Alimentar
-                                </button>
-                            </div>
+                            <FoodInventoryCard
+                                key={userFood.id}
+                                food={food}
+                                userFood={userFood}
+                                feed={handleFeed}
+                            />
                         );
                     })}
                 </div>

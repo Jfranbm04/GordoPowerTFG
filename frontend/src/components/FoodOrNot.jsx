@@ -29,7 +29,7 @@ const WORDS = [
     { word: 'Guitarra', isFood: false }
 ];
 
-export function FoodOrNot() {
+export const FoodOrNot = () => {
     const [currentWord, setCurrentWord] = useState(null);
     const [score, setScore] = useState(0);
     const [lives, setLives] = useState(3);

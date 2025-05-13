@@ -2,17 +2,12 @@ import React, { useState, useEffect } from 'react';
 import { useFood } from '../context/FoodContext';
 
 const AdminFood = () => {
+
     const [showForm, setShowForm] = useState(false);
     const [showList, setShowList] = useState(false);
     const [formData, setFormData] = useState({
-        name: '',
-        description: '',
-        origin: '',
-        type: '',
-        rarity: 'COMMON',
-        protein: 0,
-        fat: 0,
-        price: 0
+        name: '', description: '', origin: '', type: '', rarity: 'COMMON',
+        protein: 0, fat: 0, price: 0, image: null
     });
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [notification, setNotification] = useState({ show: false, message: '', type: '' });
@@ -25,121 +20,96 @@ const AdminFood = () => {
     // Ocultar notificación después de 3 segundos
     useEffect(() => {
         if (notification.show) {
-            const timer = setTimeout(() => {
-                setNotification({ show: false, message: '', type: '' });
-            }, 3000);
+            const timer = setTimeout(() => setNotification({ show: false, message: '', type: '' }), 3000);
             return () => clearTimeout(timer);
         }
     }, [notification.show]);
 
+    const resetForm = () => setFormData({
+        name: '', description: '', origin: '', type: '', rarity: 'COMMON',
+        protein: 0, fat: 0, price: 0, image: null
+    });
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
+    const handleCreate = async () => {
         setIsSubmitting(true);
-
         try {
-            let success;
-
-            if (editMode) {
-                // Actualizar plato existente
-                success = await updateFood(editingFoodId, formData);
-                if (success) {
-                    setNotification({
-                        show: true,
-                        message: '¡Plato actualizado exitosamente!',
-                        type: 'success'
-                    });
-                    setEditMode(false);
-                    setEditingFoodId(null);
-                    setShowEditForm(false);
-                }
-            } else {
-                // Crear nuevo plato
-                success = await createFood(formData);
-                if (success) {
-                    setNotification({
-                        show: true,
-                        message: '¡Plato creado exitosamente!',
-                        type: 'success'
-                    });
-                    setShowForm(false);
+            const data = new FormData();
+            for (const key in formData) {
+                if (formData[key] !== null && formData[key] !== undefined) {
+                    data.append(key, formData[key]);
                 }
             }
-
+            const success = await createFood(data, true);
             if (success) {
-                // Limpiar formulario
-                setFormData({
-                    name: '',
-                    description: '',
-                    origin: '',
-                    type: '',
-                    rarity: 'COMMON',
-                    protein: 0,
-                    fat: 0,
-                    price: 0
-                });
-
-                // Mostrar lista actualizada
-                setShowList(true);
+                setNotification({ show: true, message: 'Plato creado exitosamente', type: 'success' });
+                setShowForm(false);
+                resetForm();
             }
-        } catch (error) {
-            console.error('Error al procesar el plato:', error);
-            setNotification({
-                show: true,
-                message: editMode
-                    ? 'Error al actualizar el plato. Inténtalo de nuevo.'
-                    : 'Error al crear el plato. Inténtalo de nuevo.',
-                type: 'error'
-            });
+        } catch {
+            setNotification({ show: true, message: 'Error al crear el plato.', type: 'error' });
         } finally {
             setIsSubmitting(false);
         }
     };
 
-    // Función para iniciar la edición de un plato
+    const handleUpdate = async () => {
+        setIsSubmitting(true);
+        try {
+            const data = new FormData();
+            for (const key in formData) {
+                if (formData[key] !== null && formData[key] !== undefined) {
+                    data.append(key, formData[key]);
+                }
+            }
+            const success = await updateFood(editingFoodId, data, true);
+            if (success) {
+                setNotification({ show: true, message: 'Plato actualizado', type: 'success' });
+                setEditMode(false);
+                setShowEditForm(false);
+                setEditingFoodId(null);
+                resetForm();
+            }
+        } catch {
+            setNotification({ show: true, message: 'Error al actualizar el plato.', type: 'error' });
+        } finally {
+            setIsSubmitting(false);
+        }
+    };
+
     const handleEdit = (food) => {
         setFormData({
-            name: food.name,
-            description: food.description || '',
-            origin: food.origin,
-            type: food.type,
-            rarity: food.rarity,
-            protein: food.protein,
-            fat: food.fat,
-            price: food.price
+            name: food.name, description: food.description || '', origin: food.origin,
+            type: food.type, rarity: food.rarity, protein: food.protein,
+            fat: food.fat, price: food.price, image: null
         });
         setEditMode(true);
         setEditingFoodId(food.id);
         setShowEditForm(true);
         setShowForm(false);
-
-        // Desplazar la vista al formulario de edición
         setTimeout(() => {
             document.getElementById('editForm').scrollIntoView({ behavior: 'smooth' });
         }, 100);
     };
 
-    // Función para eliminar un plato
     const handleDelete = async (foodId) => {
         if (window.confirm('¿Estás seguro de que deseas eliminar este plato?')) {
-            try {
-                const success = await deleteFood(foodId);
-                if (success) {
-                    setNotification({
-                        show: true,
-                        message: 'Plato eliminado correctamente',
-                        type: 'success'
-                    });
-                }
-            } catch (error) {
-                console.error('Error al eliminar el plato:', error);
-                setNotification({
-                    show: true,
-                    message: 'Error al eliminar el plato',
-                    type: 'error'
-                });
-            }
+            const success = await deleteFood(foodId);
+            if (success) setNotification({ show: true, message: 'Plato eliminado', type: 'success' });
         }
+    };
+
+    const handleChange = (e) => {
+        const { name, value, type, files } = e.target;
+        setFormData(prev => ({
+            ...prev,
+            [name]: type === 'file' ? files[0] :
+                ['protein', 'fat', 'price'].includes(name) ? parseFloat(value) : value
+        }));
+    };
+
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        if (editMode) handleUpdate(); else handleCreate();
     };
 
     // Cancelar la edición
@@ -147,28 +117,7 @@ const AdminFood = () => {
         setEditMode(false);
         setEditingFoodId(null);
         setShowEditForm(false);
-        setFormData({
-            name: '',
-            description: '',
-            origin: '',
-            type: '',
-            rarity: 'COMMON',
-            protein: 0,
-            fat: 0,
-            price: 0
-        });
-    };
-
-
-
-    const handleChange = (e) => {
-        const { name, value } = e.target;
-        setFormData(prev => ({
-            ...prev,
-            [name]: name === 'protein' || name === 'fat' || name === 'price'
-                ? parseFloat(value)
-                : value
-        }));
+        resetForm();
     };
 
     if (loading) {
@@ -270,13 +219,18 @@ const AdminFood = () => {
                                     name="rarity"
                                     value={formData.rarity}
                                     onChange={handleChange}
-                                    className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-2"
+                                    className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-2 appearance-none cursor-pointer hover:bg-white/10 transition-colors duration-200"
                                 >
-                                    <option value="COMMON">Común</option>
-                                    <option value="RARE">Raro</option>
-                                    <option value="EPIC">Épico</option>
-                                    <option value="LEGENDARY">Legendario</option>
+                                    <option value="COMMON" className="bg-gray-800 text-gray-300">Común</option>
+                                    <option value="RARE" className="bg-gray-800 text-blue-300">Raro</option>
+                                    <option value="EPIC" className="bg-gray-800 text-purple-300">Épico</option>
+                                    <option value="LEGENDARY" className="bg-gray-800 text-yellow-300">Legendario</option>
                                 </select>
+                                <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-300">
+                                    <svg className="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+                                        <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" />
+                                    </svg>
+                                </div>
                             </div>
                             <div>
                                 <label className="block text-sm font-medium mb-1">Precio</label>
@@ -323,6 +277,17 @@ const AdminFood = () => {
                                 required
                             ></textarea>
                         </div>
+                        <div>
+                            <label className="block text-sm font-medium mb-1">Imagen</label>
+                            <input
+                                type="file"
+                                name="image"
+                                accept="image/*"
+                                onChange={handleChange}
+                                className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-2"
+                            />
+                        </div>
+
                         <button
                             type="submit"
                             disabled={isSubmitting}
@@ -383,13 +348,18 @@ const AdminFood = () => {
                                     name="rarity"
                                     value={formData.rarity}
                                     onChange={handleChange}
-                                    className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-2"
+                                    className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-2 appearance-none cursor-pointer hover:bg-white/10 transition-colors duration-200"
                                 >
-                                    <option value="COMMON">Común</option>
-                                    <option value="RARE">Raro</option>
-                                    <option value="EPIC">Épico</option>
-                                    <option value="LEGENDARY">Legendario</option>
+                                    <option value="COMMON" className="bg-gray-800 text-gray-300">Común</option>
+                                    <option value="RARE" className="bg-gray-800 text-blue-300">Raro</option>
+                                    <option value="EPIC" className="bg-gray-800 text-purple-300">Épico</option>
+                                    <option value="LEGENDARY" className="bg-gray-800 text-yellow-300">Legendario</option>
                                 </select>
+                                <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-300">
+                                    <svg className="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+                                        <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" />
+                                    </svg>
+                                </div>
                             </div>
                             <div>
                                 <label className="block text-sm font-medium mb-1">Precio</label>
@@ -436,6 +406,17 @@ const AdminFood = () => {
                                 required
                             ></textarea>
                         </div>
+                        <div>
+                            <label className="block text-sm font-medium mb-1">Imagen</label>
+                            <input
+                                type="file"
+                                name="image"
+                                accept="image/*"
+                                onChange={handleChange}
+                                className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-2"
+                            />
+                        </div>
+
                         <button
                             type="submit"
                             disabled={isSubmitting}
@@ -454,55 +435,71 @@ const AdminFood = () => {
             {showList && (
                 <div className="bg-white/10 p-6 rounded-lg animate-fadeIn">
                     <h3 className="text-xl font-semibold mb-4">Lista de Platos</h3>
-                    <div className="space-y-4">
-                        {foodsList.length > 0 ? (
-                            foodsList.map((food) => (
-                                <div key={food.id}
-                                    className="flex items-center justify-between bg-white/5 p-4 rounded-lg hover:bg-white/10 transition-all duration-300"
-                                >
-                                    <div className="flex items-center gap-4 flex-1">
-
-                                        <div className="flex-1">
-                                            <div className="flex items-center gap-2">
-                                                <h3 className="font-bold">{food.name}</h3>
-                                                <span className={`text-xs px-2 py-0.5 rounded-full ${food.rarity === 'LEGENDARY' ? 'bg-yellow-500/20 text-yellow-300' :
-                                                    food.rarity === 'EPIC' ? 'bg-purple-500/20 text-purple-300' :
-                                                        food.rarity === 'RARE' ? 'bg-blue-500/20 text-blue-300' :
-                                                            'bg-gray-500/20 text-gray-300'
-                                                    }`}>
-                                                    {food.rarity}
-                                                </span>
-                                            </div>
-                                            <div className="text-sm text-gray-400 mt-1">
-                                                <span>Origen: {food.origin}</span>
-                                                <span className="mx-2">•</span>
-                                                <span>Tipo: {food.type}</span>
-                                                <span className="mx-2">•</span>
-                                                <span>Precio: {food.price}</span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div className="flex gap-2">
-                                        <button
-                                            onClick={() => handleEdit(food)}
-                                            className="bg-yellow-600 hover:bg-yellow-700 px-3 py-1 rounded text-sm transition-colors"
-                                        >
-                                            Editar
-                                        </button>
-                                        <button
-                                            onClick={() => handleDelete(food.id)}
-                                            className="bg-red-600 hover:bg-red-700 px-3 py-1 rounded text-sm transition-colors"
-                                        >
-                                            Eliminar
-                                        </button>
-                                    </div>
-                                </div>
-                            ))
-                        ) : (
-                            <div className="text-center py-8 text-gray-400">
-                                No hay platos disponibles. ¡Crea uno nuevo!
-                            </div>
-                        )}
+                    <div className="overflow-x-auto">
+                        <table className="min-w-full divide-y divide-white/10">
+                            <thead>
+                                <tr>
+                                    <th className="text-left py-3 px-4">Imagen</th>
+                                    <th className="text-left py-3 px-4">Nombre</th>
+                                    <th className="text-left py-3 px-4">Origen</th>
+                                    <th className="text-left py-3 px-4">Tipo</th>
+                                    <th className="text-left py-3 px-4">Rareza</th>
+                                    <th className="text-left py-3 px-4">Precio</th>
+                                    <th className="text-right py-3 px-4">Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {foodsList.map((food) => (
+                                    <tr key={food.id} className="border-b border-white/10 hover:bg-white/5">
+                                        <td className="py-3 px-4">
+                                            {food.image ? (
+                                                <div className="w-24 h-24 overflow-hidden rounded-lg group-hover:scale-110 transition-transform duration-300">
+                                                    <img 
+                                                        src={`${import.meta.env.VITE_BASE_URL}/${food.image}`}
+                                                        alt={food.name}
+                                                        className="w-full h-full object-cover"
+                                                    />
+                                                </div>
+                                            ) : (
+                                                <div className="w-24 h-24 bg-white/5 rounded-lg flex items-center justify-center">
+                                                    <span className="text-4xl">🍽️</span>
+                                                </div>
+                                            )}
+                                        </td>
+                                        <td className="py-3 px-4 font-medium">{food.name}</td>
+                                        <td className="py-3 px-4">{food.origin}</td>
+                                        <td className="py-3 px-4">{food.type}</td>
+                                        <td className="py-3 px-4">
+                                            <span className={`px-2 py-1 rounded-full text-xs ${
+                                                food.rarity.toUpperCase() === 'LEGENDARY' ? 'bg-gradient-to-r from-yellow-500/20 to-amber-500/20 text-yellow-300 border border-yellow-500/30' :
+                                                food.rarity.toUpperCase() === 'EPIC' ? 'bg-gradient-to-r from-purple-500/20 to-pink-500/20 text-purple-300 border border-purple-500/30' :
+                                                food.rarity.toUpperCase() === 'RARE' ? 'bg-gradient-to-r from-blue-500/20 to-cyan-500/20 text-blue-300 border border-blue-500/30' :
+                                                'bg-gradient-to-r from-gray-500/20 to-slate-500/20 text-gray-300 border border-gray-500/30'
+                                            }`}>
+                                                {food.rarity.toUpperCase()}
+                                            </span>
+                                        </td>
+                                        <td className="py-3 px-4">
+                                            <span className="text-yellow-300">💰 {food.price}</span>
+                                        </td>
+                                        <td className="py-3 px-4 text-right space-x-2">
+                                            <button
+                                                onClick={() => handleEdit(food)}
+                                                className="bg-yellow-600 hover:bg-yellow-700 px-3 py-1 rounded transition duration-200"
+                                            >
+                                                Editar
+                                            </button>
+                                            <button
+                                                onClick={() => handleDelete(food.id)}
+                                                className="bg-red-600 hover:bg-red-700 px-3 py-1 rounded transition duration-200"
+                                            >
+                                                Eliminar
+                                            </button>
+                                        </td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             )}

@@ -1,10 +1,22 @@
 import React from 'react';
-import { useUser } from '../context/UserContext';
 
-export const FoodShopCard = ({ food, userFood, onBuy }) => {
+export const FoodInventoryCard = ({ food, userFood, feed }) => {
     const quantity = userFood ? userFood.quantity : 0;
     const unlocked = userFood ? userFood.unlocked : false;
-    const { user } = useUser();
+
+    // Función para mostrar el XP basado en la rareza
+    const getXPValue = (rarity) => {
+        switch (rarity.toUpperCase()) {
+            case 'LEGENDARY':
+                return 100;
+            case 'EPIC':
+                return 50;
+            case 'RARE':
+                return 20;
+            default:
+                return 10;
+        }
+    };
 
     return (
         <div className="bg-purple-900/30 rounded-xl overflow-hidden backdrop-blur-sm relative">
@@ -26,9 +38,9 @@ export const FoodShopCard = ({ food, userFood, onBuy }) => {
                 )}
 
                 {/* Contador de cantidad */}
-                <div className="absolute top-4 right-4 z-20 bg-gray-800/20 px-3 py-1 rounded-full border border-gray-500/30">
-                    <span className=" text-sm font-medium">
-                        Tienes: {quantity}
+                <div className="absolute top-4 right-4 z-20 bg-yellow-500/20 px-3 py-1 rounded-full border border-yellow-500/30">
+                    <span className="text-yellow-300 text-sm font-medium">
+                        x{quantity}
                     </span>
                 </div>
             </div>
@@ -57,24 +69,22 @@ export const FoodShopCard = ({ food, userFood, onBuy }) => {
                         <span>🍖 Grasas:</span>
                         <span>{food.fat}g</span>
                     </div>
+                    <div className="flex justify-between">
+                        <span>⭐ XP:</span>
+                        <span className="text-purple-300">{getXPValue(food.rarity)} XP</span>
+                    </div>
                     <div className="flex justify-between items-center pt-2 border-t border-purple-500/20">
-                        <div className="flex items-center">
-                            <span className="text-yellow-300 mr-1">💰</span>
-                            <span className="text-yellow-300 font-medium">{food.price}</span>
-                        </div>
                         <button
-                            onClick={() => onBuy(food.id, food.price)}
-                            disabled={!user || user.coins < food.price || !unlocked}
-                            className={`px-4 py-1.5 rounded-lg text-sm transition-colors ${user && user.coins >= food.price && unlocked
-                                ? 'bg-purple-600 hover:bg-purple-700 text-white cursor-pointer'
+                            onClick={() => feed(userFood.id, food)}
+                            disabled={!userFood || quantity <= 0}
+                            className={`w-full px-4 py-2 rounded-lg text-sm transition-colors ${userFood && quantity > 0
+                                ? 'bg-green-600 hover:bg-green-700 text-white cursor-pointer'
                                 : 'bg-gray-700 text-gray-400 cursor-not-allowed'
                                 }`}
                         >
-                            {!unlocked
-                                ? '🔒 Bloqueado'
-                                : user && user.coins >= food.price
-                                    ? 'Comprar'
-                                    : 'No tienes suficientes monedas'}
+                            {userFood && quantity > 0
+                                ? 'Alimentar'
+                                : 'No disponible'}
                         </button>
                     </div>
                 </div>
@@ -83,4 +93,4 @@ export const FoodShopCard = ({ food, userFood, onBuy }) => {
     );
 }
 
-export default FoodShopCard;
+export default FoodInventoryCard;
