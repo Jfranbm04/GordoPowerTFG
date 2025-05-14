@@ -9,6 +9,7 @@ const ShopPage = () => {
     const [showModal, setShowModal] = useState(false);
     const [purchaseStatus, setPurchaseStatus] = useState('loading');
     const [currentFood, setCurrentFood] = useState(null);
+    const [totalQuantity, setTotalQuantity] = useState(1);
 
     const isUnlocked = (foodId) => {
         if (!userFoods?.member) return false;
@@ -18,11 +19,12 @@ const ShopPage = () => {
         });
     };
 
-    const handleBuy = async (foodId, price) => {
+    const handleBuy = async (foodId, price, quantity) => {
         if (!user || user.coins < price || !isUnlocked(foodId)) return;
 
         const foodName = foods.member.find(f => f.id === foodId)?.name;
         setCurrentFood(foodName);
+        setTotalQuantity(quantity);
         setShowModal(true);
         setPurchaseStatus('loading');
 
@@ -36,7 +38,7 @@ const ShopPage = () => {
                 // Simular un tiempo de carga
                 setTimeout(async () => {
                     try {
-                        await updateFoodQuantity(existingUserFood.id, existingUserFood.quantity + 1);
+                        await updateFoodQuantity(existingUserFood.id, existingUserFood.quantity + quantity);
                         await updateUserCoins(user.id, user.coins - price);
                         setPurchaseStatus('success');
 
@@ -73,13 +75,15 @@ const ShopPage = () => {
         <div className="space-y-6 relative">
             {/* Modal de compra */}
             {showModal && (
-                <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+                <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 min-h-screen">
                     <div className="bg-purple-900/90 p-6 rounded-xl backdrop-blur-sm max-w-sm w-full mx-4">
                         <div className="text-center space-y-4">
                             {purchaseStatus === 'loading' ? (
                                 <>
                                     <div className="animate-spin rounded-full h-12 w-12 border-4 border-purple-500 border-t-transparent mx-auto"></div>
-                                    <p className="text-purple-300">Comprando un plato de {currentFood}...</p>
+                                    <p className="text-purple-300">
+                                        Comprando {totalQuantity} {totalQuantity === 1 ? 'plato' : 'platos'} de {currentFood}...
+                                    </p>
                                 </>
                             ) : purchaseStatus === 'success' ? (
                                 <>
@@ -110,7 +114,7 @@ const ShopPage = () => {
                     });
 
                     return (
-                        <FoodShopCard 
+                        <FoodShopCard
                             key={food.id}
                             food={food}
                             userFood={userFood}

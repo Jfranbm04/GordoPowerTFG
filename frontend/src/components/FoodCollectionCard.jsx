@@ -45,8 +45,8 @@ export const FoodCollectionCard = ({ food, userFood }) => {
                 {/* Indicador de cantidad/bloqueo */}
                 <div className="absolute top-4 right-4 z-20">
                     {unlocked ? (
-                        <div className="bg-yellow-500/20 px-2 py-0.5 rounded-full border border-yellow-500/30">
-                            <span className="text-yellow-300 text-sm font-medium">
+                        <div className="bg-gray-800/20 px-2 py-0.5 rounded-full border border-gray-500/30">
+                            <span className="text-sm font-medium">
                                 x{quantity}
                             </span>
                         </div>

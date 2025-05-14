@@ -125,7 +125,6 @@ export const UserProvider = ({ children }) => {
             }
             setLoading(false);
         } else {
-            // console.log('Missing user ID or token:', { userId: user?.id, hasToken: !!token });
             setCharacter(null);
             setLoading(false);
         }
@@ -174,8 +173,38 @@ export const UserProvider = ({ children }) => {
             setLoading(false);
         }
     };
+    const updateUser = async (userId, updates) => {
+        try {
+            const response = await fetch(`${BASE_URL}/api/users/${userId}`, {
+                method: 'PATCH',
+                headers: {
+                    'Content-Type': 'application/merge-patch+json',
+                },
+                body: JSON.stringify(updates)
+            });
+
+            if (!response.ok) {
+                throw new Error('Error al actualizar el usuario');
+            }
+
+            const updatedUser = await response.json();
+
+            // Actualizar el localStorage si es el usuario actual
+            const currentUser = getCurrentUser();
+            if (currentUser && currentUser.id === userId) {
+                localStorage.setItem('user', JSON.stringify(updatedUser));
+                setUser(updatedUser);
+            }
+
+            return updatedUser;
+        } catch (error) {
+            console.error('Error al actualizar el usuario:', error);
+            throw error;
+        }
+    };
+
     return (
-        <UserContext.Provider value={{ user, character, loading, updateCharacter, updateUserCoins, updateUserFood, users }}>
+        <UserContext.Provider value={{ user, character, loading, updateCharacter, updateUserCoins, updateUserFood, users, updateUser }}>
             {children}
         </UserContext.Provider>
     );

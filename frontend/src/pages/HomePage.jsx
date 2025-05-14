@@ -68,19 +68,26 @@ const HomePage = () => {
             <div className="text-center relative px-4 md:px-6 lg:px-8">
                 <div className="text-center relative">
                     {!user ? (
-                        // Vista para usuarios no logueados (Landing Page Moderna)
+                        // Vista para usuarios no logueados 
                         <div className="pt-6 md:pt-8 lg:pt-12 pb-12 md:pb-16">
-                            <div className="flex items-center justify-center gap-4 mb-4">
-                                <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-purple-400 via-pink-500 to-orange-400">
-                                    Gordo Power
-                                </h1>
-                                <button
-                                    onClick={() => setShowTutorial(true)}
-                                    className="bg-purple-600 hover:bg-purple-700 text-white p-2 md:p-3 rounded-full transition duration-200"
-                                    aria-label="Mostrar tutorial"
-                                >
-                                    <Info size={20} className="md:w-6 md:h-6" />
-                                </button>
+                            <div className="flex flex-col items-center justify-center gap-4 mb-8">
+                                <img
+                                    src="/images/gordopower_logo_2.png"
+                                    alt="Logo"
+                                    className="w-32 h-32 md:w-40 md:h-40 lg:w-48 lg:h-48 mb-4"
+                                />
+                                <div className="flex items-center gap-4">
+                                    <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-purple-400 via-pink-500 to-orange-400">
+                                        Gordo Power
+                                    </h1>
+                                    <button
+                                        onClick={() => setShowTutorial(true)}
+                                        className="bg-purple-600 hover:bg-purple-700 text-white p-2 md:p-3 rounded-full transition duration-200"
+                                        aria-label="Mostrar tutorial"
+                                    >
+                                        <Info size={20} className="md:w-6 md:h-6" />
+                                    </button>
+                                </div>
                             </div>
                             <p className="text-lg sm:text-xl md:text-2xl mb-8 md:mb-10 text-purple-200 max-w-3xl mx-auto px-4">
                                 ¡Embárcate en una aventura culinaria épica! Personaliza tu avatar, colecciona platos exóticos y domina divertidos minijuegos para convertirte en la leyenda gastronómica definitiva.
@@ -122,17 +129,25 @@ const HomePage = () => {
                     ) : (
                         // Vista para usuarios logueados (Dashboard)
                         <div className="px-4 py-6 md:py-8">
-                            <div className="flex items-center justify-center gap-4 mb-4">
-                                <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-pink-600">
-                                    Gordo Power
-                                </h1>
-                                <button
-                                    onClick={() => setShowTutorial(true)}
-                                    className="bg-purple-600 hover:bg-purple-700 text-white p-2 md:p-3 rounded-full transition duration-200"
-                                    aria-label="Mostrar tutorial"
-                                >
-                                    <Info size={20} className="md:w-6 md:h-6" />
-                                </button>
+                            {/* Logo y título para usuarios logueados */}
+                            <div className="flex flex-col items-center justify-center gap-4 mb-8">
+                                <img
+                                    src="/images/gordopower_logo_2.png"
+                                    alt="Logo"
+                                    className="w-24 h-24 md:w-32 md:h-32 lg:w-40 lg:h-40 mb-4"
+                                />
+                                <div className="flex items-center gap-4">
+                                    <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-purple-400 via-pink-500 to-orange-400">
+                                        Gordo Power
+                                    </h1>
+                                    <button
+                                        onClick={() => setShowTutorial(true)}
+                                        className="bg-purple-600 hover:bg-purple-700 text-white p-2 md:p-3 rounded-full transition duration-200"
+                                        aria-label="Mostrar tutorial"
+                                    >
+                                        <Info size={20} className="md:w-6 md:h-6" />
+                                    </button>
+                                </div>
                             </div>
                             <p className="text-lg md:text-xl mb-6 md:mb-8 text-purple-200">
                                 ¡Bienvenido de nuevo, {user.username}! Continúa tu aventura.

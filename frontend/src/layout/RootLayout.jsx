@@ -44,7 +44,11 @@ const RootLayout = () => {
                     <div className="flex items-center justify-between h-16">
                         <div className="flex items-center">
                             <Link to="/" className="flex items-center space-x-2 text-xl font-bold">
-                                <Home className="w-6 h-6" />
+                                <img
+                                    src="/images/gordopower_logo_2.png"
+                                    alt="Logo"
+                                    className="w-10 h-10 md:w-12 md:h-12"
+                                />
                                 <span>Gordo Power</span>
                             </Link>
                         </div>
@@ -154,8 +158,12 @@ const RootLayout = () => {
                 <div className={`fixed top-0 right-0 h-full w-2/3 max-w-xs bg-gradient-to-br from-purple-900 to-indigo-900 shadow-xl overflow-y-auto transform transition-transform duration-300 ease-in-out ${isMenuOpen ? 'translate-x-0' : 'translate-x-full'
                     }`}>
                     <div className="flex items-center justify-between p-4 border-b border-white/10">
-                        <Link to="/" className="flex items-center space-x-2 text-xl font-bold" onClick={handleLinkClick}>
-                            <Home className="w-6 h-6" />
+                        <Link to="/" className="flex items-center space-x-3 text-xl font-bold" onClick={handleLinkClick}>
+                            <img
+                                src="/images/gordopower_logo_2.png"
+                                alt="Logo"
+                                className="w-10 h-10 md:w-12 md:h-12"
+                            />
                             <span>Gordo Power</span>
                         </Link>
                         <button

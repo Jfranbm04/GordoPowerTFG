@@ -1,10 +1,22 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useUser } from '../context/UserContext';
 
-export const FoodShopCard = ({ food, userFood, onBuy }) => {
-    const quantity = userFood ? userFood.quantity : 0;
+export const FoodShopCard = ({ food, userFood, onBuy, quantity }) => {
     const unlocked = userFood ? userFood.unlocked : false;
     const { user } = useUser();
+    const [purchaseQuantity, setPurchaseQuantity] = useState(1);
+
+    const handleIncrement = () => {
+        setPurchaseQuantity(prev => prev + 1);
+    };
+
+    const handleDecrement = () => {
+        setPurchaseQuantity(prev => Math.max(1, prev - 1));
+    };
+
+    const totalPrice = food.price * purchaseQuantity;
+
+    quantity = userFood ? userFood.quantity : 0;
 
     return (
         <div className="bg-purple-900/30 rounded-xl overflow-hidden backdrop-blur-sm relative">
@@ -57,24 +69,45 @@ export const FoodShopCard = ({ food, userFood, onBuy }) => {
                         <span>🍖 Grasas:</span>
                         <span>{food.fat}g</span>
                     </div>
-                    <div className="flex justify-between items-center pt-2 border-t border-purple-500/20">
-                        <div className="flex items-center">
-                            <span className="text-yellow-300 mr-1">💰</span>
-                            <span className="text-yellow-300 font-medium">{food.price}</span>
+                    <div className="flex flex-col space-y-4 pt-2 border-t border-purple-500/20">
+                        {/* Contenedor para precio y controles de cantidad */}
+                        <div className="flex items-center justify-between bg-purple-800/30 p-3 rounded-lg">
+                            {/* Precio */}
+                            <div className="flex items-center">
+                                <span className="text-yellow-300 text-xl mr-2">💰</span>
+                                <span className="text-yellow-300 text-xl font-medium">{totalPrice}</span>
+                            </div>
+
+                            {/* Controles de cantidad */}
+                            {unlocked && user && (
+                                <div className="flex items-center space-x-3">
+                                    <button
+                                        onClick={handleDecrement}
+                                        className="bg-purple-700 hover:bg-purple-800 w-8 h-8 rounded-full flex items-center justify-center text-white text-lg font-bold transition-colors"
+                                    > - </button>
+                                    <span className="text-white font-medium text-lg w-8 text-center">{purchaseQuantity}</span>
+                                    <button
+                                        onClick={handleIncrement}
+                                        className="bg-purple-700 hover:bg-purple-800 w-8 h-8 rounded-full flex items-center justify-center text-white text-lg font-bold transition-colors"
+                                    > + </button>
+                                </div>
+                            )}
                         </div>
+
+                        {/* Botón de compra */}
                         <button
-                            onClick={() => onBuy(food.id, food.price)}
-                            disabled={!user || user.coins < food.price || !unlocked}
-                            className={`px-4 py-1.5 rounded-lg text-sm transition-colors ${user && user.coins >= food.price && unlocked
-                                ? 'bg-purple-600 hover:bg-purple-700 text-white cursor-pointer'
+                            onClick={() => onBuy(food.id, totalPrice, purchaseQuantity)}
+                            disabled={!user || user.coins < totalPrice || !unlocked}
+                            className={`w-full py-3 rounded-lg text-sm font-medium transition-all transform hover:scale-105 ${user && user.coins >= totalPrice && unlocked
+                                ? 'bg-purple-600 hover:bg-purple-700 text-white cursor-pointer shadow-lg hover:shadow-purple-500/50'
                                 : 'bg-gray-700 text-gray-400 cursor-not-allowed'
                                 }`}
                         >
                             {!unlocked
                                 ? '🔒 Bloqueado'
-                                : user && user.coins >= food.price
+                                : user && user.coins >= totalPrice
                                     ? 'Comprar'
-                                    : 'No tienes suficientes monedas'}
+                                    : '❌ No tienes suficientes monedas'}
                         </button>
                     </div>
                 </div>
