@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
+import { useUser } from '../context/UserContext';
 
 const FOOD_CHALLENGES = [
     {
@@ -97,6 +98,7 @@ export const FoodZoom = () => {
     const [zoomLevel, setZoomLevel] = useState(500);
     const [gameWon, setGameWon] = useState(false);
     const { getCurrentUser } = useAuth();
+    const { character, updateCharacter } = useUser();
     const [user, setUser] = useState(getCurrentUser());
     const [coins, setCoins] = useState(user?.coins || 0);
 
@@ -127,6 +129,14 @@ export const FoodZoom = () => {
         const formattedGuess = guess.toUpperCase();
         setGuess('');
         setAttempts(prev => prev + 1);
+
+        // Aplicar pérdida de nutrientes al jugar (20 grasas, 10 proteínas)
+        if (character) {
+            await updateCharacter(character.id, {
+                fat: Math.max(0, character.fat - 20),
+                protein: Math.max(0, character.protein - 10)
+            });
+        }
 
         // Reducimos el zoom con cada intento
         setZoomLevel(prev => Math.max(100, prev - 100));
@@ -162,6 +172,14 @@ export const FoodZoom = () => {
             setGameOver(true);
             setGameWon(false);
             setZoomLevel(100);
+            
+            // Aplicar pérdida adicional de nutrientes al perder (10 grasas, 50 proteínas)
+            if (character) {
+                await updateCharacter(character.id, {
+                    fat: Math.max(0, character.fat - 10),
+                    protein: Math.max(0, character.protein - 50)
+                });
+            }
 
             try {
                 const response = await fetch(`${import.meta.env.VITE_BASE_URL}/api/users/${user.id}`, {

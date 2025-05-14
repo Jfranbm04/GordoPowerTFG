@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
+import { useUser } from '../context/UserContext';
 
 // Lista de palabras para el juego
 const WORDS = [
@@ -48,6 +49,7 @@ export const FoodOrNot = () => {
     const [gameActive, setGameActive] = useState(false);
     const [gameWon, setGameWon] = useState(false);
     const { getCurrentUser } = useAuth();
+    const { character, updateCharacter } = useUser();
     const [user, setUser] = useState(getCurrentUser());
     const [coins, setCoins] = useState(user?.coins || 0);
     const [totalTimeLeft, setTotalTimeLeft] = useState(15); // Tiempo total del juego: 30 segundos
@@ -60,13 +62,22 @@ export const FoodOrNot = () => {
     }, [getCurrentUser]);
 
     // Iniciar el juego
-    const startGame = () => {
+    const startGame = async () => {
         setScore(0);
         setLives(3);
         setGameOver(false);
         setGameActive(true);
         setGameWon(false);
         setTotalTimeLeft(15); // Reiniciar el tiempo total
+
+        // Aplicar pérdida de nutrientes al iniciar el juego (20 grasas, 10 proteínas)
+        if (character) {
+            await updateCharacter(character.id, {
+                fat: Math.max(0, character.fat - 20),
+                protein: Math.max(0, character.protein - 10)
+            });
+        }
+
         nextWord();
     };
 
@@ -146,6 +157,14 @@ export const FoodOrNot = () => {
         setGameActive(false);
         setGameOver(true);
         setGameWon(won);
+
+        // Si el jugador pierde, aplicar pérdida adicional de nutrientes (10 grasas, 50 proteínas)
+        if (!won && character) {
+            await updateCharacter(character.id, {
+                fat: Math.max(0, character.fat - 10),
+                protein: Math.max(0, character.protein - 50)
+            });
+        }
 
         // Calcular recompensa basada en la puntuación
         const coinsWon = score * 10;

@@ -1,22 +1,23 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
+import { useUser } from '../context/UserContext';
 
 const COUNTRIES = [
-    { name: 'SPAIN', capital: 'Madrid', continent: 'Europe', hint: 'Known for paella and flamenco', dish: 'Tortilla de patatas' },
-    { name: 'JAPAN', capital: 'Tokyo', continent: 'Asia', hint: 'Land of the rising sun', dish: 'Tonkatsu' },
-    { name: 'ITALY', capital: 'Rome', continent: 'Europe', hint: 'Famous for pizza and pasta', dish: 'Osso buco' },
-    { name: 'BRAZIL', capital: 'Brasilia', continent: 'South America', hint: 'Largest country in South America', dish: 'Feijoada' },
-    { name: 'FRANCE', capital: 'Paris', continent: 'Europe', hint: 'Known for the Eiffel Tower', dish: 'Coq au vin' },
-    { name: 'MEXICO', capital: 'Mexico City', continent: 'North America', hint: 'Known for tacos and mariachi', dish: 'Chiles en nogada' },
-    { name: 'INDIA', capital: 'New Delhi', continent: 'Asia', hint: 'Land of spices and Taj Mahal', dish: 'Butter chicken' },
-    { name: 'CHINA', capital: 'Beijing', continent: 'Asia', hint: 'Home of the Great Wall', dish: 'Peking duck' },
-    { name: 'EGYPT', capital: 'Cairo', continent: 'Africa', hint: 'Land of pyramids and pharaohs', dish: 'Molokhia' },
-    { name: 'GREECE', capital: 'Athens', continent: 'Europe', hint: 'Birthplace of democracy', dish: 'Moussaka' },
-    { name: 'AUSTRALIA', capital: 'Canberra', continent: 'Oceania', hint: 'Land of kangaroos', dish: 'Vegemite sandwich' },
-    { name: 'GERMANY', capital: 'Berlin', continent: 'Europe', hint: 'Famous for beer and sausages', dish: 'Sauerbraten' },
-    { name: 'RUSSIA', capital: 'Moscow', continent: 'Asia', hint: 'Largest country in the world', dish: 'Beef Stroganoff' },
-    { name: 'CANADA', capital: 'Ottawa', continent: 'North America', hint: 'Known for maple syrup', dish: 'Poutine' },
-    { name: 'ARGENTINA', capital: 'Buenos Aires', continent: 'South America', hint: 'Land of tango', dish: 'Locro' }
+    { name: 'ESPAÑA', capital: 'Madrid', continent: 'Europa', hint: 'Conocida por la paella y el flamenco', dish: 'Tortilla de patatas' },
+    { name: 'JAPÓN', capital: 'Tokio', continent: 'Asia', hint: 'La tierra del sol naciente', dish: 'Tonkatsu' },
+    { name: 'ITALIA', capital: 'Roma', continent: 'Europa', hint: 'Famosa por la pizza y la pasta', dish: 'Osso buco' },
+    { name: 'BRASIL', capital: 'Brasilia', continent: 'América del Sur', hint: 'El país más grande de Sudamérica', dish: 'Feijoada' },
+    { name: 'FRANCIA', capital: 'París', continent: 'Europa', hint: 'Conocida por la Torre Eiffel', dish: 'Coq au vin' },
+    { name: 'MÉXICO', capital: 'Ciudad de México', continent: 'América del Norte', hint: 'Conocido por los tacos y el mariachi', dish: 'Chiles en nogada' },
+    { name: 'INDIA', capital: 'Nueva Delhi', continent: 'Asia', hint: 'Tierra de especias y el Taj Mahal', dish: 'Pollo a la mantequilla' },
+    { name: 'CHINA', capital: 'Pekín', continent: 'Asia', hint: 'Hogar de la Gran Muralla', dish: 'Pato Pekín' },
+    { name: 'EGIPTO', capital: 'El Cairo', continent: 'África', hint: 'Tierra de pirámides y faraones', dish: 'Molokhia' },
+    { name: 'GRECIA', capital: 'Atenas', continent: 'Europa', hint: 'Cuna de la democracia', dish: 'Musaka' },
+    { name: 'AUSTRALIA', capital: 'Canberra', continent: 'Oceanía', hint: 'Tierra de canguros', dish: 'Sándwich de Vegemite' },
+    { name: 'ALEMANIA', capital: 'Berlín', continent: 'Europa', hint: 'Famosa por la cerveza y las salchichas', dish: 'Sauerbraten' },
+    { name: 'RUSIA', capital: 'Moscú', continent: 'Asia', hint: 'El país más grande del mundo', dish: 'Stroganoff de res' },
+    { name: 'CANADÁ', capital: 'Ottawa', continent: 'América del Norte', hint: 'Conocido por el jarabe de arce', dish: 'Poutine' },
+    { name: 'ARGENTINA', capital: 'Buenos Aires', continent: 'América del Sur', hint: 'Tierra del tango', dish: 'Locro' }
 ];
 
 export const CountryGuesser = () => {
@@ -26,6 +27,7 @@ export const CountryGuesser = () => {
     const [gameOver, setGameOver] = useState(false);
     const [showHint, setShowHint] = useState(false);
     const { getCurrentUser } = useAuth();
+    const { character, updateCharacter } = useUser();
     const user = getCurrentUser();
 
     useEffect(() => {
@@ -39,6 +41,14 @@ export const CountryGuesser = () => {
         const formattedGuess = guess.toUpperCase();
         setAttempts(prev => [...prev, formattedGuess]);
         setGuess('');
+
+        // Aplicar pérdida de nutrientes al jugar (20 grasas, 10 proteínas)
+        if (character) {
+            await updateCharacter(character.id, {
+                fat: Math.max(0, character.fat - 20),
+                protein: Math.max(0, character.protein - 10)
+            });
+        }
 
         if (formattedGuess === targetCountry.name) {
             setGameOver(true);
@@ -64,6 +74,15 @@ export const CountryGuesser = () => {
             }
         } else if (attempts.length >= 4) {
             setGameOver(true);
+
+            // Aplicar pérdida adicional de nutrientes al perder (10 grasas, 50 proteínas)
+            if (character) {
+                await updateCharacter(character.id, {
+                    fat: Math.max(0, character.fat - 10),
+                    protein: Math.max(0, character.protein - 50)
+                });
+            }
+
             try {
                 const response = await fetch(`${import.meta.env.VITE_BASE_URL}/api/users/${user.id}`, {
                     method: 'PATCH',
@@ -131,24 +150,24 @@ export const CountryGuesser = () => {
                             value={guess}
                             onChange={(e) => setGuess(e.target.value)}
                             className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-2 text-white"
-                            placeholder="Enter country name..."
+                            placeholder="Escribe el nombre del país"
                             maxLength={20}
                         />
                         <button
                             onClick={handleGuess}
                             className="w-full bg-purple-600 hover:bg-purple-700 px-4 py-2 rounded-lg"
                         >
-                            Guess ({5 - attempts.length} attempts left)
+                            Adivinar ({5 - attempts.length} Intentos restantes)
                         </button>
                     </div>
                 )}
 
                 {getHints() && (
                     <div className="mt-4 p-4 bg-yellow-500/20 rounded-lg space-y-2">
-                        {attempts.length >= 1 && <p>Continent: {targetCountry?.continent}</p>}
-                        {attempts.length >= 2 && <p>Typical Dish: {targetCountry?.dish}</p>}
+                        {attempts.length >= 1 && <p>Continente: {targetCountry?.continent}</p>}
+                        {attempts.length >= 2 && <p>Plato típico: {targetCountry?.dish}</p>}
                         {attempts.length >= 3 && <p>Capital: {targetCountry?.capital}</p>}
-                        {attempts.length >= 4 && <p>Hint: {targetCountry?.hint}</p>}
+                        {attempts.length >= 4 && <p>Pista: {targetCountry?.hint}</p>}
                     </div>
                 )}
 
@@ -159,15 +178,15 @@ export const CountryGuesser = () => {
                             : 'bg-red-500/20'
                             }`}>
                             {attempts[attempts.length - 1] === targetCountry?.name
-                                ? `Congratulations! You won ${Math.max(100 - (attempts.length * 10), 20)} coins!`
-                                : `Game Over! The country was ${targetCountry?.name}. You lost 100 coins!`
+                                ? `Felicidades! Has ganado ${Math.max(100 - (attempts.length * 10), 20)} monedas!`
+                                : `Game Over! El país era ${targetCountry?.name}. Has perdido 100 monedas!`
                             }
                         </div>
                         <button
                             onClick={resetGame}
                             className="w-full bg-purple-600 hover:bg-purple-700 px-4 py-2 rounded-lg"
                         >
-                            Play Again
+                            Jugar de nuevo
                         </button>
                     </div>
                 )}

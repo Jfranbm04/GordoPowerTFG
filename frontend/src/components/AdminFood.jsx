@@ -204,14 +204,19 @@ const AdminFood = () => {
                             </div>
                             <div>
                                 <label className="block text-sm font-medium mb-1">Tipo</label>
-                                <input
-                                    type="text"
+                                <select
                                     name="type"
                                     value={formData.type}
                                     onChange={handleChange}
-                                    className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-2"
-                                    required
-                                />
+                                    className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-2 appearance-none cursor-pointer hover:bg-white/10 transition-colors duration-200"
+                                >
+                                    <option value="" disabled>Selecciona un tipo</option>
+                                    <option value="Tapa" className="bg-gray-800">Tapa</option>
+                                    <option value="Entrante" className="bg-gray-800">Entrante</option>
+                                    <option value="Principal" className="bg-gray-800">Principal</option>
+                                    <option value="Secundario" className="bg-gray-800">Secundario</option>
+                                    <option value="Postre" className="bg-gray-800">Postre</option>
+                                </select>
                             </div>
                             <div>
                                 <label className="block text-sm font-medium mb-1">Rareza</label>
@@ -226,11 +231,7 @@ const AdminFood = () => {
                                     <option value="EPIC" className="bg-gray-800 text-purple-300">Épico</option>
                                     <option value="LEGENDARY" className="bg-gray-800 text-yellow-300">Legendario</option>
                                 </select>
-                                <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-300">
-                                    <svg className="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
-                                        <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" />
-                                    </svg>
-                                </div>
+
                             </div>
                             <div>
                                 <label className="block text-sm font-medium mb-1">Precio</label>
@@ -333,14 +334,19 @@ const AdminFood = () => {
                             </div>
                             <div>
                                 <label className="block text-sm font-medium mb-1">Tipo</label>
-                                <input
-                                    type="text"
+                                <select
                                     name="type"
                                     value={formData.type}
                                     onChange={handleChange}
-                                    className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-2"
-                                    required
-                                />
+                                    className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-2 appearance-none cursor-pointer hover:bg-white/10 transition-colors duration-200"
+                                >
+                                    <option value="" disabled>Selecciona un tipo</option>
+                                    <option value="Tapa" className="bg-gray-800">Tapa</option>
+                                    <option value="Entrante" className="bg-gray-800">Entrante</option>
+                                    <option value="Principal" className="bg-gray-800">Principal</option>
+                                    <option value="Secundario" className="bg-gray-800">Secundario</option>
+                                    <option value="Postre" className="bg-gray-800">Postre</option>
+                                </select>
                             </div>
                             <div>
                                 <label className="block text-sm font-medium mb-1">Rareza</label>
@@ -455,7 +461,7 @@ const AdminFood = () => {
                                             {food.image ? (
                                                 <div className="w-24 h-24 overflow-hidden rounded-lg group-hover:scale-110 transition-transform duration-300">
                                                     <img
-                                                        src={`${import.meta.env.VITE_BASE_URL}/${food.image}`}
+                                                        src={`${import.meta.env.VITE_BASE_URL}/${food.image}`} // Consulta porque la ruta está en la base de datos
                                                         alt={food.name}
                                                         className="w-full h-full object-cover"
                                                     />
@@ -471,9 +477,9 @@ const AdminFood = () => {
                                         <td className="py-3 px-4">{food.type}</td>
                                         <td className="py-3 px-4">
                                             <span className={`px-2 py-1 rounded-full text-xs ${food.rarity.toUpperCase() === 'LEGENDARY' ? 'bg-gradient-to-r from-yellow-500/20 to-amber-500/20 text-yellow-300 border border-yellow-500/30' :
-                                                    food.rarity.toUpperCase() === 'EPIC' ? 'bg-gradient-to-r from-purple-500/20 to-pink-500/20 text-purple-300 border border-purple-500/30' :
-                                                        food.rarity.toUpperCase() === 'RARE' ? 'bg-gradient-to-r from-blue-500/20 to-cyan-500/20 text-blue-300 border border-blue-500/30' :
-                                                            'bg-gradient-to-r from-gray-500/20 to-slate-500/20 text-gray-300 border border-gray-500/30'
+                                                food.rarity.toUpperCase() === 'EPIC' ? 'bg-gradient-to-r from-purple-500/20 to-pink-500/20 text-purple-300 border border-purple-500/30' :
+                                                    food.rarity.toUpperCase() === 'RARE' ? 'bg-gradient-to-r from-blue-500/20 to-cyan-500/20 text-blue-300 border border-blue-500/30' :
+                                                        'bg-gradient-to-r from-gray-500/20 to-slate-500/20 text-gray-300 border border-gray-500/30'
                                                 }`}>
                                                 {food.rarity.toUpperCase()}
                                             </span>

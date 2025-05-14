@@ -238,7 +238,7 @@ const ProfilePage = () => {
             }
             {/* Modal de alimentar al personaje */
                 isModalOpen && (
-                    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50">
+                    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 min-h-screen">
                         <div className="bg-purple-900/90 p-4 sm:p-6 rounded-xl backdrop-blur-sm max-w-sm w-[90%] mx-auto">
                             <div className="text-center space-y-4">
                                 <div className="animate-spin rounded-full h-12 w-12 border-4 border-purple-500 border-t-transparent mx-auto"></div>
@@ -250,7 +250,7 @@ const ProfilePage = () => {
             }
             {/* Modal de subida de nivel */
                 showLevelUpModal && (
-                    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50">
+                    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 min-h-screen">
                         <div className="bg-purple-900/90 p-4 sm:p-6 rounded-xl backdrop-blur-sm max-w-sm w-[90%] mx-auto">
                             <div className="text-center space-y-4">
                                 <div className="text-5xl">🎉</div>
@@ -273,7 +273,13 @@ const ProfilePage = () => {
                 {/* Avatar del personaje */}
                 <div className="relative">
                     <div className="w-32 h-32 sm:w-40 sm:h-40 rounded-full bg-gradient-to-br from-purple-500 to-indigo-600 flex items-center justify-center overflow-hidden">
-                        <span className="text-6xl">👨‍🍳</span>
+                        <div className="relative w-48 h-48">
+                            <img
+                                src="public/images/characters/BoyCharacter.png"
+                                alt="Personaje"
+                                className="w-full h-full object-contain"
+                            />
+                        </div>
                     </div>
                     <div className="absolute -bottom-2 -right-2 bg-yellow-500 text-white rounded-full w-10 h-10 flex items-center justify-center text-lg font-bold border-2 border-purple-900">
                         {character?.level || 1}
