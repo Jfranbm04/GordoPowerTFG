@@ -2,8 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useUser } from '../context/UserContext';
 import { useFood } from '../context/FoodContext';
+import { useSkin } from '../context/SkinContext';
 import { Info, Check, X } from 'lucide-react';
 import { FoodInventoryCard } from '../components/FoodInventoryCard';
+import { SkinInventoryCard } from '../components/SkinInventoryCard';
 
 const ProfilePage = () => {
     const { user, character, loading: userLoading, updateCharacter, updateUser } = useUser();
@@ -18,10 +20,12 @@ const ProfilePage = () => {
     const [showTutorial, setShowTutorial] = useState(false);
     const [isEditingName, setIsEditingName] = useState(false);
     const [newUsername, setNewUsername] = useState('');
+    const { userSkins } = useSkin();
+    const { skins } = useSkin();
 
     useEffect(() => {
-        console.log('Datos del personaje:', character);
-        console.log('Datos del usuario:', user);
+        // console.log('Datos del personaje:', character);
+        // console.log('Datos del usuario:', user);
 
         // Verificar si todos los datos necesarios están cargados
         if (user && character && foods && userFoods) {
@@ -178,7 +182,6 @@ const ProfilePage = () => {
             </div>
         );
     }
-
     return (
         <div className="space-y-8 p-4 sm:p-6 relative">
             {/* Modal Tutorial */}
@@ -275,7 +278,7 @@ const ProfilePage = () => {
                     <div className="w-32 h-32 sm:w-40 sm:h-40 rounded-full bg-gradient-to-br from-purple-500 to-indigo-600 flex items-center justify-center overflow-hidden">
                         <div className="relative w-48 h-48">
                             <img
-                                src="public/images/characters/BoyCharacter.png"
+                                src="public/images/skins/BoyCharacter.png"
                                 alt="Personaje"
                                 className="w-full h-full object-contain"
                             />
@@ -351,11 +354,11 @@ const ProfilePage = () => {
                             <div className="text-xl font-bold">{character?.weight || 0}</div>
                         </div>
                         <div className="bg-white/5 p-3 rounded-lg">
-                            <div className="text-sm text-purple-300">Proteína</div>
+                            <div className="text-sm text-purple-300">Proteína 💪</div>
                             <div className="text-xl font-bold">{character?.protein || 0}g</div>
                         </div>
                         <div className="bg-white/5 p-3 rounded-lg">
-                            <div className="text-sm text-purple-300">Grasa</div>
+                            <div className="text-sm text-purple-300">Grasa 🍖</div>
                             <div className="text-xl font-bold">{character?.fat || 0}g</div>
                         </div>
                     </div>
@@ -396,7 +399,7 @@ const ProfilePage = () => {
                             }`}
                         onClick={() => setActiveTab('clothing')}
                     >
-                        Ropa
+                        Skins
                     </button>
                 </div>
 
@@ -429,15 +432,39 @@ const ProfilePage = () => {
                     </div>
                 )}
 
-                {/* Contenido de la pestaña de ropa */}
+                {/* Contenido de la pestaña de skins */}
                 {activeTab === 'clothing' && (
                     <div className="p-4 sm:p-6">
-                        <h2 className="text-xl font-bold mb-4">Tu inventario de ropa</h2>
-                        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
-                            <div className="col-span-full text-center p-6 bg-white/5 rounded-lg">
-                                <p className="text-gray-400">Próximamente...</p>
-                            </div>
+                        <h2 className="text-xl font-bold mb-4">Tu inventario de skins</h2>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                            {userSkins?.member?.map(userSkin => {
+                                // Encontrar la skin correspondiente en la lista de skins
+                                const skinId = userSkin.skin.split('/').pop();
+                                const skinDetails = skins?.member?.find(s => s.id.toString() === skinId);
+
+                                if (skinDetails) {
+                                    return (
+                                        <SkinInventoryCard
+                                            key={userSkin.id}
+                                            skin={skinDetails}
+                                            userSkin={userSkin}
+                                            equip={(userSkinId, skin) => {
+                                                console.log('Equipando skin:', skinDetails.name);
+                                            }}
+                                        />
+                                    );
+                                }
+                                return null;
+                            })}
+                            {(!userSkins?.member || userSkins.member.length === 0) && (
+                                <div className="col-span-full text-center p-8 bg-white/5 rounded-xl">
+                                    <p className="text-gray-400 text-lg">No tienes skins disponibles</p>
+                                    <p className="text-sm text-gray-500 mt-2">¡Juega minijuegos o compra en la tienda para conseguir nuevas skins!</p>
+                                </div>
+                            )}
                         </div>
+
+
                     </div>
                 )}
             </div>
@@ -446,3 +473,5 @@ const ProfilePage = () => {
 }
 
 export default ProfilePage;
+
+

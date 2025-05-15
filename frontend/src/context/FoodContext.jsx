@@ -119,7 +119,7 @@ export const FoodProvider = ({ children }) => {
     const createFood = async (foodData, hasImage = false) => {
         try {
             let response;
-            
+
             if (hasImage) {
                 // Si hay imagen, enviamos como FormData
                 response = await fetch(`${BASE_URL}/api/food/new`, {
@@ -157,12 +157,11 @@ export const FoodProvider = ({ children }) => {
     const updateFood = async (foodId, foodData, hasImage = false) => {
         try {
             let response;
-            
+
             if (hasImage) {
                 // Si hay imagen, enviamos como FormData
                 response = await fetch(`${BASE_URL}/api/food/${foodId}/edit`, {
                     method: 'POST',
-                    // No establecemos Content-Type aquí, el navegador lo configurará automáticamente con el boundary correcto
                     body: foodData // Ya es un FormData
                 });
             } else {

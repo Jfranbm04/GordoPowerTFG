@@ -70,11 +70,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[Groups(['user:read'])]
     private ?bool $active = null;
 
+    /**
+     * @var Collection<int, UserSkin>
+     */
+    #[ORM\OneToMany(targetEntity: UserSkin::class, mappedBy: 'user')]
+    private Collection $userSkins;
+
     public function __construct()
     {
         $this->userFood = new ArrayCollection();
         $this->userClothing = new ArrayCollection();
         $this->active = true;
+        $this->userSkins = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -266,6 +273,36 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setActive(bool $active): static
     {
         $this->active = $active;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, UserSkin>
+     */
+    public function getUserSkins(): Collection
+    {
+        return $this->userSkins;
+    }
+
+    public function addUserSkin(UserSkin $userSkin): static
+    {
+        if (!$this->userSkins->contains($userSkin)) {
+            $this->userSkins->add($userSkin);
+            $userSkin->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeUserSkin(UserSkin $userSkin): static
+    {
+        if ($this->userSkins->removeElement($userSkin)) {
+            // set the owning side to null (unless already changed)
+            if ($userSkin->getUser() === $this) {
+                $userSkin->setUser(null);
+            }
+        }
 
         return $this;
     }

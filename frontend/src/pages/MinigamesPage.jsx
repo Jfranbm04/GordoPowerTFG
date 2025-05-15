@@ -105,6 +105,12 @@ export default function Minigames() {
                 </div>
             </div>
 
+            {/* Información de coste de partida */}
+            <div className="text-center text-gray-400 mt-8 mb-4">
+                <p className="text-sm">Coste de partida: 20 🍖 / 10 💪</p>
+                <p className="text-xs mt-1">Perder una partida: 10 🍖 / 50 💪 adicionales</p>
+            </div>
+
             {/* Modal de información del juego */}
             {activeModal && (
                 <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50">

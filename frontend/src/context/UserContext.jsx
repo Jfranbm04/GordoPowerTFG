@@ -98,7 +98,7 @@ export const UserProvider = ({ children }) => {
         }
     };
     const fetchCharacter = async () => {
-        if (user && user.id) {  // Check if token exists
+        if (user && user.id) {
             setLoading(true);
             try {
                 const response = await fetch(`${BASE_URL}/api/character/user/${user.id}`, {

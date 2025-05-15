@@ -1,21 +1,24 @@
 import React, { useState, useEffect } from 'react';
-import { useFood } from '../context/FoodContext';
+import { useSkin } from '../context/SkinContext';
 
-const AdminFood = () => {
-
+const AdminSkin = () => {
     const [showForm, setShowForm] = useState(false);
     const [showList, setShowList] = useState(true);
     const [formData, setFormData] = useState({
-        name: '', description: '', origin: '', type: '', rarity: 'COMMON',
-        protein: 0, fat: 0, price: 0, image: null
+        name: '',
+        image: null,
+        levelcondition: 1,
+        proteincondition: 0,
+        fatcondition: 0,
+        rarity: 'COMMON'
     });
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [notification, setNotification] = useState({ show: false, message: '', type: '' });
     const [editMode, setEditMode] = useState(false);
-    const [editingFoodId, setEditingFoodId] = useState(null);
+    const [editingSkinId, setEditingSkinId] = useState(null);
     const [showEditForm, setShowEditForm] = useState(false);
-    const { foods, loading, createFood, updateFood, deleteFood } = useFood();
-    const foodsList = foods?.member || [];
+    const { skins, loading, createSkin, updateSkin, deleteSkin } = useSkin();
+    const skinsList = skins?.member || [];
 
     // Ocultar notificación después de 3 segundos
     useEffect(() => {
@@ -26,8 +29,12 @@ const AdminFood = () => {
     }, [notification.show]);
 
     const resetForm = () => setFormData({
-        name: '', description: '', origin: '', type: '', rarity: 'COMMON',
-        protein: 0, fat: 0, price: 0, image: null
+        name: '',
+        image: null,
+        levelcondition: 1,
+        proteincondition: 0,
+        fatcondition: 0,
+        rarity: 'COMMON'
     });
 
     const handleCreate = async () => {
@@ -39,14 +46,15 @@ const AdminFood = () => {
                     data.append(key, formData[key]);
                 }
             }
-            const success = await createFood(data, true);
+            const success = await createSkin(data, true);
             if (success) {
-                setNotification({ show: true, message: 'Plato creado exitosamente', type: 'success' });
+                setNotification({ show: true, message: 'Skin creada exitosamente', type: 'success' });
                 setShowForm(false);
                 resetForm();
             }
-        } catch {
-            setNotification({ show: true, message: 'Error al crear el plato.', type: 'error' });
+        } catch (error) {
+            console.error('Error:', error);
+            setNotification({ show: true, message: 'Error al crear la skin', type: 'error' });
         } finally {
             setIsSubmitting(false);
         }
@@ -61,29 +69,33 @@ const AdminFood = () => {
                     data.append(key, formData[key]);
                 }
             }
-            const success = await updateFood(editingFoodId, data, true);
+            const success = await updateSkin(editingSkinId, data, true);
             if (success) {
-                setNotification({ show: true, message: 'Plato actualizado', type: 'success' });
+                setNotification({ show: true, message: 'Skin actualizada', type: 'success' });
                 setEditMode(false);
                 setShowEditForm(false);
-                setEditingFoodId(null);
+                setEditingSkinId(null);
                 resetForm();
             }
-        } catch {
-            setNotification({ show: true, message: 'Error al actualizar el plato.', type: 'error' });
+        } catch (error) {
+            console.error('Error:', error);
+            setNotification({ show: true, message: 'Error al actualizar la skin', type: 'error' });
         } finally {
             setIsSubmitting(false);
         }
     };
 
-    const handleEdit = (food) => {
+    const handleEdit = (skin) => {
         setFormData({
-            name: food.name, description: food.description || '', origin: food.origin,
-            type: food.type, rarity: food.rarity, protein: food.protein,
-            fat: food.fat, price: food.price, image: null
+            name: skin.name,
+            levelcondition: skin.levelcondition,
+            proteincondition: skin.proteincondition,
+            fatcondition: skin.fatcondition,
+            rarity: skin.rarity,
+            image: null
         });
         setEditMode(true);
-        setEditingFoodId(food.id);
+        setEditingSkinId(skin.id);
         setShowEditForm(true);
         setShowForm(false);
         setTimeout(() => {
@@ -91,10 +103,10 @@ const AdminFood = () => {
         }, 100);
     };
 
-    const handleDelete = async (foodId) => {
-        if (window.confirm('¿Estás seguro de que deseas eliminar este plato?')) {
-            const success = await deleteFood(foodId);
-            if (success) setNotification({ show: true, message: 'Plato eliminado', type: 'success' });
+    const handleDelete = async (skinId) => {
+        if (window.confirm('¿Estás seguro de que deseas eliminar esta skin?')) {
+            const success = await deleteSkin(skinId);
+            if (success) setNotification({ show: true, message: 'Skin eliminada', type: 'success' });
         }
     };
 
@@ -103,7 +115,7 @@ const AdminFood = () => {
         setFormData(prev => ({
             ...prev,
             [name]: type === 'file' ? files[0] :
-                ['protein', 'fat', 'price'].includes(name) ? parseFloat(value) : value
+                ['levelcondition', 'proteincondition', 'fatcondition'].includes(name) ? parseInt(value) : value
         }));
     };
 
@@ -115,7 +127,7 @@ const AdminFood = () => {
     // Cancelar la edición
     const handleCancelEdit = () => {
         setEditMode(false);
-        setEditingFoodId(null);
+        setEditingSkinId(null);
         setShowEditForm(false);
         resetForm();
     };
@@ -137,7 +149,7 @@ const AdminFood = () => {
             )}
 
             <div className="flex justify-between items-center">
-                <h2 className="text-2xl font-bold">Gestión de Platos</h2>
+                <h2 className="text-2xl font-bold">Gestión de Skins</h2>
                 <div className="space-x-4">
                     <button
                         onClick={() => {
@@ -145,12 +157,12 @@ const AdminFood = () => {
                             if (showEditForm) {
                                 setShowEditForm(false);
                                 setEditMode(false);
-                                setEditingFoodId(null);
+                                setEditingSkinId(null);
                             }
                         }}
                         className="bg-purple-600 hover:bg-purple-700 px-4 py-2 rounded-lg transition duration-200"
                     >
-                        {showForm ? 'Cerrar Formulario' : 'Nuevo Plato'}
+                        {showForm ? 'Cerrar Formulario' : 'Nueva Skin'}
                     </button>
                 </div>
             </div>
@@ -158,7 +170,7 @@ const AdminFood = () => {
             {/* Formulario de creación */}
             {showForm && (
                 <div className="bg-white/10 p-6 rounded-lg animate-fadeIn">
-                    <h3 className="text-xl font-semibold mb-4">Crear Nuevo Plato</h3>
+                    <h3 className="text-xl font-semibold mb-4">Crear Nueva Skin</h3>
                     <form onSubmit={handleSubmit} className="space-y-4">
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
@@ -190,62 +202,41 @@ const AdminFood = () => {
                             </div>
 
                             <div>
-                                <label className="block text-sm font-medium mb-1">Origen</label>
-                                <input
-                                    type="text"
-                                    name="origin"
-                                    value={formData.origin}
-                                    onChange={handleChange}
-                                    className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-2"
-                                />
-                            </div>
-
-                            <div>
-                                <label className="block text-sm font-medium mb-1">Tipo</label>
-                                <input
-                                    type="text"
-                                    name="type"
-                                    value={formData.type}
-                                    onChange={handleChange}
-                                    className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-2"
-                                />
-                            </div>
-
-                            <div>
-                                <label className="block text-sm font-medium mb-1">Proteínas (g)</label>
+                                <label className="block text-sm font-medium mb-1">Condición de Nivel</label>
                                 <input
                                     type="number"
-                                    name="protein"
-                                    value={formData.protein}
+                                    name="levelcondition"
+                                    value={formData.levelcondition}
+                                    onChange={handleChange}
+                                    className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-2"
+                                    min="1"
+                                    required
+                                />
+                            </div>
+
+                            <div>
+                                <label className="block text-sm font-medium mb-1">Condición de Proteína</label>
+                                <input
+                                    type="number"
+                                    name="proteincondition"
+                                    value={formData.proteincondition}
                                     onChange={handleChange}
                                     className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-2"
                                     min="0"
-                                    step="0.1"
+                                    required
                                 />
                             </div>
 
                             <div>
-                                <label className="block text-sm font-medium mb-1">Grasas (g)</label>
+                                <label className="block text-sm font-medium mb-1">Condición de Grasa</label>
                                 <input
                                     type="number"
-                                    name="fat"
-                                    value={formData.fat}
+                                    name="fatcondition"
+                                    value={formData.fatcondition}
                                     onChange={handleChange}
                                     className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-2"
                                     min="0"
-                                    step="0.1"
-                                />
-                            </div>
-
-                            <div>
-                                <label className="block text-sm font-medium mb-1">Precio</label>
-                                <input
-                                    type="number"
-                                    name="price"
-                                    value={formData.price}
-                                    onChange={handleChange}
-                                    className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-2"
-                                    min="0"
+                                    required
                                 />
                             </div>
 
@@ -257,45 +248,25 @@ const AdminFood = () => {
                                     onChange={handleChange}
                                     className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-2"
                                     accept="image/*"
+                                    required
                                 />
                             </div>
                         </div>
 
-                        <div className="col-span-full">
-                            <label className="block text-sm font-medium mb-1">Descripción</label>
-                            <textarea
-                                name="description"
-                                value={formData.description}
-                                onChange={handleChange}
-                                className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-2 h-24"
-                            ></textarea>
-                        </div>
-
-                        <div className="flex justify-end space-x-4">
+                        <div className="flex justify-end space-x-4 mt-6">
                             <button
                                 type="button"
-                                onClick={() => {
-                                    setShowForm(false);
-                                    resetForm();
-                                }}
-                                className="px-4 py-2 border border-white/10 rounded-lg hover:bg-white/5"
+                                onClick={() => setShowForm(false)}
+                                className="px-4 py-2 bg-gray-600 hover:bg-gray-700 rounded-lg transition duration-200"
                             >
                                 Cancelar
                             </button>
                             <button
                                 type="submit"
                                 disabled={isSubmitting}
-                                className="bg-purple-600 hover:bg-purple-700 px-4 py-2 rounded-lg transition duration-200 disabled:opacity-50 flex items-center"
+                                className="px-4 py-2 bg-purple-600 hover:bg-purple-700 rounded-lg transition duration-200 disabled:opacity-50"
                             >
-                                {isSubmitting ? (
-                                    <>
-                                        <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                                            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                                            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                                        </svg>
-                                        Creando...
-                                    </>
-                                ) : 'Crear Plato'}
+                                {isSubmitting ? 'Creando...' : 'Crear Skin'}
                             </button>
                         </div>
                     </form>
@@ -306,7 +277,7 @@ const AdminFood = () => {
             {showEditForm && (
                 <div id="editForm" className="bg-white/10 p-6 rounded-lg animate-fadeIn border-2 border-yellow-500/50">
                     <div className="flex justify-between items-center mb-4">
-                        <h3 className="text-xl font-semibold">Editar Plato</h3>
+                        <h3 className="text-xl font-semibold">Editar Skin</h3>
                         <button
                             onClick={handleCancelEdit}
                             className="text-gray-400 hover:text-white"
@@ -345,62 +316,41 @@ const AdminFood = () => {
                             </div>
 
                             <div>
-                                <label className="block text-sm font-medium mb-1">Origen</label>
-                                <input
-                                    type="text"
-                                    name="origin"
-                                    value={formData.origin}
-                                    onChange={handleChange}
-                                    className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-2"
-                                />
-                            </div>
-
-                            <div>
-                                <label className="block text-sm font-medium mb-1">Tipo</label>
-                                <input
-                                    type="text"
-                                    name="type"
-                                    value={formData.type}
-                                    onChange={handleChange}
-                                    className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-2"
-                                />
-                            </div>
-
-                            <div>
-                                <label className="block text-sm font-medium mb-1">Proteínas (g)</label>
+                                <label className="block text-sm font-medium mb-1">Condición de Nivel</label>
                                 <input
                                     type="number"
-                                    name="protein"
-                                    value={formData.protein}
+                                    name="levelcondition"
+                                    value={formData.levelcondition}
+                                    onChange={handleChange}
+                                    className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-2"
+                                    min="1"
+                                    required
+                                />
+                            </div>
+
+                            <div>
+                                <label className="block text-sm font-medium mb-1">Condición de Proteína</label>
+                                <input
+                                    type="number"
+                                    name="proteincondition"
+                                    value={formData.proteincondition}
                                     onChange={handleChange}
                                     className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-2"
                                     min="0"
-                                    step="0.1"
+                                    required
                                 />
                             </div>
 
                             <div>
-                                <label className="block text-sm font-medium mb-1">Grasas (g)</label>
+                                <label className="block text-sm font-medium mb-1">Condición de Grasa</label>
                                 <input
                                     type="number"
-                                    name="fat"
-                                    value={formData.fat}
+                                    name="fatcondition"
+                                    value={formData.fatcondition}
                                     onChange={handleChange}
                                     className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-2"
                                     min="0"
-                                    step="0.1"
-                                />
-                            </div>
-
-                            <div>
-                                <label className="block text-sm font-medium mb-1">Precio</label>
-                                <input
-                                    type="number"
-                                    name="price"
-                                    value={formData.price}
-                                    onChange={handleChange}
-                                    className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-2"
-                                    min="0"
+                                    required
                                 />
                             </div>
 
@@ -416,102 +366,82 @@ const AdminFood = () => {
                             </div>
                         </div>
 
-                        <div className="col-span-full">
-                            <label className="block text-sm font-medium mb-1">Descripción</label>
-                            <textarea
-                                name="description"
-                                value={formData.description}
-                                onChange={handleChange}
-                                className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-2 h-24"
-                            ></textarea>
-                        </div>
-
-                        <div className="flex justify-end space-x-4">
+                        <div className="flex justify-end space-x-4 mt-6">
                             <button
                                 type="button"
                                 onClick={handleCancelEdit}
-                                className="px-4 py-2 border border-white/10 rounded-lg hover:bg-white/5"
+                                className="px-4 py-2 bg-gray-600 hover:bg-gray-700 rounded-lg transition duration-200"
                             >
                                 Cancelar
                             </button>
                             <button
                                 type="submit"
                                 disabled={isSubmitting}
-                                className="bg-yellow-600 hover:bg-yellow-700 px-4 py-2 rounded-lg transition duration-200 disabled:opacity-50 flex items-center"
+                                className="px-4 py-2 bg-yellow-600 hover:bg-yellow-700 rounded-lg transition duration-200 disabled:opacity-50"
                             >
-                                {isSubmitting ? (
-                                    <>
-                                        <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                                            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                                            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                                        </svg>
-                                        Actualizando...
-                                    </>
-                                ) : 'Actualizar Plato'}
+                                {isSubmitting ? 'Actualizando...' : 'Actualizar Skin'}
                             </button>
                         </div>
                     </form>
                 </div>
             )}
 
-            {/* Lista de platos */}
+            {/* Lista de skins */}
             <div className="bg-white/10 p-6 rounded-lg">
-                <h3 className="text-xl font-semibold mb-4">Lista de Platos</h3>
+                <h3 className="text-xl font-semibold mb-4">Lista de Skins</h3>
                 <div className="overflow-x-auto">
-                    <table className="min-w-full divide-y divide-white/10">
+                    <table className="min-w-full">
                         <thead>
-                            <tr>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Imagen</th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Nombre</th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Origen</th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Tipo</th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Rareza</th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Precio</th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Acciones</th>
+                            <tr className="border-b border-white/10">
+                                <th className="py-3 px-4 text-left">Imagen</th>
+                                <th className="py-3 px-4 text-left">Nombre</th>
+                                <th className="py-3 px-4 text-left">Nivel requerido</th>
+                                <th className="py-3 px-4 text-left">Proteína requerida</th>
+                                <th className="py-3 px-4 text-left">Grasa requerida</th>
+                                <th className="py-3 px-4 text-left">Rareza</th>
+                                <th className="py-3 px-4 text-right">Acciones</th>
                             </tr>
                         </thead>
                         <tbody>
-                            {foodsList.map((food) => (
-                                <tr key={food.id} className="border-b border-white/10 hover:bg-white/5">
+                            {skinsList.map((skin) => (
+                                <tr key={skin.id} className="border-b border-white/10 hover:bg-white/5">
                                     <td className="py-3 px-4">
-                                        {food.image ? (
+                                        {skin.image ? (
                                             <div className="w-24 h-24 overflow-hidden rounded-lg group-hover:scale-110 transition-transform duration-300">
                                                 <img
-                                                    src={`${import.meta.env.VITE_BASE_URL}/${food.image}`} // Consulta porque la ruta está en la base de datos
-                                                    alt={food.name}
+                                                    src={`${import.meta.env.VITE_BASE_URL}/${skin.image}`}
+                                                    alt={skin.name}
                                                     className="w-full h-full object-cover"
                                                 />
                                             </div>
                                         ) : (
                                             <div className="w-24 h-24 bg-white/5 rounded-lg flex items-center justify-center">
-                                                <span className="text-4xl">🍽️</span>
+                                                <span className="text-4xl">👕</span>
                                             </div>
                                         )}
                                     </td>
-                                    <td className="py-3 px-4 font-medium">{food.name}</td>
-                                    <td className="py-3 px-4">{food.origin}</td>
-                                    <td className="py-3 px-4">{food.type}</td>
+                                    <td className="py-3 px-4 font-medium">{skin.name}</td>
+                                    <td className="py-3 px-4">⭐ {skin.levelcondition}</td>
+                                    <td className="py-3 px-4">💪 {skin.proteincondition}g</td>
+                                    <td className="py-3 px-4">🍖 {skin.fatcondition}g</td>
                                     <td className="py-3 px-4">
-                                        <span className={`px-2 py-1 rounded-full text-xs ${food.rarity.toUpperCase() === 'LEGENDARY' ? 'bg-gradient-to-r from-yellow-500/20 to-amber-500/20 text-yellow-300 border border-yellow-500/30' :
-                                            food.rarity.toUpperCase() === 'EPIC' ? 'bg-gradient-to-r from-purple-500/20 to-pink-500/20 text-purple-300 border border-purple-500/30' :
-                                                food.rarity.toUpperCase() === 'RARE' ? 'bg-gradient-to-r from-blue-500/20 to-cyan-500/20 text-blue-300 border border-blue-500/30' :
-                                                    'bg-gradient-to-r from-gray-500/20 to-slate-500/20 text-gray-300 border border-gray-500/30'
+                                        <span className={`px-2 py-1 rounded-full text-xs ${skin.rarity.toUpperCase() === 'LEGENDARY' ? 'bg-gradient-to-r from-yellow-500/20 to-amber-500/20 text-yellow-300 border border-yellow-500/30' :
+                                                skin.rarity.toUpperCase() === 'EPIC' ? 'bg-gradient-to-r from-purple-500/20 to-pink-500/20 text-purple-300 border border-purple-500/30' :
+                                                    skin.rarity.toUpperCase() === 'RARE' ? 'bg-gradient-to-r from-blue-500/20 to-cyan-500/20 text-blue-300 border border-blue-500/30' :
+                                                        'bg-gradient-to-r from-gray-500/20 to-slate-500/20 text-gray-300 border border-gray-500/30'
                                             }`}>
-                                            {food.rarity.toUpperCase()}
+                                            {skin.rarity.toUpperCase()}
                                         </span>
-                                    </td>
-                                    <td className="py-3 px-4">
-                                        <span className="text-yellow-300">💰 {food.price}</span>
                                     </td>
                                     <td className="py-3 px-4 text-right space-x-2">
                                         <button
-                                            onClick={() => handleEdit(food)}
+                                            onClick={() => handleEdit(skin)}
                                             className="bg-yellow-600 hover:bg-yellow-700 px-3 py-1 rounded transition duration-200"
                                         >
                                             Editar
                                         </button>
                                         <button
-                                            onClick={() => handleDelete(food.id)}
+                                            onClick={() => handleDelete(skin.id)}
                                             className="bg-red-600 hover:bg-red-700 px-3 py-1 rounded transition duration-200"
                                         >
                                             Eliminar
@@ -527,4 +457,4 @@ const AdminFood = () => {
     );
 }
 
-export default AdminFood;
+export default AdminSkin;

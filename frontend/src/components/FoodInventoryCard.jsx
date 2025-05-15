@@ -1,6 +1,6 @@
 import React from 'react';
 
-export const FoodInventoryCard = ({ food, userFood, feed }) => {
+export const FoodInventoryCard = ({ food, userFood, feed }) => { // Le paso la funcion completa por parámetro ya que desde la vista se llama también a la notificación
     const quantity = userFood ? userFood.quantity : 0;
 
     // Función para mostrar el XP basado en la rareza

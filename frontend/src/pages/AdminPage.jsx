@@ -1,7 +1,7 @@
 import React from 'react';
 import { useAuth } from '../context/AuthContext';
 import { Navigate, Link, Outlet, useLocation } from 'react-router-dom';
-import { UtensilsCrossed, Users } from 'lucide-react';
+import { UtensilsCrossed, Users, Shirt } from 'lucide-react';
 
 const AdminPage = () => {
     const { getCurrentUser } = useAuth();
@@ -16,6 +16,7 @@ const AdminPage = () => {
     // Determinar qué ruta está activa
     const isPlatesActive = location.pathname.includes('/admin/platos');
     const isUsersActive = location.pathname.includes('/admin/users');
+    const isSkinsActive = location.pathname.includes('/admin/skins');
 
     return (
         <div className="container mx-auto px-4">
@@ -38,6 +39,22 @@ const AdminPage = () => {
                         Gestión de Platos
                     </span>
                     <div className={`absolute inset-0 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300 ${isPlatesActive ? 'bg-purple-100/20' : 'bg-white/20'
+                        }`}></div>
+                </Link>
+
+                <Link
+                    to="/admin/skins"
+                    className={`relative group px-8 py-3 rounded-lg shadow-lg transition-all duration-300 transform hover:-translate-y-1 ${isSkinsActive
+                        ? 'bg-white text-purple-600 hover:shadow-white/30'
+                        : 'bg-gradient-to-r from-purple-500 to-indigo-600 text-white hover:shadow-purple-500/30'
+                        }`}
+                >
+                    <span className={`relative z-10 font-semibold flex items-center ${isSkinsActive ? 'text-purple-600' : 'text-white'
+                        }`}>
+                        <Shirt className="h-5 w-5 mr-2" />
+                        Gestión de Skins
+                    </span>
+                    <div className={`absolute inset-0 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300 ${isSkinsActive ? 'bg-purple-100/20' : 'bg-white/20'
                         }`}></div>
                 </Link>
 

@@ -16,6 +16,7 @@ import ShopPage from "../pages/ShopPage";
 import AdminUserPage from "../components/AdminUser";
 import AdminFood from "../components/AdminFood";
 import AdminUser from "../components/AdminUser";
+import AdminSkin from "../components/AdminSkin";
 import FoodOrNotPage from "../pages/FoodOrNotPage";
 
 export const router = createBrowserRouter([
@@ -108,7 +109,10 @@ export const router = createBrowserRouter([
                         path: "users",
                         element: <AdminUser />
                     },
-
+                    {
+                        path: "skins",
+                        element: <AdminSkin />
+                    },
                 ]
             },
             // {
