@@ -39,7 +39,7 @@ const ProfilePage = () => {
     useEffect(() => {
         if (userSkins?.member) {
             const activeSkin = userSkins.member.find(skin => skin.active);
-            console.log("userSkins", userSkins)
+            // console.log("userSkins", userSkins)
             if (activeSkin) {
                 const skinId = activeSkin.skin.split('/').pop();
 
@@ -483,7 +483,18 @@ const ProfilePage = () => {
                     <div className="p-4 sm:p-6">
                         <h2 className="text-xl font-bold mb-4">Tu inventario de skins</h2>
                         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-                            {skins?.member?.map(skin => {
+                            {userSkins.map(skin => {
+                                console.log("skin", skin)
+                                // return (
+                                //     <SkinInventoryCard
+                                //         key={skin.id}
+                                //         skin={skin}
+                                //         userSkin={userSkin}
+                                //         equip={handleEquipSkin}
+                                //     />
+                                // );
+                            })}
+                            {/* {skins?.member?.map(skin => {
                                 console.log("userSkins", userSkins)
                                 const userSkin = userSkins?.member?.find(
                                     us => us.skin === `/api/skins/${skin.id}`
@@ -496,7 +507,7 @@ const ProfilePage = () => {
                                         equip={handleEquipSkin}
                                     />
                                 );
-                            })}
+                            })} */}
                         </div>
 
 
