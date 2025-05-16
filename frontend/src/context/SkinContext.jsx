@@ -34,17 +34,32 @@ export const SkinProvider = ({ children }) => {
         }
     };
 
+    // Obtener una skin por ID
+    const fetchSkinById = async (id) => {
+        try {
+            const response = await fetch(`${BASE_URL}/api/skins/${id}`);
+            if (!response.ok) {
+                throw new Error('Error fetching skin by ID');
+            }
+            const data = await response.json();
+            return data;
+        } catch (error) {
+            console.error('Error:', error);
+            return null;
+        }
+    };
     // Obtener las skins del usuario
     const fetchUserSkins = async () => {
         const user = getCurrentUser();
         if (!user) return;
 
         try {
-            const response = await fetch(`${BASE_URL}/api/user_skins?user=${user.id}`);
+            const response = await fetch(`${BASE_URL}/api/user/${user.id}/unlocked_skins`);
             if (!response.ok) {
                 throw new Error('Error al obtener las skins del usuario');
             }
             const data = await response.json();
+            console.log("fetchUserSkins: ", data);
             setUserSkins(data);
         } catch (error) {
             console.error('Error:', error);
@@ -61,7 +76,7 @@ export const SkinProvider = ({ children }) => {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/ld+json',
-                    'Accept': 'application/ld+json'
+                    // 'Accept': 'application/ld+json'
                 },
                 body: JSON.stringify({
                     "user": `/api/users/${user.id}`,
@@ -214,58 +229,36 @@ export const SkinProvider = ({ children }) => {
         }
     };
 
-    // Función para refrescar las skins del usuario
-    const refreshUserSkins = async () => {
-        await fetchUserSkins();
-    };
-
-    // Equipar una skin (activar una y desactivar las demás)
-    const equipSkin = async (userSkinId, skinId) => {
-        const user = getCurrentUser();
-        if (!user) return false;
-    
+    const equipSkin = async (userSkinId) => {
         try {
-            // 1. Primero desactivamos todas las skins del usuario
-            const allUserSkinsResponse = await fetch(`${BASE_URL}/api/user_skins?user=${user.id}`);
-            if (!allUserSkinsResponse.ok) {
-                throw new Error('Error al obtener las skins del usuario');
+            // Buscar la skin actualmente activa y desactivarla
+            const activeSkin = userSkins?.member?.find(userSkin => userSkin.active === true);
+            console.log("userSkins", userSkins)
+            console.log("activeSkin", activeSkin)
+            if (activeSkin && activeSkin.id !== userSkinId) {
+                await fetch(`${BASE_URL}/api/user_skins/${activeSkin.id}`, {
+                    method: 'PATCH',
+                    headers: {
+                        'Content-Type': 'application/merge-patch+json',
+                    },
+                    body: JSON.stringify({ active: false })
+                });
+                console.log("Paso1")
             }
-            
-            const allUserSkinsData = await allUserSkinsResponse.json();
-            const userSkinsList = allUserSkinsData['hydra:member'] || [];
-            
-            // Desactivar todas las skins
-            for (const skin of userSkinsList) {
-                if (skin.active) {
-                    await fetch(`${BASE_URL}/api/user_skins/${skin.id}`, {
-                        method: 'PATCH',
-                        headers: {
-                            'Content-Type': 'application/merge-patch+json',
-                        },
-                        body: JSON.stringify({
-                            active: 0
-                        })
-                    });
-                }
-            }
-            
-            // 2. Activar la skin seleccionada
-            const response = await fetch(`${BASE_URL}/api/user_skins/${userSkinId}`, {
+
+            // Activar la nueva skin
+            await fetch(`${BASE_URL}/api/user_skins/${userSkinId}`, {
                 method: 'PATCH',
                 headers: {
                     'Content-Type': 'application/merge-patch+json',
                 },
-                body: JSON.stringify({
-                    active: 1
-                })
+                body: JSON.stringify({ active: true })
             });
-    
-            if (!response.ok) {
-                throw new Error('Error al equipar la skin');
-            }
-    
-            // Actualizar la lista de skins del usuario
+            console.log("Paso2")
+
             await fetchUserSkins();
+            console.log("Paso3")
+
             return true;
         } catch (error) {
             console.error('Error al equipar la skin:', error);
@@ -278,14 +271,14 @@ export const SkinProvider = ({ children }) => {
             skins,
             userSkins,
             loading,
-            fetchSkins,
-            fetchUserSkins,
-            unlockSkin,
-            updateSkinQuantity,
             createSkin,
             updateSkin,
             deleteSkin,
-            equipSkin
+            unlockSkin,
+            updateSkinQuantity,
+            fetchUserSkins,
+            equipSkin,
+            fetchSkinById,
         }}>
             {children}
         </SkinContext.Provider>

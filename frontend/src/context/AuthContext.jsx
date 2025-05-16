@@ -94,6 +94,25 @@ export const AuthProvider = ({ children }) => {
                 throw new Error("Error al crear el personaje");
             }
 
+            // Asignar skin por defecto al usuario
+            const skinResponse = await fetch(`${BASE_URL}/api/user_skins`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/ld+json",
+                },
+                body: JSON.stringify({
+                    user: `/api/users/${data.id}`,
+                    skin: "/api/skins/1",
+                    unlocked: true,
+                    active: true,
+                    quantity: 1
+                })
+            });
+
+            if (!skinResponse.ok) {
+                throw new Error("Error al asignar skin por defecto");
+            }
+
             return data;
         } catch (error) {
             console.log("Error al registrar usuario", error);

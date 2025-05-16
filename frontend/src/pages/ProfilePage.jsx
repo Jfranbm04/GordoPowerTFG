@@ -20,13 +20,11 @@ const ProfilePage = () => {
     const [showTutorial, setShowTutorial] = useState(false);
     const [isEditingName, setIsEditingName] = useState(false);
     const [newUsername, setNewUsername] = useState('');
-    const { userSkins } = useSkin();
-    const { skins } = useSkin();
+    const { skins, userSkins, fetchUserSkins, equipSkin, fetchSkinById } = useSkin();
+    const [actualSkin, setActualSkin] = useState("public/images/skins/defaultCharacter.png")
+
 
     useEffect(() => {
-        // console.log('Datos del personaje:', character);
-        // console.log('Datos del usuario:', user);
-
         // Verificar si todos los datos necesarios están cargados
         if (user && character && foods && userFoods) {
             const timer = setTimeout(() => {
@@ -36,6 +34,27 @@ const ProfilePage = () => {
             return () => clearTimeout(timer);
         }
     }, [character, user, foods, userFoods]);
+
+    // Effect para actualizar la imagen del personaje
+    useEffect(() => {
+        if (userSkins?.member) {
+            const activeSkin = userSkins.member.find(skin => skin.active);
+            console.log("userSkins", userSkins)
+            if (activeSkin) {
+                const skinId = activeSkin.skin.split('/').pop();
+
+                const fetchSkin = async () => {
+                    const skinData = await fetchSkinById(skinId);
+                    if (skinData) {
+                        setActualSkin(`${import.meta.env.VITE_BASE_URL}/${skinData.image}`);
+                    }
+                };
+
+                fetchSkin();
+            }
+        }
+    }, [userSkins]);
+
 
     // Función para alimentar al personaje
     const handleFeed = async (userFoodId, food) => {
@@ -118,7 +137,6 @@ const ProfilePage = () => {
         }
     };
 
-
     // Función para iniciar la edición del nombre
     const handleStartEditing = () => {
         setNewUsername(user?.username || '');
@@ -165,6 +183,34 @@ const ProfilePage = () => {
             });
 
             // Ocultar la notificación después de 3 segundos
+            setTimeout(() => {
+                setFeedingStatus({ show: false, message: '', success: false });
+            }, 3000);
+        }
+    };
+
+    // Función para equipar una skin
+    const handleEquipSkin = async (userSkinId) => {
+        try {
+            const success = await equipSkin(userSkinId);
+            if (success) {
+                await fetchUserSkins();
+                setFeedingStatus({
+                    show: true,
+                    message: '¡Skin equipada correctamente!',
+                    success: true
+                });
+                setTimeout(() => {
+                    setFeedingStatus({ show: false, message: '', success: true });
+                }, 3000);
+            }
+        } catch (error) {
+            console.error('Error al equipar la skin:', error);
+            setFeedingStatus({
+                show: true,
+                message: 'Error al equipar la skin',
+                success: false
+            });
             setTimeout(() => {
                 setFeedingStatus({ show: false, message: '', success: false });
             }, 3000);
@@ -278,7 +324,7 @@ const ProfilePage = () => {
                     <div className="w-32 h-32 sm:w-40 sm:h-40 rounded-full bg-gradient-to-br from-purple-500 to-indigo-600 flex items-center justify-center overflow-hidden">
                         <div className="relative w-48 h-48">
                             <img
-                                src="public/images/skins/BoyCharacter.png"
+                                src={actualSkin}
                                 alt="Personaje"
                                 className="w-full h-full object-contain"
                             />
@@ -326,7 +372,7 @@ const ProfilePage = () => {
                                         aria-label="Editar nombre"
                                     >
                                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                                            <path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"></path>
+                                            <path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2/22l1.5-5.5Z"></path>
                                         </svg>
                                     </button>
                                 </>
@@ -395,9 +441,9 @@ const ProfilePage = () => {
                         Comida
                     </button>
                     <button
-                        className={`flex-1 py-3 text-center transition-colors ${activeTab === 'clothing' ? 'bg-white/10 text-white' : 'text-gray-400 hover:text-white'
+                        className={`flex-1 py-3 text-center transition-colors ${activeTab === 'skins' ? 'bg-white/10 text-white' : 'text-gray-400 hover:text-white'
                             }`}
-                        onClick={() => setActiveTab('clothing')}
+                        onClick={() => setActiveTab('skins')}
                     >
                         Skins
                     </button>
@@ -433,35 +479,24 @@ const ProfilePage = () => {
                 )}
 
                 {/* Contenido de la pestaña de skins */}
-                {activeTab === 'clothing' && (
+                {activeTab === 'skins' && (
                     <div className="p-4 sm:p-6">
                         <h2 className="text-xl font-bold mb-4">Tu inventario de skins</h2>
                         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-                            {userSkins?.member?.map(userSkin => {
-                                // Encontrar la skin correspondiente en la lista de skins
-                                const skinId = userSkin.skin.split('/').pop();
-                                const skinDetails = skins?.member?.find(s => s.id.toString() === skinId);
-
-                                if (skinDetails) {
-                                    return (
-                                        <SkinInventoryCard
-                                            key={userSkin.id}
-                                            skin={skinDetails}
-                                            userSkin={userSkin}
-                                            equip={(userSkinId, skin) => {
-                                                console.log('Equipando skin:', skinDetails.name);
-                                            }}
-                                        />
-                                    );
-                                }
-                                return null;
+                            {skins?.member?.map(skin => {
+                                console.log("userSkins", userSkins)
+                                const userSkin = userSkins?.member?.find(
+                                    us => us.skin === `/api/skins/${skin.id}`
+                                );
+                                return (
+                                    <SkinInventoryCard
+                                        key={skin.id}
+                                        skin={skin}
+                                        userSkin={userSkin}
+                                        equip={handleEquipSkin}
+                                    />
+                                );
                             })}
-                            {(!userSkins?.member || userSkins.member.length === 0) && (
-                                <div className="col-span-full text-center p-8 bg-white/5 rounded-xl">
-                                    <p className="text-gray-400 text-lg">No tienes skins disponibles</p>
-                                    <p className="text-sm text-gray-500 mt-2">¡Juega minijuegos o compra en la tienda para conseguir nuevas skins!</p>
-                                </div>
-                            )}
                         </div>
 
 

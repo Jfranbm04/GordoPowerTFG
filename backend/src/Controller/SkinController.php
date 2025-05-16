@@ -175,4 +175,19 @@ class SkinController extends AbstractController
             return new JsonResponse(['error' => $e->getMessage()], 500);
         }
     }
+
+    #[Route('/api/user/{userId}/unlocked_skins', name: 'api_get_unlocked_skins', methods: ['GET'])]
+    public function getUnlockedUserSkins(int $userId, UserRepository $userRepository, UserSkinRepository $userSkinRepository): JsonResponse
+    {
+        $user = $userRepository->find($userId);
+
+        if (!$user) {
+            return new JsonResponse(['message' => 'Usuario no encontrado'], 404);
+        }
+
+        // Usar el método personalizado del repositorio
+        $unlockedSkins = $userSkinRepository->findUnlockedByUser($userId);
+
+        return $this->json($unlockedSkins, 200, [], ['groups' => ['user_skin:read']]);
+    }
 }

@@ -15,7 +15,17 @@ class UserSkinRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, UserSkin::class);
     }
-
+    public function findUnlockedByUser($userId): array
+    {
+        return $this->createQueryBuilder('us')
+            ->andWhere('us.user = :userId')
+            ->andWhere('us.unlocked = :unlocked')
+            ->setParameter('userId', $userId)
+            ->setParameter('unlocked', true)
+            ->getQuery()
+            ->getResult()
+        ;
+    }
     //    /**
     //     * @return UserSkin[] Returns an array of UserSkin objects
     //     */
