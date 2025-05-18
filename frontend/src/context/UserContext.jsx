@@ -163,7 +163,7 @@ export const UserProvider = ({ children }) => {
             }
 
             const data = await response.json();
-            console.log("Datos fetchUsers:", data)
+            // console.log("Datos fetchUsers:", data)
             setUsers(data);
             return data;
         } catch (error) {

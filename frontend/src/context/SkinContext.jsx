@@ -8,7 +8,7 @@ export const SkinProvider = ({ children }) => {
     const [skins, setSkins] = useState([]);
     const [userSkins, setUserSkins] = useState([]);
     const [loading, setLoading] = useState(true);
-    const BASE_URL = import.meta.env.VITE_BASE_URL;
+    const urlApi = import.meta.env.VITE_BASE_URL;
 
     useEffect(() => {
         const loadData = async () => {
@@ -23,7 +23,7 @@ export const SkinProvider = ({ children }) => {
     // Obtener todas las skins
     const fetchSkins = async () => {
         try {
-            const response = await fetch(`${BASE_URL}/api/skins`);
+            const response = await fetch(`${urlApi}/api/skins`);
             if (!response.ok) {
                 throw new Error('Error al obtener las skins');
             }
@@ -37,7 +37,7 @@ export const SkinProvider = ({ children }) => {
     // Obtener una skin por ID
     const fetchSkinById = async (id) => {
         try {
-            const response = await fetch(`${BASE_URL}/api/skins/${id}`);
+            const response = await fetch(`${urlApi}/api/skins/${id}`);
             if (!response.ok) {
                 throw new Error('Error fetching skin by ID');
             }
@@ -54,7 +54,7 @@ export const SkinProvider = ({ children }) => {
         if (!user) return;
 
         try {
-            const response = await fetch(`${BASE_URL}/api/user/${user.id}/unlocked_skins`);
+            const response = await fetch(`${urlApi}/api/user/${user.id}/unlocked_skins`);
             if (!response.ok) {
                 throw new Error('Error al obtener las skins del usuario');
             }
@@ -72,7 +72,7 @@ export const SkinProvider = ({ children }) => {
         if (!user) return;
 
         try {
-            const response = await fetch(`${BASE_URL}/api/user_skins`, {
+            const response = await fetch(`${urlApi}/api/user_skins`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/ld+json',
@@ -104,7 +104,7 @@ export const SkinProvider = ({ children }) => {
     // Actualizar la cantidad de una skin del usuario
     const updateSkinQuantity = async (userSkinId, newQuantity) => {
         try {
-            const response = await fetch(`${BASE_URL}/api/user_skins/${userSkinId}`, {
+            const response = await fetch(`${urlApi}/api/user_skins/${userSkinId}`, {
                 method: 'PATCH',
                 headers: {
                     'Content-Type': 'application/merge-patch+json',
@@ -134,13 +134,13 @@ export const SkinProvider = ({ children }) => {
 
             if (hasImage) {
                 // Si hay imagen, enviamos como FormData
-                response = await fetch(`${BASE_URL}/api/skin/new`, {
+                response = await fetch(`${urlApi}/api/skin/new`, {
                     method: 'POST',
                     body: skinData // Ya es un FormData
                 });
             } else {
                 // Si no hay imagen, enviamos como JSON
-                response = await fetch(`${BASE_URL}/api/skin`, {
+                response = await fetch(`${urlApi}/api/skin`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/ld+json',
@@ -172,13 +172,13 @@ export const SkinProvider = ({ children }) => {
 
             if (hasImage) {
                 // Si hay imagen, enviamos como FormData
-                response = await fetch(`${BASE_URL}/api/skin/${skinId}/edit`, {
+                response = await fetch(`${urlApi}/api/skin/${skinId}/edit`, {
                     method: 'POST',
                     body: skinData // Ya es un FormData
                 });
             } else {
                 // Si no hay imagen, enviamos como JSON
-                response = await fetch(`${BASE_URL}/api/skin/${skinId}`, {
+                response = await fetch(`${urlApi}/api/skin/${skinId}`, {
                     method: 'PATCH',
                     headers: {
                         'Content-Type': 'application/merge-patch+json',
@@ -212,7 +212,7 @@ export const SkinProvider = ({ children }) => {
     // Eliminar una skin
     const deleteSkin = async (skinId) => {
         try {
-            const response = await fetch(`${BASE_URL}/api/skin/${skinId}`, {
+            const response = await fetch(`${urlApi}/api/skin/${skinId}`, {
                 method: 'DELETE'
             });
 
@@ -232,11 +232,11 @@ export const SkinProvider = ({ children }) => {
     const equipSkin = async (userSkinId) => {
         try {
             // Buscar la skin actualmente activa y desactivarla
-            const activeSkin = userSkins?.member?.find(userSkin => userSkin.active === true);
+            const activeSkin = userSkins?.find(userSkin => userSkin.active === true);
             console.log("userSkins", userSkins)
             console.log("activeSkin", activeSkin)
             if (activeSkin && activeSkin.id !== userSkinId) {
-                await fetch(`${BASE_URL}/api/user_skins/${activeSkin.id}`, {
+                await fetch(`${urlApi}/api/user_skins/${activeSkin.id}`, {
                     method: 'PATCH',
                     headers: {
                         'Content-Type': 'application/merge-patch+json',
@@ -247,7 +247,7 @@ export const SkinProvider = ({ children }) => {
             }
 
             // Activar la nueva skin
-            await fetch(`${BASE_URL}/api/user_skins/${userSkinId}`, {
+            await fetch(`${urlApi}/api/user_skins/${userSkinId}`, {
                 method: 'PATCH',
                 headers: {
                     'Content-Type': 'application/merge-patch+json',

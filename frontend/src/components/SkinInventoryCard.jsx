@@ -1,6 +1,6 @@
 import React from 'react';
 
-export const SkinInventoryCard = ({ skin, userSkin, equip }) => {
+export const SkinInventoryCard = ({ skin, userSkin, equipSkin }) => {
     const unlocked = userSkin ? userSkin.unlocked : false;
 
     // Función para obtener clases de color según rareza
@@ -67,7 +67,7 @@ export const SkinInventoryCard = ({ skin, userSkin, equip }) => {
                     </div>
                 </div>
                 <button
-                    onClick={() => equip(userSkin?.id)}
+                    onClick={() => equipSkin(userSkin?.id)}
                     disabled={!unlocked}
                     className={`w-full mt-3 px-4 py-2.5 rounded-lg text-sm font-medium transition-all duration-300 ${unlocked
                         ? 'bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white shadow-md hover:shadow-indigo-600/30'

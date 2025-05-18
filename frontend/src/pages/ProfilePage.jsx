@@ -12,7 +12,7 @@ const ProfilePage = () => {
     const { foods, userFoods, updateFoodQuantity, refreshUserFoods } = useFood();
     const [isPageLoading, setIsPageLoading] = useState(true);
     const [activeTab, setActiveTab] = useState('foods');
-    const [feedingStatus, setFeedingStatus] = useState({ show: false, message: '', success: true });
+    const [status, setStatus] = useState({ show: false, message: '', success: true });
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [feedingItemId, setFeedingItemId] = useState(null);
     const [showLevelUpModal, setShowLevelUpModal] = useState(false);
@@ -21,7 +21,8 @@ const ProfilePage = () => {
     const [isEditingName, setIsEditingName] = useState(false);
     const [newUsername, setNewUsername] = useState('');
     const { skins, userSkins, fetchUserSkins, equipSkin, fetchSkinById } = useSkin();
-    const [actualSkin, setActualSkin] = useState("public/images/skins/defaultCharacter.png")
+    const urlApi = import.meta.env.VITE_BASE_URL;
+    const [actualSkin, setActualSkin] = useState(`${urlApi}/uploads/skin/defaultCharacter.png`)
 
 
     useEffect(() => {
@@ -35,25 +36,27 @@ const ProfilePage = () => {
         }
     }, [character, user, foods, userFoods]);
 
-    // Effect para actualizar la imagen del personaje
+    // Efecto para actualizar la skin actual cuando cambian las skins del usuario
     useEffect(() => {
         if (userSkins?.member) {
-            const activeSkin = userSkins.member.find(skin => skin.active);
-            // console.log("userSkins", userSkins)
-            if (activeSkin) {
-                const skinId = activeSkin.skin.split('/').pop();
-
-                const fetchSkin = async () => {
-                    const skinData = await fetchSkinById(skinId);
-                    if (skinData) {
-                        setActualSkin(`${import.meta.env.VITE_BASE_URL}/${skinData.image}`);
-                    }
-                };
-
-                fetchSkin();
+            // Buscar la skin equipada
+            const equippedSkin = userSkins.member.find(skin => skin.active);
+            if (equippedSkin) {
+                // Extraer el ID de la skin desde la URL
+                const skinId = equippedSkin.skin.split('/').pop();
+                // Buscar la información completa de la skin
+                const skinInfo = skins?.member?.find(s => s.id.toString() === skinId);
+                if (skinInfo && skinInfo.imageUrl) {
+                    setActualSkin(`${urlApi}${skinInfo.imageUrl}`);
+                }
             }
         }
-    }, [userSkins]);
+    }, [userSkins, skins, urlApi]);
+
+
+
+
+
 
 
     // Función para alimentar al personaje
@@ -66,7 +69,7 @@ const ProfilePage = () => {
         try {
             const userFood = userFoods?.member?.find(uf => uf.id === userFoodId);
             if (!userFood || userFood.quantity < 1) {
-                setFeedingStatus({
+                setStatus({
                     show: true,
                     message: 'No tienes suficiente cantidad de este alimento',
                     success: false
@@ -103,7 +106,7 @@ const ProfilePage = () => {
             } else {
                 setTimeout(() => {
                     setIsModalOpen(false);
-                    setFeedingStatus({
+                    setStatus({
                         show: true,
                         message: `¡Has alimentado a tu personaje con ${food.name}! (+${expGain} XP)`,
                         success: true
@@ -122,11 +125,11 @@ const ProfilePage = () => {
 
             await updateFoodQuantity(userFoodId, userFood.quantity - 1);
 
-            setTimeout(() => setFeedingStatus({ show: false, message: '', success: true }), 4000);
+            setTimeout(() => setStatus({ show: false, message: '', success: true }), 4000);
 
         } catch (error) {
             console.error('Error al alimentar:', error);
-            setFeedingStatus({
+            setStatus({
                 show: true,
                 message: 'Error al alimentar al personaje',
                 success: false
@@ -159,7 +162,7 @@ const ProfilePage = () => {
             await updateUser(user.id, { username: newUsername });
 
             // Mostrar notificación de éxito
-            setFeedingStatus({
+            setStatus({
                 show: true,
                 message: '¡Nombre actualizado correctamente!',
                 success: true
@@ -167,7 +170,7 @@ const ProfilePage = () => {
 
             // Ocultar la notificación después de 3 segundos
             setTimeout(() => {
-                setFeedingStatus({ show: false, message: '', success: true });
+                setStatus({ show: false, message: '', success: true });
             }, 3000);
 
             // Desactivar modo edición
@@ -176,7 +179,7 @@ const ProfilePage = () => {
             console.error('Error al actualizar el nombre:', error);
 
             // Mostrar notificación de error
-            setFeedingStatus({
+            setStatus({
                 show: true,
                 message: 'Error al actualizar el nombre. Inténtalo de nuevo.',
                 success: false
@@ -184,7 +187,7 @@ const ProfilePage = () => {
 
             // Ocultar la notificación después de 3 segundos
             setTimeout(() => {
-                setFeedingStatus({ show: false, message: '', success: false });
+                setStatus({ show: false, message: '', success: false });
             }, 3000);
         }
     };
@@ -195,24 +198,24 @@ const ProfilePage = () => {
             const success = await equipSkin(userSkinId);
             if (success) {
                 await fetchUserSkins();
-                setFeedingStatus({
+                setStatus({
                     show: true,
                     message: '¡Skin equipada correctamente!',
                     success: true
                 });
                 setTimeout(() => {
-                    setFeedingStatus({ show: false, message: '', success: true });
+                    setStatus({ show: false, message: '', success: true });
                 }, 3000);
             }
         } catch (error) {
             console.error('Error al equipar la skin:', error);
-            setFeedingStatus({
+            setStatus({
                 show: true,
                 message: 'Error al equipar la skin',
                 success: false
             });
             setTimeout(() => {
-                setFeedingStatus({ show: false, message: '', success: false });
+                setStatus({ show: false, message: '', success: false });
             }, 3000);
         }
     };
@@ -311,9 +314,9 @@ const ProfilePage = () => {
                 )
             }
             { /* Notificación de alimentación */
-                feedingStatus.show && (
-                    <div className={`fixed top-4 right-4 p-4 rounded-lg shadow-lg z-40 ${feedingStatus.success ? 'bg-green-500/80' : 'bg-red-500/80'} text-white max-w-[90%] sm:max-w-md`}>
-                        {feedingStatus.message}
+                status.show && (
+                    <div className={`fixed top-4 right-4 p-4 rounded-lg shadow-lg z-40 ${status.success ? 'bg-green-500/80' : 'bg-red-500/80'} text-white max-w-[90%] sm:max-w-md`}>
+                        {status.message}
                     </div>
                 )
             }
@@ -371,9 +374,9 @@ const ProfilePage = () => {
                                         className="bg-yellow-600 hover:bg-yellow-700 text-white p-1.5 rounded-full transition duration-200"
                                         aria-label="Editar nombre"
                                     >
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                        {/* <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                                             <path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2/22l1.5-5.5Z"></path>
-                                        </svg>
+                                        </svg> */}
                                     </button>
                                 </>
                             )}
@@ -482,35 +485,22 @@ const ProfilePage = () => {
                 {activeTab === 'skins' && (
                     <div className="p-4 sm:p-6">
                         <h2 className="text-xl font-bold mb-4">Tu inventario de skins</h2>
-                        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-                            {userSkins.map(skin => {
-                                console.log("skin", skin)
-                                // return (
-                                //     <SkinInventoryCard
-                                //         key={skin.id}
-                                //         skin={skin}
-                                //         userSkin={userSkin}
-                                //         equip={handleEquipSkin}
-                                //     />
-                                // );
-                            })}
-                            {/* {skins?.member?.map(skin => {
-                                console.log("userSkins", userSkins)
-                                const userSkin = userSkins?.member?.find(
-                                    us => us.skin === `/api/skins/${skin.id}`
-                                );
+                        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                            {userSkins?.map(userSkin => {
+                                const skinId = userSkin.skin.split('/').pop();
+                                const skin = skins?.member?.find(s => s.id.toString() === skinId);
+                                if (!skin) return null;
+
                                 return (
                                     <SkinInventoryCard
-                                        key={skin.id}
+                                        key={userSkin.id}
                                         skin={skin}
                                         userSkin={userSkin}
-                                        equip={handleEquipSkin}
+                                        equipSkin={handleEquipSkin}
                                     />
                                 );
-                            })} */}
+                            })}
                         </div>
-
-
                     </div>
                 )}
             </div>

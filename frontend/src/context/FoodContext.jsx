@@ -46,7 +46,6 @@ export const FoodProvider = ({ children }) => {
                 throw new Error('Error al obtener las comidas del usuario');
             }
             const data = await response.json();
-            console.log("Data: ", data)
             setUserFoods(data);
         } catch (error) {
             console.error('Error:', error);
