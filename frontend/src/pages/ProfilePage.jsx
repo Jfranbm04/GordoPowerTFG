@@ -439,9 +439,7 @@ const ProfilePage = () => {
                                         className="bg-yellow-600 hover:bg-yellow-700 text-white p-1.5 rounded-full transition duration-200"
                                         aria-label="Editar nombre"
                                     >
-                                        {/* <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                                            <path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2/22l1.5-5.5Z"></path>
-                                        </svg> */}
+                                        <img src="/images/lapiz.png" alt="Edit" width="16" height="16" />
                                     </button>
                                 </>
                             )}

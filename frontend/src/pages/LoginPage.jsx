@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate, Link } from 'react-router-dom';
+import Loading from '../components/loading';
 
 const LoginPage = () => {
     const [formData, setFormData] = useState({
@@ -45,7 +46,7 @@ const LoginPage = () => {
             <div className="bg-white/10 backdrop-blur-md p-8 rounded-lg shadow-xl w-full max-w-md relative">
                 {isLoading && (
                     <div className="absolute inset-0 bg-black/20 backdrop-blur-sm flex items-center justify-center rounded-lg">
-                        <div className="animate-spin rounded-full h-12 w-12 border-4 border-purple-500 border-t-transparent"></div>
+                        <Loading />
                     </div>
                 )}
                 <h2 className="text-3xl font-bold text-white mb-6 text-center">¡Bienvenido!</h2>

@@ -14,7 +14,7 @@ const HomePage = () => {
     return (
         <div className="min-h-screen">
             {isLoading && <Loading />}
-            
+
             {/* Modal Tutorial */}
             {showTutorial && (
                 <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 overflow-y-auto py-[5vh] md:py-[10vh]">
@@ -56,12 +56,12 @@ const HomePage = () => {
                             </div>
 
                             <div className="bg-purple-800/30 p-4 rounded-lg">
-                                <h3 className="text-xl font-semibold mb-2 text-purple-300">🎯 Consejos Rápidos</h3>
+                                <h3 className="text-xl font-semibold mb-2 text-purple-300">👕 Consigue skins</h3>
                                 <ul className="list-disc list-inside space-y-1 text-gray-300">
-                                    <li>Prioriza alimentos legendarios y épicos para mayores ganancias de XP.</li>
-                                    <li>Equilibra proteínas y grasas según la evolución que quieras para tu personaje.</li>
-                                    <li>Juega minijuegos a diario para acumular monedas.</li>
-                                    <li>Visita la tienda y el Gacha regularmente.</li>
+                                    <li>Desbloquea skins únicas.</li>
+                                    <li>Cada skin requiere un nivel mínimo, proteína y grasa específicos para poder desbloquearla.</li>
+                                    <li>Solo podrás obtener determinadas skins cuando cumplas los requisitos.</li>
+                                    <li>Las skins más raras tienen requisitos más altos, ¡mejora tu personaje para conseguirlas!</li>
                                 </ul>
                             </div>
                         </div>

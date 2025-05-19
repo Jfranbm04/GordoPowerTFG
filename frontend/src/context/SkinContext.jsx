@@ -96,9 +96,9 @@ export const SkinProvider = ({ children }) => {
                 },
                 body: JSON.stringify({
                     "user": `/api/users/${user.id}`,
-                    "skin": `/api/skin/${skinId}`,
+                    "skin": `/api/skins/${skinId}`,
                     "unlocked": true,
-                    "quantity": 1
+                    "active": false
                 })
             });
 

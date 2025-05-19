@@ -1,8 +1,20 @@
 import React from 'react';
+import { useUser } from '../context/UserContext';
 
 export const SkinCollectionCard = ({ skin, userSkin }) => {
-    const quantity = userSkin ? userSkin.quantity : 0;
     const unlocked = userSkin ? userSkin.unlocked : false;
+    const { character } = useUser();
+
+    // Función para verificar si el personaje cumple con las condiciones para desbloquear la skin
+    const isUnlockable = () => {
+        if (!character || unlocked) return false;
+
+        const levelOk = character.level >= skin.levelcondition;
+        const proteinOk = character.protein >= skin.proteincondition;
+        const fatOk = character.fat >= skin.fatcondition;
+
+        return levelOk && proteinOk && fatOk;
+    };
 
     return (
         <div
@@ -19,7 +31,7 @@ export const SkinCollectionCard = ({ skin, userSkin }) => {
                         <img
                             src={`${import.meta.env.VITE_BASE_URL}/${skin.image}`}
                             alt={skin.name}
-                            className="w-full h-full object-cover"
+                            className="w-full h-full object-contain"
                         />
                     </div>
                 ) : (
@@ -73,6 +85,20 @@ export const SkinCollectionCard = ({ skin, userSkin }) => {
                         <span className="text-purple-300">{skin.fatcondition}g</span>
                     </div>
 
+                </div>
+
+                {/* Indicador de desbloqueo/bloqueo/desbloqueable */}
+                <div className={`w-full text-center py-2 rounded-lg font-medium text-sm mt-2 ${unlocked
+                        ? 'bg-green-600/30 text-green-300 border border-green-500/30'
+                        : isUnlockable()
+                            ? 'bg-yellow-600/30 text-yellow-300 border border-yellow-500/30'
+                            : 'bg-red-600/30 text-red-300 border border-red-500/30'
+                    }`}>
+                    {unlocked
+                        ? 'DESBLOQUEADO'
+                        : isUnlockable()
+                            ? 'DESBLOQUEABLE'
+                            : 'BLOQUEADO'}
                 </div>
             </div>
         </div>

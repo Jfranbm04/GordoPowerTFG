@@ -3,10 +3,11 @@ import { Gift } from 'lucide-react';
 import { useUser } from '../context/UserContext';
 import { useAuth } from '../context/AuthContext';
 import { FoodRoulette } from '../components/FoodRoulette';
+import { SkinRoulette } from '../components/SkinRoulette';
 
 export const GachaPage = () => {
   const [activeRoulette, setActiveRoulette] = useState(null);
-  const { user } = useUser();
+  const { user, character } = useUser();
   const { getCurrentUser } = useAuth();
 
   const handleRoulette = async (type, cost) => {
@@ -29,24 +30,25 @@ export const GachaPage = () => {
           </div>
           <p className="text-purple-200 mb-4">¡Prueba tu suerte para obtener comidas raras!</p>
           <button
-            onClick={() => handleRoulette('food', 100)}
+            onClick={() => handleRoulette('food', 300)}
             className="bg-purple-600 hover:bg-purple-700 px-8 py-3 rounded-lg transition duration-200"
           >
-            Tirar (100 monedas)
+            Tirar (300 monedas)
           </button>
         </div>
 
         <div className="bg-white/10 backdrop-blur-sm p-6 rounded-lg text-center">
-          <h3 className="text-xl font-bold mb-4">Gacha de Ropa</h3>
+          <h3 className="text-xl font-bold mb-4">Gacha de Skins</h3>
           <div className="aspect-square max-w-sm mx-auto bg-white/5 rounded-lg flex items-center justify-center mb-4">
             <Gift className="w-24 h-24 text-indigo-400" />
           </div>
-          <p className="text-purple-200 mb-4">¡Consigue ropa exclusiva y monedas!</p>
+          <p className="text-purple-200 mb-4">¡Consigue skins exclusivas!</p>
+          <p className="text-purple-200 mb-4 text-sm">Solo aparecerán skins que puedas desbloquear según tus estadísticas actuales.</p>
           <button
-            onClick={() => handleRoulette('clothing', 200)}
+            onClick={() => handleRoulette('skins', 1000)}
             className="bg-indigo-600 hover:bg-indigo-700 px-8 py-3 rounded-lg transition duration-200"
           >
-            Tirar (200 monedas)
+            Tirar (1000 monedas)
           </button>
         </div>
       </div>
@@ -54,24 +56,17 @@ export const GachaPage = () => {
 
       {activeRoulette === 'food' && (
         <FoodRoulette
-          cost={100}
+          cost={300}
           onClose={() => setActiveRoulette(null)}
         />
       )}
 
-      {activeRoulette === 'clothing' && (
-        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center">
-          <div className="bg-white/10 p-8 rounded-lg max-w-md w-full">
-            <h3 className="text-xl font-bold mb-4">¡Tirando Gacha de Ropa!</h3>
-            {/* Aquí irá la animación y lógica de la ruleta */}
-            <button
-              onClick={() => setActiveRoulette(null)}
-              className="w-full bg-indigo-600 hover:bg-indigo-700 px-4 py-2 rounded-lg mt-4"
-            >
-              Cerrar
-            </button>
-          </div>
-        </div>
+      {activeRoulette === 'skins' && (
+        <SkinRoulette
+          cost={1000}
+          onClose={() => setActiveRoulette(null)}
+          character={character}
+        />
       )}
     </div>
   );
