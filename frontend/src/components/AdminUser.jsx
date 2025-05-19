@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useUser } from '../context/UserContext';
+import Loading from './loading';
 
 const AdminUser = () => {
     const [showList, setShowList] = useState(true);
@@ -162,7 +163,7 @@ const AdminUser = () => {
 
     if (loading) {
         return <div className="flex justify-center items-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-purple-500"></div>
+            <Loading />
         </div>;
     }
 
@@ -262,9 +263,8 @@ const AdminUser = () => {
                         {usersList.length > 0 ? (
                             usersList.map((user) => (
                                 <div key={user.id}
-                                    className={`flex flex-col sm:flex-row items-start sm:items-center justify-between p-4 rounded-lg transition-all duration-300 ${
-                                        user.active ? 'bg-white/5 hover:bg-white/10' : 'bg-red-900/20 hover:bg-red-900/30'
-                                    }`}
+                                    className={`flex flex-col sm:flex-row items-start sm:items-center justify-between p-4 rounded-lg transition-all duration-300 ${user.active ? 'bg-white/5 hover:bg-white/10' : 'bg-red-900/20 hover:bg-red-900/30'
+                                        }`}
                                 >
                                     <div className="flex items-start sm:items-center gap-4 flex-1 w-full sm:w-auto">
                                         <div className="w-12 h-12 bg-purple-500/20 rounded-full flex items-center justify-center shrink-0">
@@ -273,18 +273,16 @@ const AdminUser = () => {
                                         <div className="flex-1 min-w-0">
                                             <div className="flex flex-wrap items-center gap-2">
                                                 <h3 className="font-bold truncate">{user.username}</h3>
-                                                <span className={`text-xs px-2 py-0.5 rounded-full ${
-                                                    user.roles.includes('ROLE_ADMIN')
-                                                        ? 'bg-red-500/20 text-red-300'
-                                                        : 'bg-blue-500/20 text-blue-300'
-                                                }`}>
+                                                <span className={`text-xs px-2 py-0.5 rounded-full ${user.roles.includes('ROLE_ADMIN')
+                                                    ? 'bg-red-500/20 text-red-300'
+                                                    : 'bg-blue-500/20 text-blue-300'
+                                                    }`}>
                                                     {user.roles.includes('ROLE_ADMIN') ? 'Admin' : 'Usuario'}
                                                 </span>
-                                                <span className={`text-xs px-2 py-0.5 rounded-full ${
-                                                    user.active
-                                                        ? 'bg-green-500/20 text-green-300'
-                                                        : 'bg-red-500/20 text-red-300'
-                                                }`}>
+                                                <span className={`text-xs px-2 py-0.5 rounded-full ${user.active
+                                                    ? 'bg-green-500/20 text-green-300'
+                                                    : 'bg-red-500/20 text-red-300'
+                                                    }`}>
                                                     {user.active ? 'Activo' : 'Baneado'}
                                                 </span>
                                             </div>
@@ -306,11 +304,10 @@ const AdminUser = () => {
                                         </button>
                                         <button
                                             onClick={() => handleBanToggle(user.id, user.active)}
-                                            className={`flex-1 sm:flex-none px-3 py-1 rounded text-sm transition-colors ${
-                                                user.active
-                                                    ? 'bg-red-600 hover:bg-red-700'
-                                                    : 'bg-green-600 hover:bg-green-700'
-                                            }`}
+                                            className={`flex-1 sm:flex-none px-3 py-1 rounded text-sm transition-colors ${user.active
+                                                ? 'bg-red-600 hover:bg-red-700'
+                                                : 'bg-green-600 hover:bg-green-700'
+                                                }`}
                                         >
                                             {user.active ? 'Banear' : 'Desbanear'}
                                         </button>

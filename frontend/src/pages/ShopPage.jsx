@@ -2,14 +2,16 @@ import React, { useState } from 'react';
 import { useUser } from '../context/UserContext';
 import { useFood } from '../context/FoodContext';
 import { FoodShopCard } from '../components/FoodShopCard';
+import Loading from '../components/loading';
 
 const ShopPage = () => {
     const { user, updateUserCoins } = useUser();
-    const { foods, userFoods, loading, updateFoodQuantity } = useFood();
+    const { foods, userFoods, loading: foodLoading, updateFoodQuantity } = useFood();
     const [showModal, setShowModal] = useState(false);
     const [purchaseStatus, setPurchaseStatus] = useState('loading');
     const [currentFood, setCurrentFood] = useState(null);
     const [totalQuantity, setTotalQuantity] = useState(1);
+    const [isLoading, setIsLoading] = useState(false);
 
     const isUnlocked = (foodId) => {
         if (!userFoods?.member) return false;
@@ -60,19 +62,14 @@ const ShopPage = () => {
         }
     };
 
-    if (loading) {
-        return (
-            <div className="flex items-center justify-center min-h-[50vh]">
-                <div className="text-center space-y-4">
-                    <div className="animate-spin rounded-full h-12 w-12 border-4 border-purple-500 border-t-transparent mx-auto"></div>
-                    <p className="text-purple-300">Cargando tienda...</p>
-                </div>
-            </div>
-        );
+    if (foodLoading) {
+        return <Loading />;
     }
 
     return (
         <div className="space-y-6 relative">
+            {isLoading && <Loading />}
+
             {/* Modal de compra */}
             {showModal && (
                 <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 min-h-screen">
@@ -80,7 +77,7 @@ const ShopPage = () => {
                         <div className="text-center space-y-4">
                             {purchaseStatus === 'loading' ? (
                                 <>
-                                    <div className="animate-spin rounded-full h-12 w-12 border-4 border-purple-500 border-t-transparent mx-auto"></div>
+                                    <Loading />
                                     <p className="text-purple-300">
                                         Comprando {totalQuantity} {totalQuantity === 1 ? 'plato' : 'platos'} de {currentFood}...
                                     </p>

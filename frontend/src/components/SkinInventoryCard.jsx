@@ -67,20 +67,14 @@ export const SkinInventoryCard = ({ skin, userSkin, equipSkin }) => {
                     </div>
                 </div>
                 <button
-                    onClick={() => equipSkin(userSkin?.id)}
-                    disabled={!unlocked}
-                    className={`w-full mt-3 px-4 py-2.5 rounded-lg text-sm font-medium transition-all duration-300 ${unlocked
-                        ? 'bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white shadow-md hover:shadow-indigo-600/30'
-                        : 'bg-gray-700/50 text-gray-400 cursor-not-allowed'
+                    onClick={() => equipSkin(userSkin.id)}
+                    className={`w-full py-2 px-4 rounded-lg font-semibold transition duration-200 ${userSkin.active
+                        ? 'bg-green-600 hover:bg-green-700'
+                        : 'bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white shadow-md hover:shadow-indigo-600/30'
                         }`}
+                    disabled={userSkin.active}
                 >
-                    {unlocked ? (
-                        <span className="flex items-center justify-center">
-                            <span className="mr-2">🎽</span> Equipar
-                        </span>
-                    ) : (
-                        'No disponible'
-                    )}
+                    {userSkin.active ? 'Equipado' : 'Equipar'}
                 </button>
             </div>
         </div>

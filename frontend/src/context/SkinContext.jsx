@@ -48,6 +48,22 @@ export const SkinProvider = ({ children }) => {
             return null;
         }
     };
+
+    // Obtener un userSkin por ID
+    const fetchUserSkinById = async (id) => {
+        try {
+            const response = await fetch(`${urlApi}/api/user_skins/${id}`);
+            if (!response.ok) {
+                throw new Error('Error fetching user skin by ID');
+            }
+            const data = await response.json();
+            return data;
+        } catch (error) {
+            console.error('Error:', error);
+            return null;
+        }
+    };
+
     // Obtener las skins del usuario
     const fetchUserSkins = async () => {
         const user = getCurrentUser();
@@ -59,7 +75,7 @@ export const SkinProvider = ({ children }) => {
                 throw new Error('Error al obtener las skins del usuario');
             }
             const data = await response.json();
-            console.log("fetchUserSkins: ", data);
+            // console.log("fetchUserSkins: ", data);
             setUserSkins(data);
         } catch (error) {
             console.error('Error:', error);
@@ -277,6 +293,7 @@ export const SkinProvider = ({ children }) => {
             unlockSkin,
             updateSkinQuantity,
             fetchUserSkins,
+            fetchUserSkinById,
             equipSkin,
             fetchSkinById,
         }}>

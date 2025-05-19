@@ -1,16 +1,20 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { PanelTop, FileSpreadsheet, ClipboardList, Settings, Info, Zap, Utensils, Gamepad } from 'lucide-react'; // Añadidos Zap, Utensils, Gamepad
+import { PanelTop, FileSpreadsheet, ClipboardList, Settings, Info, Zap, Utensils, Gamepad } from 'lucide-react';
+import Loading from '../components/loading';
 
 const HomePage = () => {
     const { getCurrentUser, logOut } = useAuth();
     const navigate = useNavigate();
     const user = getCurrentUser();
     const [showTutorial, setShowTutorial] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
 
     return (
         <div className="min-h-screen">
+            {isLoading && <Loading />}
+            
             {/* Modal Tutorial */}
             {showTutorial && (
                 <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 overflow-y-auto py-[5vh] md:py-[10vh]">

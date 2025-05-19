@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useSkin } from '../context/SkinContext';
+import Loading from './loading';
 
 const AdminSkin = () => {
     const [showForm, setShowForm] = useState(false);
@@ -134,7 +135,7 @@ const AdminSkin = () => {
 
     if (loading) {
         return <div className="flex justify-center items-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-purple-500"></div>
+            <Loading />
         </div>;
     }
 
@@ -426,9 +427,9 @@ const AdminSkin = () => {
                                     <td className="py-3 px-4">🍖 {skin.fatcondition}g</td>
                                     <td className="py-3 px-4">
                                         <span className={`px-2 py-1 rounded-full text-xs ${skin.rarity.toUpperCase() === 'LEGENDARY' ? 'bg-gradient-to-r from-yellow-500/20 to-amber-500/20 text-yellow-300 border border-yellow-500/30' :
-                                                skin.rarity.toUpperCase() === 'EPIC' ? 'bg-gradient-to-r from-purple-500/20 to-pink-500/20 text-purple-300 border border-purple-500/30' :
-                                                    skin.rarity.toUpperCase() === 'RARE' ? 'bg-gradient-to-r from-blue-500/20 to-cyan-500/20 text-blue-300 border border-blue-500/30' :
-                                                        'bg-gradient-to-r from-gray-500/20 to-slate-500/20 text-gray-300 border border-gray-500/30'
+                                            skin.rarity.toUpperCase() === 'EPIC' ? 'bg-gradient-to-r from-purple-500/20 to-pink-500/20 text-purple-300 border border-purple-500/30' :
+                                                skin.rarity.toUpperCase() === 'RARE' ? 'bg-gradient-to-r from-blue-500/20 to-cyan-500/20 text-blue-300 border border-blue-500/30' :
+                                                    'bg-gradient-to-r from-gray-500/20 to-slate-500/20 text-gray-300 border border-gray-500/30'
                                             }`}>
                                             {skin.rarity.toUpperCase()}
                                         </span>

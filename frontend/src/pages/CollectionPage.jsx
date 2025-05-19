@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useUser } from '../context/UserContext';
 import { useFood } from '../context/FoodContext';
 import { FoodCollectionCard } from '../components/FoodCollectionCard';
+import Loading from '../components/loading';
 
 
 
@@ -9,13 +10,14 @@ export const CollectionPage = () => {
     const [activeTab, setActiveTab] = useState('foods');
     const { user } = useUser();
     const { foods = [], userFoods = [], loading } = useFood();
+    const [isLoading, setIsLoading] = useState(false);
 
     useEffect(() => {
         console.log('Comidas en el array member:', foods.member);
     }, [foods]);
 
     if (loading) {
-        return <div className="text-center">Cargando...</div>;
+        return <Loading />;
     }
 
     const foodsList = foods?.member || [];
@@ -23,6 +25,7 @@ export const CollectionPage = () => {
 
     return (
         <div className="container mx-auto px-4 py-8">
+            {isLoading && <Loading />}
             <h1 className="text-3xl font-bold mb-6 text-center bg-gradient-to-r from-purple-500 to-pink-500 text-transparent bg-clip-text">
                 Conoce nuestra colección
             </h1>
@@ -54,12 +57,12 @@ export const CollectionPage = () => {
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
                     {Array.isArray(foodsList) && foodsList.map(food => {
                         const userFood = userFoodsList.find(uf => uf.food === `/api/food/${food.id}`);
-                        
+
                         return (
-                            <FoodCollectionCard 
-                                key={food.id} 
-                                food={food} 
-                                userFood={userFood} 
+                            <FoodCollectionCard
+                                key={food.id}
+                                food={food}
+                                userFood={userFood}
                             />
                         );
                     })}

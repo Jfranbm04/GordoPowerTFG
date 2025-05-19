@@ -6,6 +6,8 @@ import { useSkin } from '../context/SkinContext';
 import { Info, Check, X } from 'lucide-react';
 import { FoodInventoryCard } from '../components/FoodInventoryCard';
 import { SkinInventoryCard } from '../components/SkinInventoryCard';
+import Loading from '../components/loading';
+// import Loading from '../components/Loading';
 
 const ProfilePage = () => {
     const { user, character, loading: userLoading, updateCharacter, updateUser } = useUser();
@@ -20,10 +22,18 @@ const ProfilePage = () => {
     const [showTutorial, setShowTutorial] = useState(false);
     const [isEditingName, setIsEditingName] = useState(false);
     const [newUsername, setNewUsername] = useState('');
-    const { skins, userSkins, fetchUserSkins, equipSkin, fetchSkinById } = useSkin();
+    const { skins, userSkins, fetchUserSkins, equipSkin, fetchSkinById, fetchUserSkinById } = useSkin();
     const urlApi = import.meta.env.VITE_BASE_URL;
-    const [actualSkin, setActualSkin] = useState(`${urlApi}/uploads/skin/defaultCharacter.png`)
-
+    const [actualSkin, setActualSkin] = useState(`${urlApi}/uploads/loading.gif`)
+    const [isAvatarLoading, setIsAvatarLoading] = useState(true);
+    // const hola = () => {
+    //     const equippedSkin = userSkins.find(skin => skin.active);
+    //     console.log("equippedSkin", equippedSkin)
+    //     if (equippedSkin) {
+    //         const userSkinId = equippedSkin.id;
+    //         updateAvatar(userSkinId);
+    //     }
+    // }
 
     useEffect(() => {
         // Verificar si todos los datos necesarios están cargados
@@ -31,33 +41,43 @@ const ProfilePage = () => {
             const timer = setTimeout(() => {
                 setIsPageLoading(false);
             }, 1000);
+            // console.log("userSkins?.member", userSkins)
+
+            // Buscar la skin activa y actualizar el avatar
+            if (userSkins) {
+                setIsAvatarLoading(true);
+                const equippedSkin = userSkins.find(skin => skin.active);
+                // console.log("equippedSkin", equippedSkin)
+                if (equippedSkin) {
+                    const userSkinId = equippedSkin.id;
+                    updateAvatar(userSkinId);
+                }
+            }
 
             return () => clearTimeout(timer);
         }
-    }, [character, user, foods, userFoods]);
+        // Cargo fetchUserSkins
+        fetchUserSkins();
+
+    }, [character, user, foods, userFoods, userSkins]);
 
     // Efecto para actualizar la skin actual cuando cambian las skins del usuario
-    useEffect(() => {
-        if (userSkins?.member) {
-            // Buscar la skin equipada
-            const equippedSkin = userSkins.member.find(skin => skin.active);
-            if (equippedSkin) {
-                // Extraer el ID de la skin desde la URL
-                const skinId = equippedSkin.skin.split('/').pop();
-                // Buscar la información completa de la skin
-                const skinInfo = skins?.member?.find(s => s.id.toString() === skinId);
-                if (skinInfo && skinInfo.imageUrl) {
-                    setActualSkin(`${urlApi}${skinInfo.imageUrl}`);
-                }
-            }
-        }
-    }, [userSkins, skins, urlApi]);
-
-
-
-
-
-
+    // useEffect(() => {
+    //     if (userSkins?.member) {
+    //         // Buscar la skin equipada
+    //         const equippedSkin = userSkins.member.find(skin => skin.active);
+    //         console.log("equippedSkin encontrado:", equippedSkin); // Añadir este log para debug
+    //         if (equippedSkin) {
+    //             // Extraer el ID de la skin desde la URL
+    //             const skinId = equippedSkin.skin.split('/').pop();
+    //             // Buscar la información completa de la skin
+    //             const skinInfo = skins?.member?.find(s => s.id.toString() === skinId);
+    //             if (skinInfo && skinInfo.imageUrl) {
+    //                 setActualSkin(`${urlApi}${skinInfo.imageUrl}`);
+    //             }
+    //         }
+    //     }
+    // }, [userSkins, skins, urlApi]);
 
     // Función para alimentar al personaje
     const handleFeed = async (userFoodId, food) => {
@@ -195,37 +215,76 @@ const ProfilePage = () => {
     // Función para equipar una skin
     const handleEquipSkin = async (userSkinId) => {
         try {
+            setIsModalOpen(true); // Mostrar modal de cargando
             const success = await equipSkin(userSkinId);
             if (success) {
+                // Esperar a que se complete fetchUserSkins antes de continuar
                 await fetchUserSkins();
-                setStatus({
-                    show: true,
-                    message: '¡Skin equipada correctamente!',
-                    success: true
-                });
+
+                // Actualizar el avatar
+                await updateAvatar(userSkinId);
+                // Esperar un momento antes de cerrar el modal para que se vea la animación
                 setTimeout(() => {
-                    setStatus({ show: false, message: '', success: true });
-                }, 3000);
+                    setIsModalOpen(false);
+                    setStatus({
+                        show: true,
+                        message: '¡Skin equipada correctamente!',
+                        success: true
+                    });
+
+                    // Ocultar la notificación después de 3 segundos
+                    setTimeout(() => {
+                        setStatus({ show: false, message: '', success: true });
+                    }, 3000);
+                }, 1000);
             }
         } catch (error) {
             console.error('Error al equipar la skin:', error);
+            setIsModalOpen(false);
             setStatus({
                 show: true,
                 message: 'Error al equipar la skin',
                 success: false
             });
+
+            // Ocultar la notificación después de 3 segundos
             setTimeout(() => {
                 setStatus({ show: false, message: '', success: false });
             }, 3000);
         }
     };
 
+    // Funcion para actualizar el avatar
+    const updateAvatar = async (userSkinId) => {
+        // console.log("userSkinId", userSkinId)
+        setIsAvatarLoading(true);
+        const equippedSkin = await fetchUserSkinById(userSkinId);
+        // console.log("actualSkin", actualSkin)
+        // console.log("equippedSkin", `${urlApi}${equippedSkin.skin}`)
+        try {
+            const response = await fetch(`${urlApi}${equippedSkin.skin}`);
+            if (!response.ok) {
+                throw new Error('Error al obtener las skins');
+            }
+            const data = await response.json();
+            setActualSkin(`${urlApi}/${data.image}`);
+        } catch (error) {
+            console.error('Error:', error);
+        } finally {
+            setTimeout(() => {
+                setIsAvatarLoading(false);
+            }, 500); // Pequeño retraso para asegurar que la imagen se cargue
+        }
+    }
+
+
+
     // Si está cargando, mostrar pantalla de carga
     if (userLoading || isPageLoading) {
         return (
             <div className="flex items-center justify-center min-h-[50vh]">
                 <div className="text-center space-y-4">
-                    <div className="animate-spin rounded-full h-12 w-12 border-4 border-purple-500 border-t-transparent mx-auto"></div>
+                    <Loading size="lg" />
                     <p className="text-purple-300">Cargando perfil...</p>
                 </div>
             </div>
@@ -288,13 +347,13 @@ const ProfilePage = () => {
                 </div>
             )
             }
-            {/* Modal de alimentar al personaje */
+            {/* Modal de alimentar al personaje / equipar skin */
                 isModalOpen && (
                     <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 min-h-screen">
                         <div className="bg-purple-900/90 p-4 sm:p-6 rounded-xl backdrop-blur-sm max-w-sm w-[90%] mx-auto">
                             <div className="text-center space-y-4">
-                                <div className="animate-spin rounded-full h-12 w-12 border-4 border-purple-500 border-t-transparent mx-auto"></div>
-                                <p className="text-purple-300">Alimentando a tu personaje...</p>
+                                <Loading size="md" />
+                                <p className="text-purple-300">Realizando operación...</p>
                             </div>
                         </div>
                     </div>
@@ -326,11 +385,17 @@ const ProfilePage = () => {
                 <div className="relative">
                     <div className="w-32 h-32 sm:w-40 sm:h-40 rounded-full bg-gradient-to-br from-purple-500 to-indigo-600 flex items-center justify-center overflow-hidden">
                         <div className="relative w-48 h-48">
-                            <img
-                                src={actualSkin}
-                                alt="Personaje"
-                                className="w-full h-full object-contain"
-                            />
+                            {isAvatarLoading ? (
+                                <div className="absolute inset-0 flex items-center justify-center">
+                                    <Loading size="sm" />
+                                </div>
+                            ) : (
+                                <img
+                                    src={actualSkin}
+                                    alt="Personaje"
+                                    className="w-full h-full object-contain"
+                                />
+                            )}
                         </div>
                     </div>
                     <div className="absolute -bottom-2 -right-2 bg-yellow-500 text-white rounded-full w-10 h-10 flex items-center justify-center text-lg font-bold border-2 border-purple-900">
