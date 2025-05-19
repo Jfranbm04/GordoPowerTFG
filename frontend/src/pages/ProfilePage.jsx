@@ -520,24 +520,33 @@ const ProfilePage = () => {
                     <div className="p-4 sm:p-6">
                         <h2 className="text-xl font-bold mb-4">Tu inventario de comida</h2>
                         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
-                            {userFoods?.member?.filter(uf => uf.quantity > 0).map(userFood => {
+                            {userFoods?.member?.filter(userFood => {
+                                // Extraer el ID del usuario desde la URL
+                                const userId = userFood.user.split('/').pop();
+                                // Comparar con el ID del usuario actual
+                                return userId === user.id.toString();
+                            }).map(userFood => {
+                                // Extraer el ID de la comida desde la URL
                                 const foodId = userFood.food.split('/').pop();
-                                const food = foods?.member?.find(f => f.id.toString() === foodId);
-                                if (!food) return null;
+                                // Buscar la información completa de la comida
+                                const foodInfo = foods?.member?.find(f => f.id.toString() === foodId);
 
-                                return (
-                                    <FoodInventoryCard
-                                        key={userFood.id}
-                                        food={food}
-                                        userFood={userFood}
-                                        feed={handleFeed}
-                                    />
-                                );
+                                if (foodInfo) {
+                                    return (
+                                        <FoodInventoryCard
+                                            key={userFood.id}
+                                            food={foodInfo}
+                                            userFood={userFood}
+                                            feed={handleFeed}
+                                        />
+                                    );
+                                }
+                                return null;
                             })}
-                            {(!userFoods?.member || userFoods.member.filter(uf => uf.quantity > 0).length === 0) && (
-                                <div className="col-span-full text-center p-6 bg-white/5 rounded-lg">
-                                    <p className="text-gray-400">No tienes comida en tu inventario</p>
-                                    <p className="text-sm text-gray-500 mt-2">Visita la tienda para comprar comida</p>
+                            {(!userFoods?.member || userFoods.member.length === 0) && (
+                                <div className="col-span-full text-center p-8 bg-white/5 rounded-xl">
+                                    <p className="text-gray-400 text-lg">No tienes comida en tu inventario</p>
+                                    <p className="text-sm text-gray-500 mt-2">¡Compra comida en la tienda o gana en el Gacha!</p>
                                 </div>
                             )}
                         </div>
