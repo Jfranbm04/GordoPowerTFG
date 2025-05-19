@@ -180,13 +180,13 @@ const AdminFood = () => {
                                     name="rarity"
                                     value={formData.rarity}
                                     onChange={handleChange}
-                                    className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-2"
+                                    className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-2 appearance-none cursor-pointer hover:bg-white/10 transition-colors"
                                     required
                                 >
-                                    <option value="COMMON">Común</option>
-                                    <option value="RARE">Rara</option>
-                                    <option value="EPIC">Épica</option>
-                                    <option value="LEGENDARY">Legendaria</option>
+                                    <option value="COMMON" className="bg-gray-800 text-gray-300">Común</option>
+                                    <option value="RARE" className="bg-blue-800 text-blue-300">Rara</option>
+                                    <option value="EPIC" className="bg-purple-800 text-purple-300">Épica</option>
+                                    <option value="LEGENDARY" className="bg-yellow-800 text-yellow-300">Legendaria</option>
                                 </select>
                             </div>
 
@@ -203,13 +203,21 @@ const AdminFood = () => {
 
                             <div>
                                 <label className="block text-sm font-medium mb-1">Tipo</label>
-                                <input
-                                    type="text"
+                                <select
                                     name="type"
                                     value={formData.type}
                                     onChange={handleChange}
-                                    className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-2"
-                                />
+                                    className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-2 appearance-none cursor-pointer hover:bg-white/10 transition-colors"
+                                    required
+                                >
+                                    <option value="">Selecciona un tipo</option>
+                                    <option value="bebida" className="bg-gray-800">Bebida</option>
+                                    <option value="tapa" className="bg-gray-800">Tapa</option>
+                                    <option value="entrante" className="bg-gray-800">Entrante</option>
+                                    <option value="principal" className="bg-gray-800">Principal</option>
+                                    <option value="secundario" className="bg-gray-800">Secundario</option>
+                                    <option value="postre" className="bg-gray-800">Postre</option>
+                                </select>
                             </div>
 
                             <div>
@@ -335,13 +343,13 @@ const AdminFood = () => {
                                     name="rarity"
                                     value={formData.rarity}
                                     onChange={handleChange}
-                                    className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-2"
+                                    className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-2 appearance-none cursor-pointer hover:bg-white/10 transition-colors"
                                     required
                                 >
-                                    <option value="COMMON">Común</option>
-                                    <option value="RARE">Rara</option>
-                                    <option value="EPIC">Épica</option>
-                                    <option value="LEGENDARY">Legendaria</option>
+                                    <option value="COMMON" className="bg-gray-800 text-gray-300">Común</option>
+                                    <option value="RARE" className="bg-blue-800 text-blue-300">Rara</option>
+                                    <option value="EPIC" className="bg-purple-800 text-purple-300">Épica</option>
+                                    <option value="LEGENDARY" className="bg-yellow-800 text-yellow-300">Legendaria</option>
                                 </select>
                             </div>
 
@@ -358,13 +366,21 @@ const AdminFood = () => {
 
                             <div>
                                 <label className="block text-sm font-medium mb-1">Tipo</label>
-                                <input
-                                    type="text"
+                                <select
                                     name="type"
                                     value={formData.type}
                                     onChange={handleChange}
-                                    className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-2"
-                                />
+                                    className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-2 appearance-none cursor-pointer hover:bg-white/10 transition-colors"
+                                    required
+                                >
+                                    <option value="">Selecciona un tipo</option>
+                                    <option value="bebida" className="bg-gray-800">Bebida</option>
+                                    <option value="tapa" className="bg-gray-800">Tapa</option>
+                                    <option value="entrante" className="bg-gray-800">Entrante</option>
+                                    <option value="principal" className="bg-gray-800">Principal</option>
+                                    <option value="secundario" className="bg-gray-800">Secundario</option>
+                                    <option value="postre" className="bg-gray-800">Postre</option>
+                                </select>
                             </div>
 
                             <div>

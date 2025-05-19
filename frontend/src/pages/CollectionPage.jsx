@@ -1,20 +1,19 @@
 import React, { useState, useEffect } from 'react';
 import { useUser } from '../context/UserContext';
 import { useFood } from '../context/FoodContext';
+import { useSkin } from '../context/SkinContext';
 import { FoodCollectionCard } from '../components/FoodCollectionCard';
+import { SkinCollectionCard } from '../components/SkinCollectionCard';
 import Loading from '../components/loading';
-
-
 
 export const CollectionPage = () => {
     const [activeTab, setActiveTab] = useState('foods');
     const { user } = useUser();
-    const { foods = [], userFoods = [], loading } = useFood();
+    const { foods = [], userFoods = [], loading: foodLoading } = useFood();
+    const { skins = [], userSkins = [], loading: skinLoading } = useSkin();
     const [isLoading, setIsLoading] = useState(false);
 
-    useEffect(() => {
-        console.log('Comidas en el array member:', foods.member);
-    }, [foods]);
+    const loading = foodLoading || skinLoading;
 
     if (loading) {
         return <Loading />;
@@ -22,6 +21,8 @@ export const CollectionPage = () => {
 
     const foodsList = foods?.member || [];
     const userFoodsList = userFoods?.member || [];
+    const skinsList = skins?.member || [];
+    const userSkinsList = userSkins || [];
 
     return (
         <div className="container mx-auto px-4 py-8">
@@ -30,80 +31,73 @@ export const CollectionPage = () => {
                 Conoce nuestra colección
             </h1>
 
-            <div className="mb-8">
-                <div className="flex justify-center border-b border-gray-700">
+            <div className=" bg-white/10 rounded-t-xl overflow-hidden backdrop-blur-sm">
+                <div className="flex border-b border-white/10">
                     <button
-                        className={`px-6 py-3 text-lg transition-all duration-300 ${activeTab === 'foods'
-                            ? 'border-b-2 border-purple-500 text-purple-400 scale-105'
-                            : 'text-gray-400 hover:text-purple-300'
-                            }`}
+                        className={`flex-1 py-3 text-center transition-colors ${activeTab === 'foods' ? 'bg-white/10 text-white' : 'text-gray-400 hover:text-white'}`}
                         onClick={() => setActiveTab('foods')}
                     >
-                        🍽️ Comidas
+                        Comidas
                     </button>
                     <button
-                        className={`px-6 py-3 text-lg transition-all duration-300 ${activeTab === 'clothing'
-                            ? 'border-b-2 border-indigo-500 text-indigo-400 scale-105'
-                            : 'text-gray-400 hover:text-indigo-300'
-                            }`}
-                        onClick={() => setActiveTab('clothing')}
+                        className={`flex-1 py-3 text-center transition-colors ${activeTab === 'skins' ? 'bg-white/10 text-white' : 'text-gray-400 hover:text-white'}`}
+                        onClick={() => setActiveTab('skins')}
                     >
-                        👕 Ropa
+                        Skins
                     </button>
                 </div>
             </div>
 
             {activeTab === 'foods' && (
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-                    {Array.isArray(foodsList) && foodsList.map(food => {
-                        const userFood = userFoodsList.find(uf => uf.food === `/api/food/${food.id}`);
-
-                        return (
-                            <FoodCollectionCard
-                                key={food.id}
-                                food={food}
-                                userFood={userFood}
-                            />
-                        );
-                    })}
-                    {(!foodsList || foodsList.length === 0) && (
-                        <div className="col-span-full text-center p-8 bg-white/5 rounded-xl">
-                            <p className="text-gray-400 text-lg">No hay comidas disponibles</p>
-                            <p className="text-sm text-gray-500 mt-2">¡Juega minijuegos para conseguir nuevas comidas!</p>
-                        </div>
-                    )}
+                <div className="bg-white/10 rounded-b-xl p-4 sm:p-6 backdrop-blur-sm">
+                    <h2 className="text-xl font-bold mb-4">Colección de comidas</h2>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                        {Array.isArray(foodsList) && foodsList.map(food => {
+                            const userFood = userFoodsList.find(uf => uf.food === `/api/food/${food.id}`);
+                            return (
+                                <FoodCollectionCard
+                                    key={food.id}
+                                    food={food}
+                                    userFood={userFood}
+                                />
+                            );
+                        })}
+                        {(!foodsList || foodsList.length === 0) && (
+                            <div className="col-span-full text-center p-8 bg-white/5 rounded-xl">
+                                <p className="text-gray-400 text-lg">No hay comidas disponibles</p>
+                                <p className="text-sm text-gray-500 mt-2">¡Juega minijuegos para conseguir nuevas comidas!</p>
+                            </div>
+                        )}
+                    </div>
                 </div>
             )}
 
-            {activeTab === 'clothing' && (
-                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
-                    {clothing.map(item => (
-                        <div
-                            key={item.id}
-                            className={`p-4 rounded-lg ${getQuantity(item.id) > 0 ? 'bg-white/10' : 'bg-white/5 opacity-50'}`}
-                        >
-                            <div className="flex flex-col items-center">
-                                <span className="text-4xl mb-2">{item.emoji}</span>
-                                <h3 className="font-medium text-center">{item.name}</h3>
-                                <p className="text-sm text-gray-400 text-center">{item.description}</p>
-                                {getQuantity(item.id) > 0 && (
-                                    <div className="mt-2 text-sm">
-                                        <span className="text-yellow-300">Cantidad: {getQuantity(item.id)}</span>
-                                    </div>
-                                )}
-                                <div className={`mt-1 text-xs px-2 py-0.5 rounded-full ${item.rarity === 'legendary' ? 'bg-yellow-500/20 text-yellow-300' :
-                                    item.rarity === 'epic' ? 'bg-purple-500/20 text-purple-300' :
-                                        item.rarity === 'rare' ? 'bg-blue-500/20 text-blue-300' :
-                                            'bg-gray-500/20 text-gray-300'
-                                    }`}>
-                                    {item.rarity.toUpperCase()}
-                                </div>
-                                <div className="mt-1 text-xs text-gray-400">
-                                    {item.type}
-                                </div>
+            {activeTab === 'skins' && (
+                <div className="bg-white/10 rounded-b-xl p-4 sm:p-6 backdrop-blur-sm">
+                    <h2 className="text-xl font-bold mb-4">Colección de skins</h2>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                        {Array.isArray(skinsList) && skinsList.map(skin => {
+                            // Buscar si el usuario tiene esta skin
+                            const userSkin = userSkinsList.find(us => {
+                                const skinId = us.skin.split('/').pop();
+                                return skinId === skin.id.toString();
+                            });
+                            
+                            return (
+                                <SkinCollectionCard
+                                    key={skin.id}
+                                    skin={skin}
+                                    userSkin={userSkin}
+                                />
+                            );
+                        })}
+                        {(!skinsList || skinsList.length === 0) && (
+                            <div className="col-span-full text-center p-8 bg-white/5 rounded-xl">
+                                <p className="text-gray-400 text-lg">No hay skins disponibles</p>
+                                <p className="text-sm text-gray-500 mt-2">¡Juega minijuegos o usa el Gacha para conseguir nuevas skins!</p>
                             </div>
-                        </div>
-                    ))}
+                        )}
+                    </div>
                 </div>
             )}
         </div>

@@ -192,13 +192,13 @@ const AdminSkin = () => {
                                     name="rarity"
                                     value={formData.rarity}
                                     onChange={handleChange}
-                                    className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-2"
+                                    className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-2 appearance-none cursor-pointer hover:bg-white/10 transition-colors"
                                     required
                                 >
-                                    <option value="COMMON">Común</option>
-                                    <option value="RARE">Rara</option>
-                                    <option value="EPIC">Épica</option>
-                                    <option value="LEGENDARY">Legendaria</option>
+                                    <option value="COMMON" className="bg-gray-800 text-gray-300">Común</option>
+                                    <option value="RARE" className="bg-blue-800 text-blue-300">Rara</option>
+                                    <option value="EPIC" className="bg-purple-800 text-purple-300">Épica</option>
+                                    <option value="LEGENDARY" className="bg-yellow-800 text-yellow-300">Legendaria</option>
                                 </select>
                             </div>
 
@@ -309,10 +309,10 @@ const AdminSkin = () => {
                                     className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-2"
                                     required
                                 >
-                                    <option value="COMMON">Común</option>
-                                    <option value="RARE">Rara</option>
-                                    <option value="EPIC">Épica</option>
-                                    <option value="LEGENDARY">Legendaria</option>
+                                    <option value="COMMON" className="bg-gray-800 text-gray-300">Común</option>
+                                    <option value="RARE" className="bg-blue-800 text-blue-300">Rara</option>
+                                    <option value="EPIC" className="bg-purple-800 text-purple-300">Épica</option>
+                                    <option value="LEGENDARY" className="bg-yellow-800 text-yellow-300">Legendaria</option>
                                 </select>
                             </div>
 
