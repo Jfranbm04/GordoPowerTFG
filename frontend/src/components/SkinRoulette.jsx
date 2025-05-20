@@ -16,12 +16,12 @@ export const SkinRoulette = ({ cost, onClose, character }) => {
     // Función para verificar si una skin cumple con las condiciones del personaje
     const skinMeetsConditions = (skin) => {
         if (!character) return false;
-        
+
         // Verificar si las estadísticas del personaje son mayores que las condiciones de la skin
         const levelOk = !skin.levelcondition || character.level >= skin.levelcondition;
         const proteinOk = !skin.proteincondition || character.protein >= skin.proteincondition;
         const fatOk = !skin.fatcondition || character.fat >= skin.fatcondition;
-        
+
         return levelOk && proteinOk && fatOk;
     };
 
@@ -58,22 +58,27 @@ export const SkinRoulette = ({ cost, onClose, character }) => {
         // Si no hay skins disponibles, mostrar monedas
         const newItems = [];
 
+
+        // Agregar más opciones de monedas para tener variedad
+        newItems.push({ type: 'nothing' });
+        newItems.push({ type: 'nothing' });
+        newItems.push({ type: 'nothing' });
+        newItems.push({ type: 'nothing' });
+        newItems.push({ type: 'coins', amount: 200 });
+        newItems.push({ type: 'coins', amount: 400 });
+        newItems.push({ type: 'coins', amount: 600 });
+        newItems.push({ type: 'coins', amount: 800 });
         if (commonSkin) {
             newItems.push({ type: 'skin', skin: commonSkin });
         } else {
-            newItems.push({ type: 'coins', amount: 300 });
+            newItems.push({ type: 'coins', amount: 1000 });
         }
 
         if (rareSkin) {
             newItems.push({ type: 'skin', skin: rareSkin });
         } else {
-            newItems.push({ type: 'coins', amount: 600 });
+            newItems.push({ type: 'coins', amount: 2000 });
         }
-
-        // Agregar más opciones de monedas para tener variedad
-        newItems.push({ type: 'coins', amount: 200 });
-        newItems.push({ type: 'coins', amount: 400 });
-        newItems.push({ type: 'coins', amount: 500 });
 
         try {
             await updateUserCoins(user.id, user.coins - cost);
@@ -152,13 +157,13 @@ export const SkinRoulette = ({ cost, onClose, character }) => {
                         <p className="text-center text-purple-200">
                             Solo aparecerán skins que puedas usar con tus estadísticas actuales:
                             <br />
-                            <span className="font-bold">Nivel: {character?.level || 0}</span> | 
-                            <span className="font-bold"> Proteína: {character?.protein || 0}</span> | 
+                            <span className="font-bold">Nivel: {character?.level || 0}</span> |
+                            <span className="font-bold"> Proteína: {character?.protein || 0}</span> |
                             <span className="font-bold"> Grasa: {character?.fat || 0}</span>
                         </p>
                     </div>
                 )}
-                
+
                 <div className="grid grid-cols-5 grid-rows-2 gap-4">
                     {items.map((item, index) => (
                         <div

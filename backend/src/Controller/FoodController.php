@@ -47,13 +47,6 @@ class FoodController extends AbstractController
                 $imageFile->move(__DIR__ . '/../../public/uploads/food', $filename);
                 $food->setImage('uploads/food/' . $filename);
             }
-            // if ($imageFile) {
-            //     $originalFilename = pathinfo($imageFile->getClientOriginalName(), PATHINFO_FILENAME);
-            //     $safeFilename = $slugger->slug($originalFilename);
-            //     $newFilename = $safeFilename . '-' . uniqid() . '.' . $imageFile->getClientOriginalExtension();
-            //     $imageFile->move(__DIR__ . '/../../public/uploads/food', $newFilename);
-            //     $food->setImage('uploads/food/' . $newFilename);
-            // }
 
             $em->persist($food);
             $em->flush();
