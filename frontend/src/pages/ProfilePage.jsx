@@ -26,58 +26,30 @@ const ProfilePage = () => {
     const urlApi = import.meta.env.VITE_BASE_URL;
     const [actualSkin, setActualSkin] = useState(`${urlApi}/uploads/loading.gif`)
     const [isAvatarLoading, setIsAvatarLoading] = useState(true);
-    // const hola = () => {
-    //     const equippedSkin = userSkins.find(skin => skin.active);
-    //     console.log("equippedSkin", equippedSkin)
-    //     if (equippedSkin) {
-    //         const userSkinId = equippedSkin.id;
-    //         updateAvatar(userSkinId);
-    //     }
-    // }
 
+    // Effect para cargar datos generales
     useEffect(() => {
-        // Verificar si todos los datos necesarios están cargados
         if (user && character && foods && userFoods) {
             const timer = setTimeout(() => {
                 setIsPageLoading(false);
             }, 1000);
-            // console.log("userSkins?.member", userSkins)
-
-            // Buscar la skin activa y actualizar el avatar
-            if (userSkins) {
-                setIsAvatarLoading(true);
-                const equippedSkin = userSkins.find(skin => skin.active);
-                // console.log("equippedSkin", equippedSkin)
-                if (equippedSkin) {
-                    const userSkinId = equippedSkin.id;
-                    updateAvatar(userSkinId);
-                }
-            }
 
             return () => clearTimeout(timer);
         }
-        // Cargo fetchUserSkins
         fetchUserSkins();
+    }, [character, user, foods, userFoods]);
 
-    }, [character, user, foods, userFoods, userSkins]);
-
-    // Efecto para actualizar la skin actual cuando cambian las skins del usuario
-    // useEffect(() => {
-    //     if (userSkins?.member) {
-    //         // Buscar la skin equipada
-    //         const equippedSkin = userSkins.member.find(skin => skin.active);
-    //         console.log("equippedSkin encontrado:", equippedSkin); // Añadir este log para debug
-    //         if (equippedSkin) {
-    //             // Extraer el ID de la skin desde la URL
-    //             const skinId = equippedSkin.skin.split('/').pop();
-    //             // Buscar la información completa de la skin
-    //             const skinInfo = skins?.member?.find(s => s.id.toString() === skinId);
-    //             if (skinInfo && skinInfo.imageUrl) {
-    //                 setActualSkin(`${urlApi}${skinInfo.imageUrl}`);
-    //             }
-    //         }
-    //     }
-    // }, [userSkins, skins, urlApi]);
+    // Effect para actualizar la skin
+    useEffect(() => {
+        if (userSkins) {
+            const equippedSkin = userSkins.find(skin => skin.active);
+            if (equippedSkin) {
+                setIsAvatarLoading(true);
+                const userSkinId = equippedSkin.id;
+                updateAvatar(userSkinId);
+            }
+        }
+    }, [userSkins]); // Solo depende de userSkins (antes se actualizaba tambien al alimentar un personaje)
 
     // Función para alimentar al personaje
     const handleFeed = async (userFoodId, food) => {

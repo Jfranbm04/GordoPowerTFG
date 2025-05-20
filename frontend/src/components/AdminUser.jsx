@@ -15,9 +15,18 @@ const AdminUser = () => {
         active: true
     });
     const [isSubmitting, setIsSubmitting] = useState(false);
-    const { users, loading, updateUser } = useUser();
+    const [isLoading, setIsLoading] = useState(false);
+    const [loadingUserId, setLoadingUserId] = useState(null);
+    const { users, loading, updateUser, fetchUsers } = useUser();
     const usersList = users?.member || [];
     const BASE_URL = import.meta.env.VITE_BASE_URL;
+
+    // Efecto para cargar la lista de usuarios solo al montar el componente
+    useEffect(() => {
+        if (fetchUsers) {
+            fetchUsers();
+        }
+    }, []); // Array de dependencias vacío para ejecutar solo al montar
 
     // Función para iniciar la edición de un usuario
     const handleEdit = (user) => {
@@ -39,6 +48,9 @@ const AdminUser = () => {
 
     // Función para banear/desbanear un usuario
     const handleBanToggle = async (userId, isCurrentlyActive) => {
+        setIsLoading(true);
+        setLoadingUserId(userId);
+
         try {
             const response = await fetch(`${BASE_URL}/api/users/${userId}`, {
                 method: 'PATCH',
@@ -59,6 +71,11 @@ const AdminUser = () => {
                 await updateUser(userId, { active: !isCurrentlyActive });
             }
 
+            // Actualizar la lista de usuarios después de la modificación
+            if (fetchUsers) {
+                await fetchUsers();
+            }
+
             setNotification({
                 show: true,
                 message: isCurrentlyActive
@@ -73,6 +90,9 @@ const AdminUser = () => {
                 message: 'Error al cambiar el estado del usuario',
                 type: 'error'
             });
+        } finally {
+            setIsLoading(false);
+            setLoadingUserId(null);
         }
     };
 
@@ -96,6 +116,11 @@ const AdminUser = () => {
             // Actualizar la lista de usuarios
             if (updateUser) {
                 await updateUser(editingUserId, formData);
+            }
+
+            // Actualizar la lista de usuarios después de la modificación
+            if (fetchUsers) {
+                await fetchUsers();
             }
 
             setNotification({
@@ -244,12 +269,9 @@ const AdminUser = () => {
                         <button
                             type="submit"
                             disabled={isSubmitting}
-                            className={`w-full py-2 rounded-lg transition duration-200 ${isSubmitting
-                                ? 'bg-gray-500 cursor-not-allowed'
-                                : 'bg-yellow-600 hover:bg-yellow-700'
-                                }`}
+                            className={"w-full py-2 rounded-lg transition duration-200 bg-yellow-600 hover:bg-yellow-700"}
                         >
-                            {isSubmitting ? 'Guardando...' : 'Guardar Cambios'}
+                            {isSubmitting ? <Loading size="sm" /> : 'Guardar Cambios'}
                         </button>
                     </form>
                 </div>
@@ -304,12 +326,21 @@ const AdminUser = () => {
                                         </button>
                                         <button
                                             onClick={() => handleBanToggle(user.id, user.active)}
-                                            className={`flex-1 sm:flex-none px-3 py-1 rounded text-sm transition-colors ${user.active
-                                                ? 'bg-red-600 hover:bg-red-700'
-                                                : 'bg-green-600 hover:bg-green-700'
+                                            disabled={isLoading && loadingUserId === user.id}
+                                            className={`flex-1 sm:flex-none px-3 py-1 rounded text-sm transition-colors ${isLoading && loadingUserId === user.id
+                                                ? 'cursor-not-allowed'
+                                                : user.active
+                                                    ? 'bg-red-600 hover:bg-red-700'
+                                                    : 'bg-green-600 hover:bg-green-700'
                                                 }`}
                                         >
-                                            {user.active ? 'Banear' : 'Desbanear'}
+                                            {isLoading && loadingUserId === user.id ? (
+                                                <span className="flex items-center justify-center">
+                                                    <Loading size="sm" />
+                                                </span>
+                                            ) : (
+                                                user.active ? 'Banear' : 'Desbanear'
+                                            )}
                                         </button>
                                     </div>
                                 </div>
