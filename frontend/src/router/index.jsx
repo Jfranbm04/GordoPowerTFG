@@ -18,6 +18,7 @@ import AdminFood from "../components/AdminFood";
 import AdminUser from "../components/AdminUser";
 import AdminSkin from "../components/AdminSkin";
 import FoodOrNotPage from "../pages/FoodOrNotPage";
+import ErrorPage from "../pages/ErrorPage";
 
 export const router = createBrowserRouter([
     {
@@ -33,6 +34,7 @@ export const router = createBrowserRouter([
     {
         path: "/",
         element: <RootLayout />,
+        errorElement: <ErrorPage />,
         children: [
             {
                 index: true,
