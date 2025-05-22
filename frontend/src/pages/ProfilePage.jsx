@@ -515,7 +515,7 @@ const ProfilePage = () => {
                                 }
                                 return null;
                             })}
-                            {(!userFoods?.member || userFoods.member.length === 0) && (
+                            {(!userFoods || userFoods.length === 0) && (
                                 <div className="col-span-full text-center p-8 bg-white/5 rounded-xl">
                                     <p className="text-gray-400 text-lg">No tienes comida en tu inventario</p>
                                     <p className="text-sm text-gray-500 mt-2">¡Compra comida en la tienda o gana en el Gacha!</p>

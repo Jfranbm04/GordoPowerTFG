@@ -53,70 +53,36 @@ export const AuthProvider = ({ children }) => {
 
     const registerUser = async ({ email, username, password }) => {
         try {
-            const response = await fetch(`${BASE_URL}/api/users`, {
+            const response = await fetch(`${BASE_URL}/api/register`, {
                 method: "POST",
                 headers: {
-                    "Content-Type": "application/ld+json",
+                    "Content-Type": "application/json",
+                    "Accept": "application/json"
                 },
                 body: JSON.stringify({
                     email,
-                    password,
                     username,
-                    coins: 1000,
-                    roles: ["ROLE_USER"]
+                    password
                 })
             });
 
-            if (!response.ok) {
-                const errorData = await response.json().catch(() => ({}));
-                throw new Error(errorData.message || "Error al registrar usuario");
-            }
             const data = await response.json();
-
-            // Crear el personaje para el usuario
-            const characterResponse = await fetch(`${BASE_URL}/api/characters`, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/ld+json",
-                },
-                body: JSON.stringify({
-                    user: `/api/users/${data.id}`,
-                    level: 1,
-                    strength: 1,
-                    weight: 50,
-                    protein: 100,
-                    fat: 100,
-                    experience: 0
-                })
-            });
-
-            if (!characterResponse.ok) {
-                throw new Error("Error al crear el personaje");
+            
+            if (!response.ok) {
+                throw new Error(data.message || "Error al registrar usuario");
             }
-
-            // Asignar skin por defecto al usuario
-            const skinResponse = await fetch(`${BASE_URL}/api/user_skins`, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/ld+json",
-                },
-                body: JSON.stringify({
-                    user: `/api/users/${data.id}`,
-                    skin: "/api/skins/1",
-                    unlocked: true,
-                    active: true,
-                    quantity: 1
-                })
-            });
-
-            if (!skinResponse.ok) {
-                throw new Error("Error al asignar skin por defecto");
-            }
-
-            return data;
+            
+            return {
+                success: data.success,
+                message: data.message,
+                user: data.user
+            };
         } catch (error) {
             console.log("Error al registrar usuario", error);
-            throw error;
+            return {
+                success: false,
+                message: error.message || "Error al registrar usuario"
+            };
         }
     }
 
