@@ -20,7 +20,6 @@ export const CollectionPage = () => {
     }
 
     const foodsList = foods?.member || [];
-    const userFoodsList = userFoods?.member || [];
     const skinsList = skins?.member || [];
     const userSkinsList = userSkins || [];
 
@@ -53,7 +52,7 @@ export const CollectionPage = () => {
                     <h2 className="text-xl font-bold mb-4">Colección de comidas</h2>
                     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
                         {Array.isArray(foodsList) && foodsList.map(food => {
-                            const userFood = userFoodsList.find(uf => uf.food === `/api/food/${food.id}`);
+                            const userFood = userFoods.find(uf => uf.food === `/api/food/${food.id}`);
                             return (
                                 <FoodCollectionCard
                                     key={food.id}
@@ -82,7 +81,7 @@ export const CollectionPage = () => {
                                 const skinId = us.skin.split('/').pop();
                                 return skinId === skin.id.toString();
                             });
-                            
+
                             return (
                                 <SkinCollectionCard
                                     key={skin.id}
