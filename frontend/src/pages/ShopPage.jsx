@@ -14,7 +14,7 @@ const ShopPage = () => {
     const [isLoading, setIsLoading] = useState(false);
 
     const isUnlocked = (foodId) => {
-        if (!userFoods?.member) return false;
+        if (!userFoods) return false;
         return userFoods.member.some(uf => {
             const userFoodId = uf.food.split('/').pop();
             return userFoodId === foodId.toString();
@@ -105,7 +105,7 @@ const ShopPage = () => {
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
                 {foods?.member?.map((food) => {
                     // Obtener la cantidad de esta comida específica
-                    const userFood = userFoods?.member?.find(uf => {
+                    const userFood = userFoods?.find(uf => {
                         const userFoodId = uf.food.split('/').pop();
                         return userFoodId === food.id.toString();
                     });

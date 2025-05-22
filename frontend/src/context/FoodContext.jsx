@@ -46,9 +46,23 @@ export const FoodProvider = ({ children }) => {
                 throw new Error('Error al obtener las comidas del usuario');
             }
             const data = await response.json();
-            setUserFoods(data);
+            console.log("dataUser", data);
+
+            // Filtrar solo los alimentos del usuario actual
+            if (data && data.member && Array.isArray(data.member)) {
+                const filteredFoods = data.member.filter(food => {
+                    // Extraer el ID del usuario de la URL
+                    const userId = food.user.split('/').pop();
+                    return userId === user.id.toString();
+                });
+                console.log("filteredFoods", filteredFoods);
+                setUserFoods(filteredFoods);
+            } else {
+                setUserFoods([]);
+            }
         } catch (error) {
             console.error('Error:', error);
+            setUserFoods([]);
         }
     };
 
