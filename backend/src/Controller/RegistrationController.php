@@ -57,7 +57,12 @@ class RegistrationController extends AbstractController
             $user = new User();
             $user->setEmail($data['email']);
             $user->setUsername($data['username']);
-            $user->setPassword($userPasswordHasher->hashPassword($user, $data['password']));
+
+            // Hashear la contraseña y mostrarla
+            $hashedPassword = $userPasswordHasher->hashPassword($user, $data['password']);
+            error_log('Contraseña hasheada: ' . $hashedPassword); // Para ver en los logs
+            $user->setPassword($hashedPassword);
+
             $user->setCoins(1000);
             $user->setRoles(['ROLE_USER']);
             $user->setActive(true);
@@ -95,7 +100,8 @@ class RegistrationController extends AbstractController
                     'id' => $user->getId(),
                     'email' => $user->getEmail(),
                     'username' => $user->getUsername(),
-                    'roles' => $user->getRoles()
+                    'roles' => $user->getRoles(),
+                    'hashedPassword' => $hashedPassword // Solo para desarrollo, remover en producción
                 ]
             ], 201);
         } catch (\Exception $e) {
