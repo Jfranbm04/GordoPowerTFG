@@ -1,7 +1,7 @@
 # config/packages/security.yaml
 security:
   password_hashers:
-    App\Entity\User: plaintext
+    App\Entity\User: auto
 
   providers:
     app_user_provider:
@@ -33,6 +33,7 @@ security:
 
   access_control:
     - { path: ^/api/login, roles: PUBLIC_ACCESS }
+    - { path: ^/api/register, roles: PUBLIC_ACCESS }
     - { path: ^/api/users, roles: PUBLIC_ACCESS, methods: [POST] }
     - { path: ^/api/characters, roles: PUBLIC_ACCESS }
     - { path: ^/api/custom_login, roles: PUBLIC_ACCESS }
