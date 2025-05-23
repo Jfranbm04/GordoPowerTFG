@@ -1,0 +1,80 @@
+version: '3.8'
+
+services:
+  # Backend service (Symfony)
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    volumes:
+      - ./backend:/var/www/html
+      - ./backend/vendor:/var/www/html/vendor
+    depends_on:
+      - database
+    environment:
+      - APP_ENV=prod
+      - DATABASE_URL=mysql://${MYSQL_USER:-app}:${MYSQL_PASSWORD:-!ChangeMe!}@database:3306/${MYSQL_DATABASE:-gordopower}
+    networks:
+      - gordopower
+
+  # Frontend service (React)
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    networks:
+      - gordopower
+
+  # Database service (MySQL)
+  database:
+    image: mysql:8.0
+    environment:
+      MYSQL_DATABASE: ${MYSQL_DATABASE:-gordopower}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD:-!ChangeMe!}
+      MYSQL_USER: ${MYSQL_USER:-app}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-!ChangeMe!}
+    volumes:
+      - database_data:/var/lib/mysql:rw
+    ports:
+      - "3306:3306"
+    networks:
+      - gordopower
+
+  # PHPMyAdmin
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    depends_on:
+      - database
+    ports:
+      - "8080:80"
+    environment:
+      PMA_HOST: database
+      PMA_PORT: 3306
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-!ChangeMe!}
+    networks:
+      - gordopower
+
+  # Nginx service
+  nginx:
+    image: nginx:alpine
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
+      - ./backend/public:/var/www/html/public
+      - ./frontend/dist:/var/www/frontend
+    depends_on:
+      - backend
+      - frontend
+    networks:
+      - gordopower
+
+networks:
+  gordopower:
+    driver: bridge
+
+volumes:
+  database_data:
