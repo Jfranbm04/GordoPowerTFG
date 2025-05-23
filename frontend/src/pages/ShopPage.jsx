@@ -15,7 +15,8 @@ const ShopPage = () => {
 
     const isUnlocked = (foodId) => {
         if (!userFoods) return false;
-        return userFoods.member.some(uf => {
+        console.log("userFoods", userFoods)
+        return userFoods.some(uf => {
             const userFoodId = uf.food.split('/').pop();
             return userFoodId === foodId.toString();
         });
@@ -31,7 +32,7 @@ const ShopPage = () => {
         setPurchaseStatus('loading');
 
         try {
-            const existingUserFood = userFoods.member.find(uf => {
+            const existingUserFood = userFoods.find(uf => {
                 const userFoodId = uf.food.split('/').pop();
                 return userFoodId === foodId.toString();
             });
