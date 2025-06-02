@@ -1,33 +1,30 @@
-# Usar una imagen base oficial de PHP
-FROM php:8.1-fpm-alpine
+FROM php:8.2-fpm
 
-# Instalar dependencias necesarias
-RUN apk add --no-cache \
-    openssl \
-    curl \
-    zip \
-    unzip \
+# Instalar dependencias del sistema
+RUN apt-get update && apt-get install -y \
     git \
-    && docker-php-ext-install pdo_mysql
+    unzip \
+    libicu-dev \
+    && rm -rf /var/lib/apt/lists/*
 
-# Configurar Composer
-RUN curl -sS https://getcomposer.org/installer  | php -- --install-dir=/usr/local/bin --filename=composer
+# Extensiones PHP necesarias
+RUN docker-php-ext-install pdo pdo_mysql opcache intl exif bcmath sockets
 
-# Copiar el código fuente
-WORKDIR /var/www/html
+# Copiar Composer
+COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
+
+# Directorio de trabajo
+WORKDIR /app
+
+# Copiar archivos del backend al contenedor
 COPY . .
 
-# Instalar dependencias de Symfony
-RUN composer install --no-scripts --prefer-dist
+# Instalar dependencias
+RUN composer install --optimize-autoloader --no-scripts
 
-# Configurar permisos
-RUN chown -R www-data:www-data /var/www/html/var
-RUN chown -R www-data:www-data /var/www/html/public
-RUN chmod -R 777 /var/www/html/var
-RUN chmod -R 777 /var/www/html/public
+# Establecer permisos adecuados
+RUN chown -R www-data:www-data /app/var
 
-# Exponer el puerto
-EXPOSE 8000
+EXPOSE 9000
 
-# Ejecutar el servidor de desarrollo
-CMD ["php", "-S", "0.0.0.0:8000", "-t", "public/"]
+CMD ["php-fpm"]

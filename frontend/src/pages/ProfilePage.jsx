@@ -6,7 +6,7 @@ import { useSkin } from '../context/SkinContext';
 import { Info, Check, X } from 'lucide-react';
 import { FoodInventoryCard } from '../components/FoodInventoryCard';
 import { SkinInventoryCard } from '../components/SkinInventoryCard';
-import Loading from '../components/loading';
+import Loading from '../components/Loading';
 // import Loading from '../components/Loading';
 
 const ProfilePage = () => {

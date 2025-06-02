@@ -1,22 +1,12 @@
-# Usar una imagen base oficial de Node.js
-FROM node:16-alpine
-
-# Configurar el directorio de trabajo
+#Imagen de partida
+FROM node:23-alpine
 WORKDIR /app
-
-# Copiar el package.json y npm install
-COPY package.json .
-COPY package-lock.json .
-RUN npm install --silent
-
-# Copiar el resto del código fuente
+# Instalar dependencias
+COPY package*.json ./
+RUN npm install
+# Copiar el código fuente
 COPY . .
-
-# Compilar el frontend
-RUN npm run build
-
 # Exponer el puerto
-EXPOSE 3000
-
-# Ejecutar el servidor de desarrollo
-CMD ["npm", "start"]
+EXPOSE 5173
+# Comando de inicio
+CMD ["npm", "run", "dev", "--", "--host", "0.0.0.0"]
