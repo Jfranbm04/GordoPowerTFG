@@ -1,68 +1,99 @@
-version: "3.8"
+version: "3.9"
 
 services:
-  # Backend Symfony (PHP-FPM)
-  backend:
-    build:
-      context: ./backend
-      dockerfile: Dockerfile
-    volumes:
-      - ./backend:/app
-      - symfony_cache:/app/var/cache
-      - symfony_log:/app/var/log
-    expose:
-      - "9000"
-    environment:
-      - APP_ENV=prod
-      - DATABASE_URL=mysql://root@mysql/gordopower
-    depends_on:
-      - mysql
-
-  # Frontend React
   frontend:
     build:
       context: ./frontend
       dockerfile: Dockerfile
     ports:
-      - "5173:5173"
+      - "3000:3000"
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    environment:
+      - CHOKIDAR_USEPOLLING=true # Activa polling para asegurar detección de cambios en Docker
     depends_on:
       - backend
+    networks:
+      - app-network
 
-  # Base de Datos MySQL
-  mysql:
-    image: mysql:5.7
-    restart: always
-    environment:
-      MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
-      MYSQL_DATABASE: gordopower
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
     volumes:
-      - mysql_data:/var/lib/mysql
-      - ./database/gordopower.sql:/docker-entrypoint-initdb.d/gordopower.sql
+      - ./backend:/app
+      - /app/vendor
+    environment:
+      PHP_VERSION: "8.2"
+      DATABASE_URL: "mysql://root:${MYSQL_ROOT_PASSWORD}@database:3306/${MYSQL_DATABASE}?serverVersion=8.0"
+    depends_on:
+      database:
+        condition: service_healthy
+    networks:
+      - app-network
+
+  database:
+    image: mysql:8.0
     ports:
       - "3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+    volumes:
+      - ./database/gordopower.sql:/docker-entrypoint-initdb.d/init.sql
+      - database_data:/var/lib/mysql
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "mysqladmin",
+          "ping",
+          "-h",
+          "localhost",
+          "-u",
+          "root",
+          "-p${MYSQL_ROOT_PASSWORD}",
+        ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - app-network
 
-  # phpMyAdmin (opcional)
   phpmyadmin:
     image: phpmyadmin/phpmyadmin
-    restart: always
     ports:
       - "8081:80"
     environment:
-      PMA_HOST: mysql
+      PMA_HOST: database
+    env_file:
+      - .env
     depends_on:
-      - mysql
+      - database
+    networks:
+      - app-network
 
-  # Servidor Web (Nginx)
   web:
     build:
       context: ./web
       dockerfile: Dockerfile
     ports:
       - "80:80"
+      - "443:443"
+    # volumes:
+    #   - ./web/certs:/etc/nginx/certs
     depends_on:
+      - frontend
       - backend
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
 
 volumes:
-  mysql_data:
-  symfony_cache:
-  symfony_log:
+  database_data:
