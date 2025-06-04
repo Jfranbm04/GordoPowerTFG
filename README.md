@@ -58,7 +58,7 @@ docker-compose up --build
 - El backend en [http://localhost:8000/api](http://localhost:8000/api)
 - phpMyAdmin en [http://localhost:8080](http://localhost:8080)
 
-### 5. Acceso a la aplicación
+### 6. Acceso a la aplicación
 
 Usa las credenciales de prueba para iniciar sesión y probar todas las funcionalidades.
 
@@ -76,14 +76,23 @@ Usa las credenciales de prueba para iniciar sesión y probar todas las funcional
 ## A tener en cuenta
 
 - El proyecto utiliza autenticación con JWT, puede ser necesario generar unas claves nuevas
+
+### Sección AWS
+
 - Para desplegar en AWS es necesario actualizar el .env (backend) con la siguiente ruta
 
 ```bash
 DATABASE_URL="mysql://root@db:3306/gordopower"
 ```
 
-- De igual manera puede ser necesario modificar el enlace del backend dentro del .env(frontend)
+- De igual manera puede ser necesario modificar el enlace del backend dentro del .env(frontend). La ruta debe ser del tipo:
+
+```bash
+VITE_BASE_URL=http://52.204.99.229:8081
+```
+
+- La dirección para acceder al proyecto de AWS es la siguiente: `52.204.99.229`
 
 ---
 
-_Desarrollado por: Juan Francisco Burgos Martin_
+_Desarrollado por: Juan Francisco Burgos Martín_
