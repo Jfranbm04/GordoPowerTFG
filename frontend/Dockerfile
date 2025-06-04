@@ -1,21 +1,12 @@
-FROM node:20-alpine
-
-# Soluciona problemas con esbuild
-RUN apk add --no-cache libc6-compat
-
+#Imagen de partida
+FROM node:23-alpine
 WORKDIR /app
-
+# Instalar dependencias
 COPY package*.json ./
-
-# Instalar dependencias con flags de optimización
-RUN npm install --production --no-optional
-
+RUN npm install
+# Copiar el código fuente
 COPY . .
-
-# Configurar variables de entorno para optimizar Node.js
-ENV NODE_OPTIONS="--max-old-space-size=512"
-ENV VITE_OPTIMIZE_DEP=true
-
+# Exponer el puerto
 EXPOSE 5173
-
+# Comando de inicio
 CMD ["npm", "run", "dev", "--", "--host", "0.0.0.0"]

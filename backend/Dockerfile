@@ -11,12 +11,10 @@ COPY . .
 
 RUN composer install --no-scripts --no-interaction --no-dev --optimize-autoloader
 
-RUN composer update
-
 RUN mkdir -p public/uploads/profile_pictures && \
     chmod -R 775 public/uploads && \
     chown -R www-data:www-data public/uploads
 
 EXPOSE 8000
 
-CMD ["php", "-S", "0.0.0.0:8000", "-t", "public"] 
+CMD ["php", "-S", "0.0.0.0:8000", "-t", "public"]
