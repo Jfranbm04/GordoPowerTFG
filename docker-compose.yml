@@ -1,0 +1,91 @@
+version: "3.8"
+
+services:
+  nginx:
+    build:
+      context: ./nginx
+      dockerfile: Dockerfile
+    ports:
+      - "8081:80"
+    volumes:
+      - ./backend/public:/var/www/public
+      - ./backend/public/uploads:/var/www/public/uploads
+    networks:
+      - app-network
+    depends_on:
+      - backend
+      - frontend
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - "5173:5173"
+    environment:
+      - CHOKIDAR_USEPOLLING=true
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    deploy:
+      resources:
+        limits:
+          cpus: "0.5"
+          memory: 512M
+        reservations:
+          cpus: "0.25"
+          memory: 256M
+    networks:
+      - app-network
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./backend:/var/www
+      - ./backend/public/uploads:/var/www/public/uploads
+    environment:
+      - APP_ENV=prod
+      - DATABASE_URL=mysql://root:@db:3306/gordopower?serverVersion=8.0.32&charset=utf8mb4
+      - JWT_SECRET_KEY=/app/config/jwt/private.pem
+      - JWT_PUBLIC_KEY=/app/config/jwt/public.pem
+      - JWT_PASSPHRASE=123456
+      - APP_SECRET=gordopower_secret_key
+    networks:
+      - app-network
+    depends_on:
+      - db
+    command: bash -c "composer install && php -S 0.0.0.0:8000 -t public"
+
+  db:
+    image: mysql:8.0
+    environment:
+      - MYSQL_ALLOW_EMPTY_PASSWORD=yes
+      - MYSQL_DATABASE=gordopower
+    volumes:
+      - db_data:/var/lib/mysql
+      - ./gordopower.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - app-network
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    ports:
+      - "8080:80"
+    environment:
+      - PMA_HOST=db
+      - PMA_USER=root
+    depends_on:
+      - db
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
+
+volumes:
+  db_data:
