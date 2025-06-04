@@ -50,9 +50,9 @@ services:
     environment:
       - APP_ENV=prod
       - DATABASE_URL=mysql://root:@db:3306/gordopower?serverVersion=8.0.32&charset=utf8mb4
-      - JWT_SECRET_KEY=/var/www/config/jwt/private.pem
-      - JWT_PUBLIC_KEY=/var/www/config/jwt/public.pem
-      - JWT_PASSPHRASE=gordopower
+      - JWT_SECRET_KEY=/app/config/jwt/private.pem
+      - JWT_PUBLIC_KEY=/app/config/jwt/public.pem
+      - JWT_PASSPHRASE=123456
       - APP_SECRET=gordopower_secret_key
     networks:
       - app-network
