@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useFood } from '../context/FoodContext';
-import Loading from './loading';
+import Loading from './Loading';
 
 const AdminFood = () => {
 

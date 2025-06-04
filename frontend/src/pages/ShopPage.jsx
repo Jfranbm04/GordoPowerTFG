@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useUser } from '../context/UserContext';
 import { useFood } from '../context/FoodContext';
 import { FoodShopCard } from '../components/FoodShopCard';
-import Loading from '../components/loading';
+import Loading from '../components/Loading';
 
 const ShopPage = () => {
     const { user, updateUserCoins } = useUser();

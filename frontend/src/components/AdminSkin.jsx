@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useSkin } from '../context/SkinContext';
-import Loading from './loading';
+import Loading from './Loading';
 
 const AdminSkin = () => {
     const [showForm, setShowForm] = useState(false);

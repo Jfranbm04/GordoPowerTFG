@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useUser } from '../context/UserContext';
-import Loading from './loading';
+import Loading from './Loading';
 
 const AdminUser = () => {
     const [showList, setShowList] = useState(true);

@@ -4,7 +4,7 @@ import { useFood } from '../context/FoodContext';
 import { useSkin } from '../context/SkinContext';
 import { FoodCollectionCard } from '../components/FoodCollectionCard';
 import { SkinCollectionCard } from '../components/SkinCollectionCard';
-import Loading from '../components/loading';
+import Loading from '../components/Loading';
 
 export const CollectionPage = () => {
     const [activeTab, setActiveTab] = useState('foods');
